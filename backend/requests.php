@@ -195,6 +195,7 @@ function handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 
 
 function saveToCalendar($gig, $calendartype='private') {
+	return;
 	global $debug;
 	global $calendars;
 
@@ -215,6 +216,7 @@ function saveToCalendar($gig, $calendartype='private') {
 		}
 		$title = "$prefix: $title";
 		$gig_details = getGigTextDescription($gig, 'calendar');
+		if (! $gig[$start_field]) { $start_field = 'band_start'; }
 	} else { 
 		$gig_details = $gig['public_description'];
    	}
@@ -273,6 +275,7 @@ function newDateTime($date, $time) {
 }
 
 function sendEmails($gig) {
+	return;
 	global $emails;
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
