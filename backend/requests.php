@@ -244,6 +244,7 @@ function deleteFromCalendar($gig, $calendartype='private') {
 	$cal = getGoogleClient();
 	$event = new Google_Event();
 	$cal->events->delete($calendar_id, $gig[$id_field]); 
+	dbwrite("update gigs set $id_field = '' where gig_id = $gig[gig_id]");
 }	
 
 function getGoogleClient() {
