@@ -59,18 +59,17 @@
 				<span ng-click="editAvailable('Yes')" class='text-success'>{{(membersList | availableFilter:['Yes', gig]).length }} Available</span>
 				<span ng-click="editAvailable('Maybe')" class='text-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} Maybes</span>
 				<span ng-click="editAvailable('No')" class='text-error'>{{(membersList | availableFilter:['No', gig]).length }} Unavailable</span>
-				<span ng-click="editAvailable('Unknown')" class='muted'>{{(membersList | availableFilter:['Unknown', gig]).length }} Unknown</span>
 				</small>
 			</div>
 			</h1>
 		</div>
-		<div class='pull-right btn-group' id='page_controls'>
+		<div class='pull-right btn-group clearfix' id='page_controls'>
 			<a class='pull-left btn btn-mini' ng-show='gigsList[currentGigIndex-1]' href='#/gigs/{{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
 			<a class='pull-right btn btn-mini' ng-show='gigsList[currentGigIndex+1]' href='#/gigs/{{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
 		</div>
 
 
-		<form id='edit_gig' class='form-horizontal' ng-submit="saveGig()">
+		<form id='edit_gig' class='form-horizontal clearfix' ng-submit="saveGig()">
 
 			<input type='hidden' name='gig_id' ng-model='gig.gig_id'/>
 			<tabs>
@@ -97,10 +96,14 @@
 									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
 								</div>
 							</dd>
+							<dt ng-hide='gig.approved==0' ></dt>
+							<dd ng-hide='gig.approved==0' >
+								Discussion has been closed because the gig has been {{ gig.approved == -1 && 'denied' || 'approved' }}.	
+							</dd>
 							<dt ng-hide='gig.approved!=0' >Your Concerns</dt>
 							<dd ng-hide='gig.approved!=0' id='user_concerns' class='user_gig_details'>
 								<div class='user_gig_details_edit'>
-									<textarea id='user_concerns_input' spellcheck="true" rows=5 ng-model='gigs[gig.gig_id].availability[currentUser].concerns' placeholder="Do you have concerns about the BLO supporting this gig?"></textarea>
+									<textarea class='input-xlarge' id='user_concerns_input' spellcheck="true" rows=5 ng-model='gigs[gig.gig_id].availability[currentUser].concerns' placeholder="Do you have concerns about the BLO supporting this gig?"></textarea>
 									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
 								</div>
 								<div class='user_gig_details_none'>
@@ -111,7 +114,7 @@
 							<dt ng-hide='gig.approved!=0'>Your Comments</dt>
 							<dd ng-hide='gig.approved!=0' id='user_comments' class='user_gig_details'>
 								<div class='user_gig_details_edit'>
-									<textarea id='user_comments_input' spellcheck="true" rows=5 ng-model='gigs[gig.gig_id].availability[currentUser].comments' placeholder="Enter any questions or comments you have about the gig"></textarea>
+									<textarea class='input-xlarge' id='user_comments_input' spellcheck="true" rows=5 ng-model='gigs[gig.gig_id].availability[currentUser].comments' placeholder="Enter any questions or comments you have about the gig"></textarea>
 									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
 								</div>
 								<div class='user_gig_details_none'>
@@ -170,7 +173,7 @@
 					</dl>
 					<div ng-hide='isCollapsed'><dt><a href='' ng-click="isCollapsed = !isCollapsed">Fewer details</a></dt><dd class='clearfix'>&nbsp;</dd></div>
 				</pane>
-				<pane heading='Edit Band Details' class='tab-pane' id='band_details' active="current_tab == 'band_details'">
+				<pane heading='Edit Band Info' class='tab-pane' id='band_details' active="current_tab == 'band_details'">
 					<div class='alert alert-error' ng-show="gig.approved == 1 && !gig.public_description">This gig has been approved, but can't be published to the public calendar until a public description has been entered below.</div>
 					<div class='btn-group pull-right'>
 						<button class='btn btn-primary save-gig-button' data-loading-text='{{savingText}}' type='submit' value='Save Gig'><i class='icon-ok icon-white'></i> Save Gig</button>
@@ -178,7 +181,7 @@
 					</div>	
 					<div class='control-group'>
 						<label class='control-label' for='title'>Title</label>
-						<div class='controls'><input type='text' ng-model='gig.title'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.title'/></div>
 					</div>
 					<div class='control-group'>
 						<label class="control-label">Band Approval</label>
@@ -215,38 +218,38 @@
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='tactical'>Tactical</label>
-						<div class='controls'><input autocomplete='off' type='text' ng-model='gig.tactical' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' /></div>
+						<div class='controls'><input class='input-xlarge' autocomplete='off' type='text' ng-model='gig.tactical' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' /></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='musical'>Musical</label>
-						<div class='controls'><input autocomplete='off' type='text' typeahead='member as member.name for member in membersList | filter:{name: $viewValue}' ng-model='gig.musical'/></div>
+						<div class='controls'><input class='input-xlarge' autocomplete='off' type='text' typeahead='member as member.name for member in membersList | filter:{name: $viewValue}' ng-model='gig.musical'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='colors'>Colors</label>
-						<div class='controls'><input type='text' autocomplete='off' typeahead="c for c in ['Red and Black', 'Pink and Black', 'Black and Black'] | filter:$viewValue" ng-model='gig.colors'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' autocomplete='off' typeahead="c for c in ['Red and Black', 'Pink and Black', 'Black and Black'] | filter:$viewValue" ng-model='gig.colors'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='public_description'>Public Description</label>
-						<div class='controls'><textarea spellcheck="true" ng-model='gig.public_description'/></div>
+						<div class='controls'><textarea class='input-xlarge' spellcheck="true" ng-model='gig.public_description'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='notes'>Notes</label>
-						<div class='controls'><textarea spellcheck="true" ng-model='gig.notes'/></div>
+						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=5 ng-model='gig.notes'/></div>
 					</div>
 
 				</pane>
-				<pane heading='Edit Event Details' class='tab-pane' id='event_details'>
+				<pane heading='Edit Event Info' class='tab-pane' id='event_details'>
 					<div class='btn-group pull-right'>
 						<button class='btn btn-primary save-gig-button' data-loading-text='{{savingText}}' type='submit' value='Save Gig'><i class='icon-ok icon-white'></i> Save Gig</button>
 						<button class='btn btn-danger' type='button' ng-click='toggleDeleteModal()' value='Delete Gig'><i class='icon-remove icon-white'></i> Delete Gig</button>
 					</div>	
 					<div class='control-group'>
 						<label class='control-label' for='title'>Title</label>
-						<div class='controls'><input type='text' ng-model='gig.title'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.title'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='date'>Date</label>
-						<div class='controls'><input type='date' ng-model='gig.date'/></div>
+						<div class='controls'><input class='input-xlarge' type='date' ng-model='gig.date'/></div>
 					</div>
 					<div class='control-group'>
 						<span class="control-label">Event Time</span>
@@ -264,23 +267,23 @@
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='location'>Location</label>
-						<div class='controls'><input type='text' ng-model='gig.location'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.location'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='description'>Description</label>
-						<div class='controls'><textarea spellcheck="true" ng-model='gig.description'/></div>
+						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=5 ng-model='gig.description'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='who'>Organizer</label>
-						<div class='controls'><input type='text' ng-model='gig.who'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.who'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='contact'>Contact</label>
-						<div class='controls'><input type='text' ng-model='gig.contact'/></div>
+						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.contact'/></div>
 					</div>
 					<div class='control-group'>
 						<label class='control-label' for='details'>Details</label>
-						<div class='controls'><textarea spellcheck="true" ng-model='gig.details'/></div>
+						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=8 ng-model='gig.details'/></div>
 					</div>
 				</pane>
 				<pane id='availability-tab' heading='Band Availability' class='tab-pane' id='event_details' active="current_tab == 'availability'">

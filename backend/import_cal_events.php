@@ -5,6 +5,7 @@ require('./config.php');
 	include('./requests.php');
 dbwrite("delete from gigs");
 dbwrite("delete from gigs_availability");
+dbwrite("alter table gigs auto_increment =1");
 foreach (fetch_gigs(0) as $gig) {
 	$description =  $gig['description'];
 	$entries = explode("\n\n", $description);
