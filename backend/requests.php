@@ -35,10 +35,12 @@ if(isset($request['action'])) {
 }
 
 function getGigTextDescription($gig, $type='email') {
+	global $giggety_url;
 	$gig_details = "";
 	$gig['event_time'] = "$gig[start_time] - $gig[end_time]";
 	$gig['band_play_time'] = "$gig[band_start] - $gig[band_end]";
-	$url = preg_replace('/backend\/requests.php/', "#/gigs/$gig[gig_id]", "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
+	$url = "$giggety_url#/gigs/$gig[gig_id]";
+	#$url = preg_replace('/backend\/requests.php/', "#/gigs/$gig[gig_id]", "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 	if($type == 'email') { 
 		foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'who', 'contact') as $key) {
@@ -64,9 +66,10 @@ function getGigTextDescription($gig, $type='email') {
 
 function gigs_deleteGig($request) {
 	$gig_id = dbEscape($request['gig_id']);
-	dbWrite("update gigs set deleted=1 where gig_id = $gig_id");
+	$gig = gigs_fetchGig($request);
 	deleteFromCalendar($gig, 'private');
 	deleteFromCalendar($gig, 'public');
+	dbWrite("update gigs set deleted=1 where gig_id = $gig_id");
 }
 
 function gigs_saveGig($request) {
