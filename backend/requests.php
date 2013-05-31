@@ -64,9 +64,10 @@ function getGigTextDescription($gig, $type='email') {
 
 function gigs_deleteGig($request) {
 	$gig_id = dbEscape($request['gig_id']);
-	dbWrite("update gigs set deleted=1 where gig_id = $gig_id");
+	$gig = gigs_fetchGig($request);
 	deleteFromCalendar($gig, 'private');
 	deleteFromCalendar($gig, 'public');
+	dbWrite("update gigs set deleted=1 where gig_id = $gig_id");
 }
 
 function gigs_saveGig($request) {
