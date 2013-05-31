@@ -195,7 +195,6 @@ function handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 
 
 function saveToCalendar($gig, $calendartype='private') {
-	return;
 	global $debug;
 	global $calendars;
 
@@ -275,7 +274,6 @@ function newDateTime($date, $time) {
 }
 
 function sendEmails($gig) {
-	return;
 	global $emails;
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
