@@ -136,7 +136,7 @@ function fetchAvailability($gigs) {
 	if ($gigs) { 
 		$where = " and a.gig_id in(".implode(',', array_keys($gigs)).")";
 
-		$availability = dbLookupArray("select concat(a.gig_id, '_', b.id) as a_id, a.gig_id, b.id as member_id,concat(b.firstname, ' ', b.lastname) as name,  d.available, d.comments, d.concerns, d.other from gigs a join addressbook b join address_in_groups c using(id) left join gigs_availability d on a.gig_id = d.gig_id and b.id = d.member_id where deleted=0 and group_id= 3 $where");
+		$availability = dbLookupArray("select concat(a.gig_id, '_', b.id) as a_id, a.gig_id, b.id as member_id,concat(b.firstname, ' ', b.lastname) as name,  d.available, d.comments, d.concerns, d.other from gigs a join blo_abook.addressbook b join blo_abook.address_in_groups c using(id) left join gigs_availability d on a.gig_id = d.gig_id and b.id = d.member_id where deleted=0 and group_id= 3 $where");
 		foreach($availability as $av) { 
 			$gig = &$gigs[$av['gig_id']];
 			if(! isset($gig['availability'])) { $gig['availability'] = array(); }
@@ -164,7 +164,7 @@ function gigs_setAvailability($request) {
 }
 
 function gigs_fetchMembers() { 
-	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, lastname, email, group_concat(group_name) as groups from addressbook join address_in_groups b using(id) left join address_in_groups c using(id) left join group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id = 3 group by id");
+	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, lastname, email, group_concat(group_name) as groups from blo_abook.addressbook join blo_abook.address_in_groups b using(id) left join blo_abook.address_in_groups c using(id) left join blo_abook.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id = 3 group by id");
 	return $members;
 }
 
