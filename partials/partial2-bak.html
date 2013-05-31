@@ -1,0 +1,97 @@
+<div class='row-fluid'>
+	<div class='span4 well' >
+		<ul class='nav nav-list' style='max-height: 400px; overflow:auto'>
+			<li class='nav-header'>Gigs</li>
+			<li ng-repeat="current_gig in gigs | toArray | orderBy:'-date'" ng-class="{active:current_gig.gig_id == gig.gig_id }" ng-click='setGig(current_gig.gig_id)'  id='{{current_gig.gig_id}}'>
+			<a ng-click='setGig(current_gig.gig_id)' href=''>{{current_gig.date}} {{current_gig.title}}</a>
+			</li>
+		</ul>
+		<button ng-click='newGig()' id='create_gig' class='btn'><i class="icon-plus"></i> Add New Gig</button>
+	</div>
+	<div style='' class='span8'>
+		<h3 class='text-center'>&nbsp; {{gig.title}} - {{ gig.date+'T08' | date:'EEE, MMM d, y' }}</h3>
+	<ul class="nav nav-tabs" id="form_tabs">
+		 <li class='active'><a href="#band_details" data-toggle="tab">Band Details</a></li>
+		 <li><a href="#event_details" data-toggle="tab">Event Details</a></li>
+	</ul>
+	<form id='create_gig_form' class='form-horizontal' ng-submit="saveGig()">
+		<div class='tab-content'>
+			<div class='active tab-pane' id='band_details'>
+				<div class='control-group'>
+					<label class='control-label' for='title'>Title</label>
+					<div class='controls'><input type='text' ng-model='gig.title'/></div>
+				</div>
+				<div class='control-group'>
+				<span class="control-label">Band Time</span>
+					<div class='controls form-inline'>
+						<label for='band_start'>Start</label>
+						<input class='input-mini' type='time' ng-model='gig.band_start'/>
+						<label for='band_end'>End</label>
+						<input class='input-mini' type='time' ng-model='gig.band_end'/>
+					</div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='tactical'>Tactical</label>
+					<div class='controls'><input type='text' ng-model='gig.tactical' typeahead='m.id as m.name for m in members | filter:$viewValue'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='musical'>Musical</label>
+					<div class='controls'><input type='text' data-provide='typeahead' data-source='{{ members }}' ng-model='gig.musical'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='public_description'>Public Description</label>
+					<div class='controls'><textarea ng-model='gig.public_description'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='notes'>Notes</label>
+					<div class='controls'><textarea ng-model='gig.notes'/></div>
+				</div>
+
+			</div>
+			<div class='tab-pane' id='event_details'>
+				<div class='control-group'>
+					<label class='control-label' for='title'>Title</label>
+					<div class='controls'><input type='text' ng-model='gig.title'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='date'>Date</label>
+					<div class='controls'><input type='date' ng-model='gig.date'/></div>
+				</div>
+				<div class='control-group'>
+					<span class="control-label">Event Time</span>
+					<div class='controls form-inline'>
+						<label for='start_time'>Start</label>
+						<input class='input-mini' type='time' ng-model='gig.start_time'/>
+						<label for='end_time'>End</label>
+						<input class='input-mini' type='time' ng-model='gig.end_time'/>
+					</div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='location'>Location</label>
+					<div class='controls'><input type='text' ng-model='gig.location'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='who'>Who</label>
+					<div class='controls'><input type='text' ng-model='gig.who'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='contact'>Contact</label>
+					<div class='controls'><input type='text' ng-model='gig.contact'/></div>
+				</div>
+				<div class='control-group'>
+					<label class='control-label' for='details'>Details</label>
+					<div class='controls'><textarea ng-model='gig.details'/></div>
+				</div>
+			</div>
+		</div>
+		<div class='control-group'>
+			<div class='controls'>
+				<input type='hidden' name='gig_id' ng-model='gig.gig_id'/>
+				<button class='btn btn-primary' type='submit' value='Save Gig'><i class='icon-ok icon-white'></i> Save Gig</button>
+				<button class='btn btn-danger' type='button' ng-click='deleteGig(gig.gig_id)' value='Delete Gig'><i class='icon-remove icon-white'></i> Delete Gig</button>
+			</div>	
+		</div>	
+	</form>
+</div>
+</div>
+	<br/><pre>{{gig | json }}</pre>

@@ -1,0 +1,92 @@
+<!doctype html>
+<html lang="en" ng-app="myApp">
+<head>
+	<meta charset="utf-8">
+	<title>Giggity</title>
+	<link rel="stylesheet" href="css/app.css"/>
+	<script src="//ajax.googleapis.com/ajax/libs/jquery/1.10.0/jquery.min.js"></script>
+	<link href="bootstrap/css/bootstrap.min.css" rel="stylesheet" media="screen">
+	<link href="bootstrap-timepicker/bootstrap-timepicker.min.css" rel="stylesheet" media="screen">
+	<link href="bootstrap/css/bootstrap-responsive.css" rel="stylesheet">
+	<link href="//netdna.bootstrapcdn.com/font-awesome/3.1.1/css/font-awesome.css" rel="stylesheet">
+	<script src="bootstrap/js/bootstrap.js"></script>
+	<script src="bootstrap-timepicker/bootstrap-timepicker.min.js"></script>
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<style type='text/css'>
+		.input-small { width: 100px; }
+		.pagination { user-select: none; -webkit-user-select: none; -moz-user-select: none; cursor: pointer; }
+		#gig_details dt, #gig_details dd {padding-top: 3px; padding-bottom:3px; border-top: dotted 1px #ccc; }
+		dl { margin-bottom: 5px; } 
+		body { padding: 10px 0px; }
+		#availableCounts span { padding-right:5px; font-weight: bold;font-size:70%; }
+		.page-header { margin-bottom: 5px; }
+		.gig_list_edit { display: none; }
+		.active .gig_list_edit, .nav tr:hover .gig_list_edit { display: inline; }
+		#gig_list .approve_icon { color: #444; }
+		#gig_list .active .approve_icon { color: #fff; }
+		#gig_list .date {font-weight: bold; color:#444;}
+		#gig_list .active .date { color: #fff; }
+		.pagination { margin: 0px; text-align: center; display: none;}
+		html, body {height: 100%; margin:0px; padding:0px;}
+		#gig_details_list { margin-top: 0px; }
+		#container, #gig_list, #list_container {
+			height: 100%;
+		}
+		#container, #gig_list, #list_container, #nav, .navbar {
+			-moz-box-sizing: border-box;
+			-webkit-box-sizing: border-box;
+			box-sizing: border-box;
+		}
+		#container {min-height: 100%; padding: 5px 0px 0px 20px; }
+	 	#gig, #nav { height: 100%;  overflow: hidden; margin-bottom: 0px; position: relative} 
+		.navbar { position: absolute; padding: 0px; width: 100%; padding-right: 20px;}
+	 	#content { height: 100%; }
+	 	#gig { overflow-y: auto; padding-right: 20px; }
+		#gig_list { overflow: auto; display: block; height: 100%; overflow: auto; }
+		#list_container { display: block; padding: 45px 0px 0px;}
+		#nav tr:hover td, #nav tr:hover td>a { background-color: #eeeeee; cursor: pointer; color:#005580;}
+			  #nav a, #nav a:hover { text-decoration: none; }
+			  #nav .active td, #nav .active td>a, #nav .active td>a:hover, #nav active td>a:focus {
+			  color: #ffffff !important;
+			    text-shadow: 0 -1px 0 rgba(0, 0, 0, 0.2);
+				  background-color: #0088cc !important;
+			  }
+		.gig_list_availability_edit {  display: none; font-size: 85%; height: auto; padding: 0px; margin: 0px; vertical-align: bottom;}
+		 #nav tr.hover .gig_list_availability_edit {  display: inline; }
+		 #nav tr.hover .gig_list_availability {  display: none; }
+		 .navbar-inner { padding: 0px; }
+		 #availability_info .btn { vertical-align: top; }
+		 .user_gig_details .user_gig_details_edit { display: none; }
+		 .user_gig_details.edit .user_gig_details_edit { display: inline; }
+		 .user_gig_details.edit .user_gig_details_none { display: none; }
+		#gig_details .alert { padding: 0px; margin:0px;}
+		#availability_info form { margin-bottom: 0px; }
+		#availableCounts span { cursor: pointer; }
+		#nav .availability-save-button, #availability_grid .availability-save-button { display: none; }
+		#nav .saving .availability-save-button, #availability_grid .saving .availability-save-button { display: inline; line-height: 1; }
+		#nav tr.hover.saving .gig_list_availability_edit { display: none; }
+		#nav .saving .gig_list_availability { display: none; }
+
+		h1 { font-size: 30px; line-height: 1; }
+		h1 small { font-size: 20px; }
+		 @media (max-width: 480px) {
+			#nav { height: 200px; } 
+			#container { padding: 0px;}
+			.brand { display: none !important; }
+		 }
+
+	</style>
+</head>
+<body>
+	<h1 class='text-center' id='init-loading'><i class='icon-spin icon-refresh'></i> Loading....</h1>
+	<div ng-view ng-cloak id='container' class='container-fluid'>
+
+  <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
+  <script src="lib/ui-bootstrap-tpls-0.3.0.js"></script>
+  <script src="js/app.js"></script>
+  <script src="js/services.js"></script>
+  <script src="js/controllers.js"></script>
+  <script src="js/filters.js"></script>
+  <script src="js/directives.js"></script>
+</body>
+</html>
