@@ -4,9 +4,10 @@
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers', 'ui.bootstrap']).
   config(['$routeProvider', function($routeProvider) {
-    $routeProvider.when('/gigs/:gig_id', {
+    $routeProvider.when('/gigs', {
 		templateUrl: 'partials/partial2.html', 
 		controller: 'MyCtrl2', 
+		reloadOnSearch: false,
 		resolve: {'MembersData': function(Members) {
 				return Members.promise; },
 			'GigsData': function(Gigs) {
@@ -24,5 +25,5 @@ angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 
 	});
 
     $routeProvider.when('/create_gig', {templateUrl: 'partials/partial2.html', controller: 'MyCtrl2'});
-    $routeProvider.otherwise({redirectTo: '/gigs/'});
+    $routeProvider.otherwise({redirectTo: '/gigs'});
   }]);

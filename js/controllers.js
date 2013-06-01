@@ -26,6 +26,17 @@ angular.module('myApp.controllers', []).
 		$scope.location = $location; 
 		$scope.savingText = "<i class='icon-spin icon-refresh'></i> Saving...";
 
+		$scope.$on('$routeUpdate', function() {
+			$scope.setView();
+		});
+		
+		$scope.setView = function() {
+			var gig_id = $location.search().gig_id;
+			if (gig_id) { 
+				$scope.setGig(gig_id);
+			}
+		};
+
 		$scope.changeUser = function() {
 			$scope.currentUser = null;
 			$scope.currentUserName= null;
@@ -222,7 +233,7 @@ angular.module('myApp.controllers', []).
 				if ($scope.checkResponse(gigsdata)) { 
 					$scope.gigs = gigsdata.data
 					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
-					$scope.setGig($routeParams.gig_id);
+					$scope.setView();
 				}
 		}
 	},
