@@ -32,9 +32,7 @@ angular.module('myApp.controllers', []).
 		
 		$scope.setView = function() {
 			var gig_id = $location.search().gig_id;
-			if (gig_id) { 
-				$scope.setGig(gig_id);
-			}
+			$scope.setGig(gig_id);
 		};
 
 		$scope.changeUser = function() {
