@@ -39,7 +39,7 @@ function getGigTextDescription($gig, $type='email') {
 	$gig_details = "";
 	$gig['event_time'] = "$gig[start_time] - $gig[end_time]";
 	$gig['band_play_time'] = "$gig[band_start] - $gig[band_end]";
-	$url = "$giggety_url#/gigs/$gig[gig_id]";
+	$url = "$giggety_url#/gigs?gig_id=$gig[gig_id]";
 	#$url = preg_replace('/backend\/requests.php/', "#/gigs/$gig[gig_id]", "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 	if($type == 'email') { 

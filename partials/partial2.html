@@ -20,7 +20,7 @@
 				</td>
 			</tr>
 
-			<tr ng-repeat="current_gig in gigsList" ng-class="{active:current_gig.gig_id == gig.gig_id }" ng-click='location.path("/gigs/"+current_gig.gig_id)'  id='{{current_gig.gig_id}}' addclassonhover='hover'>
+			<tr ng-repeat="current_gig in gigsList" ng-class="{active:current_gig.gig_id == gig.gig_id }" ng-click='location.search("gig_id", current_gig.gig_id)'  id='{{current_gig.gig_id}}' addclassonhover='hover'>
 			
 				<td>
 					<i class='approve_icon' ng-class="{'icon-thumbs-up': current_gig.approved==1, 'icon-thumbs-down':current_gig.approved==-1, 'icon-question-sign': current_gig.approved==0}"></i> 	
@@ -64,8 +64,8 @@
 			</h1>
 		</div>
 		<div class='pull-right btn-group clearfix' id='page_controls'>
-			<a class='pull-left btn btn-mini' ng-show='gigsList[currentGigIndex-1]' href='#/gigs/{{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
-			<a class='pull-right btn btn-mini' ng-show='gigsList[currentGigIndex+1]' href='#/gigs/{{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
+			<a class='pull-left btn btn-mini' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
+			<a class='pull-right btn btn-mini' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
 		</div>
 
 
