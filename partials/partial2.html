@@ -1,7 +1,22 @@
 <!--
 -->
 		<div class='alert'style='display:none;' id='status'></div>
+    <div class='mobile-nav navbar-inverse navbar-static-top'><div class='navbar-inner text-center'>
+		<h3 class='navbar-text' style='display: inline;' >{{gig.title}}</h3>
+		<br/><span class='navbar-text' ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}</span>
+	</div>
+
+		<div id='mobile_counts'>
+			<span class='btn-group'>
+			<span ng-click="editAvailable('Yes')" class='btn btn-mini btn-success'>{{(membersList | availableFilter:['Yes', gig]).length }} <i class='icon-smile'></i></span><span ng-click="editAvailable('Maybe')" class='btn btn-mini btn-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} <i class='icon-meh'></i></span><span ng-click="editAvailable('No')" class='btn btn-mini btn-danger'>{{(membersList | availableFilter:['No', gig]).length }} <i class='icon-frown'></i></span>
+			</span>
+		</div>
+		<a class='btn-prev btn' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
+		<a class='btn-next btn' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
+
+	</div>
 		<div id='content' class='row-fluid'>
+
 	<div class='span4 well well-small' id='nav' >
 <div class='nav navbar navbar-inverse'><div class='navbar-inner'>
 	<div class='container-fluid'>
