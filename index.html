@@ -112,7 +112,10 @@
 	</style>
 </head>
 <body>
-	<h1 class='text-center' id='init-loading'><i class='icon-spin icon-refresh'></i> Loading....</h1>
+	<div style='height: 100%; background-image:  linear-gradient(180deg, #F1F1F1 0%, #d9edf7 100%);'class='text-center' id='init-loading'>
+		<h1 class='text-center' style='padding-top: 5%;'><i class='icon-spin icon-refresh'></i> Loading....</h1>
+		<img style='width: 15%;margin: 5%;' src='img/giggity.png'/>
+	</div>
 	<div ng-view ng-cloak id='container' class='container-fluid'>
 
   <script src="//ajax.googleapis.com/ajax/libs/angularjs/1.0.6/angular.min.js"></script>
