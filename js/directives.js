@@ -29,7 +29,7 @@ app.directive('memberComments', [function() {
 				});
 				elm.html(output);
 			}
-			scope.$watch('gig.availability[currentUser].concerns', function(value) {
+			scope.$watch('gig.availability[currentUser]', function(value) {
 				updateConcerns(scope.gig.availability);
 			});
 			updateConcerns(scope.gig.availability);
