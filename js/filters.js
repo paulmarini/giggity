@@ -59,7 +59,7 @@ app.filter('userUnknownCount', function() {
 }});
 
 app.filter('URIencode', function() {
-  return window.encodeURI;
+  return window.encodeURIComponent;
 });
 
 app.filter('availableFilter', function() {

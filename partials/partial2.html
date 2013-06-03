@@ -22,7 +22,10 @@
 	<div class='container-fluid'>
 		<a class="brand" href="#"><img style='width:20px;' src='img/giggity.png'/>Giggity</a>
 		<ul class='nav pull-right'>
-			<li><a href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Logged In' }} <small data-tooltip='{{ gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' class='text-error'>({{ gigsList | userUnknownCount:currentUser }})</small></a>
+			<li><a tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Logged In' }} </a>
+			</li>
+			<li>
+			<p class='nav navbar-text pull-right'><small data-tooltip='{{ gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' class='text-error'>&nbsp;({{ gigsList | userUnknownCount:currentUser }})</small></p>
 			 </li>
 		</ul>
 	</div>
@@ -43,7 +46,7 @@
 				<span class='date'>{{current_gig.date+'T08' | date:'M/d'}}</span>
 				</td>
 				<td>
-				<span ng-click='setGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='icon-pencil'></i> Edit</span>
+				<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='icon-pencil'></i> Edit</span>
 				<a href=''ng-class='{muted: current_gig.approved == -1}'>{{current_gig.title}} </a>
 				<div ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-error': getAvailability(current_gig.gig_id) == 'Unknown'}">
 					<small>Your Availability:</small>
@@ -66,6 +69,11 @@
 		</table>
 	</div>
 	<div style='' class='span8' id='gig'>
+		<div id='gig_loading' fade-in='gig_loading' style='display:none;'>
+			<div>
+				<h1 class='text-center alert alert-info'><i class='icon-refresh icon-spin'></i> Loading</h1>
+			</div>
+		</div>
 
 		<div class='page-header'>
 			<h1>{{gig.title}}<br/><small ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}&nbsp; <span gig-status='{{gig.approved}}'></span></small>
@@ -145,7 +153,7 @@
 							</span>&nbsp;
 						</dd>
 						<dt>Where</dt>
-						<dd class='clearfix'>{{ gig.location}} <span ng-show='gig.location'>[<small><a href='http://maps.google.com?q={{gig.location || URIencode }}' target='map'><i class='icon-map-marker'></i>Map</a></small>]</span>&nbsp; </dd>
+						<dd class='clearfix'>{{ gig.location}} <span ng-show='gig.location'>[<small><a href='http://maps.google.com?q={{gig.location | URIencode }}' target='map'><i class='icon-map-marker'></i>Map</a></small>]</span>&nbsp; </dd>
 						<dt>Tactical</dt>
 						<dd class='clearfix'><a href='mailto:{{gig.tactical.email}}'>{{ gig.tactical.name }}</a>&nbsp; </dd>
 						<dt>Musical</dt>

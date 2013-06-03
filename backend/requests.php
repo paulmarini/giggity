@@ -1,5 +1,4 @@
 <?php
-$debug = 1;
 if (! isIncluded()) {
 	header('Content-type: application/json');
 }
@@ -198,7 +197,6 @@ function handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 
 
 function saveToCalendar($gig, $calendartype='private') {
-	global $debug;
 	global $calendars;
 
 	extract($calendars[$calendartype]);
