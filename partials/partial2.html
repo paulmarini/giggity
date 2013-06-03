@@ -22,7 +22,7 @@
 	<div class='container-fluid'>
 		<a class="brand" href="#"><img style='width:20px;' src='img/giggity.png'/>Giggity</a>
 		<ul class='nav pull-right'>
-			<li><a tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Logged In' }} </a>
+			<li><a tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
 			</li>
 			<li>
 			<p class='nav navbar-text pull-right'><small data-tooltip='{{ gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' class='text-error'>&nbsp;({{ gigsList | userUnknownCount:currentUser }})</small></p>
