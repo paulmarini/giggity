@@ -37,6 +37,22 @@ app.directive('memberComments', [function() {
 	}
 }]);
 
+app.directive('fadeIn', function () {
+	return {
+		restrict: 'A',
+		link: function (scope, element, attribs) {
+			scope.$watch(attribs.fadeIn, function (value) {
+				if (value) {
+					element.fadeIn();
+				} else {
+					element.hide(); // hide immediately; don't fade out
+				}
+			});
+		}
+	};
+});
+
+
 app.directive('gigDetails', [function() { 
 	return {
 		restrict: 'A',

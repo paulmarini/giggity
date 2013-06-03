@@ -15,8 +15,8 @@ angular.module('myApp.controllers', []).
 		$scope.gigsList = [];
 		$scope.members = [];
 		$scope.membersList = [];
-		$scope.isCollapsed = 1;
 		$scope.currentGigIndex = 0;
+		$scope.gig_loading = 0;
 		$scope.membernamefilter = '';
 		$scope.memberavailablefilter = '';
 		$scope.currentUser = localStorage.currentUser;
@@ -25,14 +25,19 @@ angular.module('myApp.controllers', []).
 		$scope.timeout = $timeout;
 		$scope.location = $location; 
 		$scope.savingText = "<i class='icon-spin icon-refresh'></i> Saving...";
+		$scope.current_tab = 'gig_details';
 
 		$scope.$on('$routeUpdate', function() {
 			$scope.setView();
 		});
 		
-		$scope.setView = function() {
+		$scope.setView = function(first) {
 			var gig_id = $location.search().gig_id;
-			$scope.setGig(gig_id);
+			if (! first) { 
+				$scope.changeGig(gig_id);
+			} else {
+				$scope.setGig(gig_id);
+			}	
 		};
 
 		$scope.changeUser = function() {
@@ -55,8 +60,7 @@ angular.module('myApp.controllers', []).
 			$http.post('backend/requests.php', $scope.gig).success(function(response) { 
 				$('.save-gig-button').button('reset');
 				if ($scope.checkResponse(response)) { 
-					var gig = response.data;
-					$scope.gigs[gig.gig_id] = gig;
+					$scope.gigs[gig.gig_id] = response.data;
 					$scope.setGig(gig.gig_id);
 					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
 				}
@@ -104,37 +108,40 @@ angular.module('myApp.controllers', []).
 			});
 		}
 
-		$scope.setGig = function(gig_id, edit) {
-			if (!gig_id || ! $scope.gigs[gig_id]) {
-				gig_id = $scope.gigsList[0].gig_id;
-			}	
-			$scope.gig = angular.copy($scope.gigs[gig_id]);
-			$scope.isCollapsed = 1;
+		$scope.changeGig = function(gig_id, edit) {
+			$scope.fetchGig(gig_id);
 			if (edit) { 
 				$scope.current_tab = 'band_details';
 			} else {
 				$scope.current_tab = 'gig_details';
 			}
+		}
+
+		$scope.setGig = function(gig_id) {
+			if (!gig_id || ! $scope.gigs[gig_id]) {
+				gig_id = $scope.gigsList[0].gig_id;
+			}	
+			$scope.gig = angular.copy($scope.gigs[gig_id]);
 			$scope.setCurrentGigIndex();
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.members[$scope.gig.tactical] : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.members[$scope.gig.musical] : '';
 			$scope.editAvailability = ($scope.getAvailability() == 'Unknown');
 			$scope.membernamefilter = '';
 			$scope.memberavailablefilter = '';
-
+			$scope.gig_loading = 0;
 		}
 
-		$scope.fetchGig = function() {
-			$scope.gig.action = 'fetchGig';
-			$http.post('backend/requests.php', $scope.gig).success(function(response) { 
+		$scope.fetchGig = function(gig_id) {
+			$scope.gig_loading = 1;
+			var post = {action: 'fetchGig', gig_id: gig_id};
+			$http.post('backend/requests.php', post).success(function(response) { 
 				$scope.checkResponse(response);
-				$scope.gig = response.data;
-				$scope.gigs[$scope.gig.gig_id] = $scope.gig;
+				$scope.gigs[gig_id] = response.data;
+				$scope.setGig(gig_id);
 			})
 		}
+
 		$scope.newGig = function() {
-		//	$('#edit_gig').show();
-		//	$('#gig_details').hide();
 			$scope.gig = {title:'New Gig', availability: {}};
 			$scope.current_tab = 'band_details';
 		}
@@ -231,7 +238,7 @@ angular.module('myApp.controllers', []).
 				if ($scope.checkResponse(gigsdata)) { 
 					$scope.gigs = gigsdata.data
 					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
-					$scope.setView();
+					$scope.setView(1);
 				}
 		}
 	},
