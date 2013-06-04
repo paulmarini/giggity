@@ -54,14 +54,15 @@ angular.module('myApp.controllers', []).
 
 		$scope.saveGig = function() {
 			$('.save-gig-button').button('loading');
+			var gig_id = $scope.gig.gig_id;
 			$scope.gig.action = 'saveGig';
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.gig.tactical.id : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.gig.musical.id : '';
 			$http.post('backend/requests.php', $scope.gig).success(function(response) { 
 				$('.save-gig-button').button('reset');
 				if ($scope.checkResponse(response)) { 
-					$scope.gigs[gig.gig_id] = response.data;
-					$scope.setGig(gig.gig_id);
+					$scope.gigs[gig_id] = response.data;
+					$scope.setGig(gig_id);
 					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
 				}
 			})
