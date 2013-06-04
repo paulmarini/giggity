@@ -312,16 +312,20 @@
 				<pane id='availability-tab' heading='Band Availability' class='tab-pane' id='event_details' active="current_tab == 'availability'">
 					<fieldset class='form-inline well well-small'>
 							<label><strong>Filters:</strong></label>
-							<label>Name:</label>
-							<input autocomplete='off' style='margin-right: 20px;' class='input-small' type='text' ng-model='membernamefilter'/>
-							<label>Availability:</label>
-							<select class='input-small' ng-model='memberavailablefilter' id='member_availability_filter'>
+							<span style='display:inline-block'>
+							<label for='name_filter'>Name:</label>
+							<input name='name_filter' autocomplete='off' style='margin-right: 20px;' class='input-small' type='text' ng-model='membernamefilter'/>
+							</span>
+							<span style='display:inline-block'>
+							<label for='availability_filter'>Availability:</label>
+							<select name='availability_filter' class='input-small' ng-model='memberavailablefilter' id='member_availability_filter'>
 								<option value='' data-icon='icon-smile'>All</option>
 								<option value='Yes' data-icon='icon-smile'>Available</option>
 								<option value='No' data-icon='icon-frown'>Unavailable</option>
 								<option data-icon='icon-meh'>Maybe</option>
 								<option data-icon='icon-question'>Unknown</option>
 							</select>
+							</span>
 					</fieldset>
 					<table class="table table-bordered table-hover table-striped" id='availability_grid'>
 						<thead><tr>
