@@ -102,14 +102,12 @@ angular.module('myApp.controllers', []).
 				if($event && $($event.target).hasClass('btn')) {
 					$($event.target).button('reset');
 				}
-				console.log('before '+$scope.gig.availability[member_id].available+' v '+ $scope.gig.availability[member_id].available);
 				if ($scope.checkResponse(response)) { 
 					$scope.gigs[gig_id].availability = response.data;
 					if (gig_id == $scope.gig.gig_id) { 
 						$scope.gig.availability = $scope.gigs[gig_id].availability;
 						//$scope.gig.availability = angular.copy($scope.gigs[gig_id].availability);
 					}
-					console.log('after '+$scope.gig.availability[member_id].available+' v '+ $scope.gig.availability[member_id].available);
 					$scope.updateGigsList();
 				}
 			});
