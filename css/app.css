@@ -118,6 +118,7 @@ h1 small { font-size: 20px; }
 	#gig { width: 100%; margin: 0px; padding: 0px 5px;}
 	.nav-tabs { position: absolute; overflow-x: auto; overflow-y: hidden; width: 100%; white-space: nowrap; }
 	.nav-tabs li { display: inline-block; float: none; }
+	.nav-tabs li a { padding: 8px 3px; }
 	#edit_gig { margin-bottom: 0px; }
 	.tab-content { padding-top: 60px; }
 	.tab-pane { height: 100%; overflow: auto; }
