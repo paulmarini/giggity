@@ -31,7 +31,7 @@ app.directive('memberComments', [function() {
 			}
 			scope.$watch('gig.availability[currentUser]', function(value) {
 				updateConcerns(scope.gig.availability);
-			});
+			}, true);
 			updateConcerns(scope.gig.availability);
 		}
 	}

@@ -54,15 +54,16 @@ angular.module('myApp.controllers', []).
 
 		$scope.saveGig = function() {
 			$('.save-gig-button').button('loading');
+			var gig_id = $scope.gig.gig_id;
 			$scope.gig.action = 'saveGig';
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.gig.tactical.id : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.gig.musical.id : '';
 			$http.post('backend/requests.php', $scope.gig).success(function(response) { 
 				$('.save-gig-button').button('reset');
 				if ($scope.checkResponse(response)) { 
-					$scope.gigs[gig.gig_id] = response.data;
-					$scope.setGig(gig.gig_id);
-					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
+					$scope.gigs[gig_id] = response.data;
+					$scope.setGig(gig_id);
+					$scope.updateGigsList();
 				}
 			})
 		}
@@ -74,20 +75,25 @@ angular.module('myApp.controllers', []).
 				$http.post('backend/requests.php', {gig_id:gig_id, action:'deleteGig'}).success(function(response) { 
 					if ($scope.checkResponse(response)) { 
 						delete $scope.gigs[$scope.gig.gig_id];
-						$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
+						$scope.updateGigsList();
 						$scope.setGig();
 					}
 				})
 			}
 			return false;
 		}
-		$scope.setAvailability = function($event, member_id, gig_id, stay_open) {
+		$scope.setAvailability = function($event, member_id, gig_id) {
 			if($event && $($event.target).hasClass('btn')) {
 				$($event.target).button('loading');
 			}
-			gig_id = gig_id ? gig_id : $scope.gig.gig_id; 
 			member_id = member_id ? member_id : $scope.currentUser;
-			var availability = $scope.gigs[gig_id].availability[member_id];
+			var availability = {};
+			if (gig_id) { 
+				availability = $scope.gigs[gig_id].availability[member_id];
+			} else {
+				gig_id = $scope.gig.gig_id;
+				availability = $scope.gig.availability[member_id];
+			}
 			availability.action = 'setAvailability';
 			$http.post('backend/requests.php', availability).success(function(response) { 
 				$('#'+gig_id).removeClass('saving');	
@@ -96,14 +102,15 @@ angular.module('myApp.controllers', []).
 				if($event && $($event.target).hasClass('btn')) {
 					$($event.target).button('reset');
 				}
+				console.log('before '+$scope.gig.availability[member_id].available+' v '+ $scope.gig.availability[member_id].available);
 				if ($scope.checkResponse(response)) { 
 					$scope.gigs[gig_id].availability = response.data;
 					if (gig_id == $scope.gig.gig_id) { 
-						$scope.gig.availability = response.data;
+						$scope.gig.availability = $scope.gigs[gig_id].availability;
+						//$scope.gig.availability = angular.copy($scope.gigs[gig_id].availability);
 					}
-					if (! stay_open) { 
-						$scope.editAvailability = 0;
-					}
+					console.log('after '+$scope.gig.availability[member_id].available+' v '+ $scope.gig.availability[member_id].available);
+					$scope.updateGigsList();
 				}
 			});
 		}
@@ -117,11 +124,16 @@ angular.module('myApp.controllers', []).
 			}
 		}
 
+		$scope.updateGigsList = function() {
+			$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
+		}
+
 		$scope.setGig = function(gig_id) {
 			if (!gig_id || ! $scope.gigs[gig_id]) {
 				gig_id = $scope.gigsList[0].gig_id;
 			}	
-			$scope.gig = angular.copy($scope.gigs[gig_id]);
+			//$scope.gig = angular.copy($scope.gigs[gig_id]);
+			$scope.gig = $scope.gigs[gig_id];
 			$scope.setCurrentGigIndex();
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.members[$scope.gig.tactical] : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.members[$scope.gig.musical] : '';
@@ -237,7 +249,7 @@ angular.module('myApp.controllers', []).
 			var gigsdata = Gigs.getGigs();
 				if ($scope.checkResponse(gigsdata)) { 
 					$scope.gigs = gigsdata.data
-					$scope.gigsList  = $filter("orderBy")($filter("toArray")($scope.gigs), 'date');
+					$scope.updateGigsList();
 					$scope.setView(1);
 				}
 		}
