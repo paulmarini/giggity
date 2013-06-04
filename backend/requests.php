@@ -151,6 +151,8 @@ function gigs_setAvailability($request) {
 	$gig_id = dbEscape(isset($request['gig_id']) ? $request['gig_id'] : '');
 	$member_id = dbEscape(isset($request['member_id']) ? $request['member_id'] : '');
 	$fields = array();
+	if ($member_id == '' || $gig_id == '') { trigger_error('Missing member_id or gig_id', E_USER_ERROR); };
+
 	foreach(array('available', 'comments', 'concerns', 'other') as $key) { 
 		if(isset($request[$key])) {
 			array_push($fields, "$key='".dbEscape($request[$key])."'");
@@ -160,7 +162,7 @@ function gigs_setAvailability($request) {
 	$availability = array_values(fetchAvailability(array($gig_id=>array('gig_id'=>$gig_id))));
 	$gig = gigs_fetchGig($request);
 	saveToCalendar($gig);
-	return $availability[0]['availability'];
+	return $availability[0]['availability'][$member_id];
 }
 
 function gigs_fetchMembers() { 

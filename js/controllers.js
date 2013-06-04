@@ -103,9 +103,9 @@ angular.module('myApp.controllers', []).
 					$($event.target).button('reset');
 				}
 				if ($scope.checkResponse(response)) { 
-					$scope.gigs[gig_id].availability = response.data;
+					$scope.gigs[gig_id].availability[member_id] = response.data;
 					if (gig_id == $scope.gig.gig_id) { 
-						$scope.gig.availability = $scope.gigs[gig_id].availability;
+						$scope.gig.availability[member_id] = $scope.gigs[gig_id].availability[member_id];
 						//$scope.gig.availability = angular.copy($scope.gigs[gig_id].availability);
 					}
 					$scope.updateGigsList();
