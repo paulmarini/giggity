@@ -53,7 +53,7 @@
 					ua.match( /NokiaBrowser\/([0-9\.]+)/ ) && parseFloat(RegExp.$1) === 7.3 && webkit && wkversion >= 533
 				);
 			})();
-		if (! overflowProbablyAlreadyWorks) { $(html).addClass('no-scroll'); }
+		if (! overflowProbablyAlreadyWorks) { $('html').addClass('no-scroll'); }
 	</script>
 	<link rel="stylesheet" href="css/app.css"/>
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
