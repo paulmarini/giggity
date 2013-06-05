@@ -46,7 +46,7 @@ body { padding: 10px 0px; }
 #gig_list .active .date { color: #fff; }
 .pagination { margin: 0px; text-align: center; display: none;}
 html, body {height: 100%; margin:0px; padding:0px;}
-.touch.no-overflowscrolling  body{ height: auto; }
+.no-scroll  body{ height: auto; }
 #gig_details_list { margin-top: 0px; }
 #container, #gig_list, #list_container {
 	height: 100%;
