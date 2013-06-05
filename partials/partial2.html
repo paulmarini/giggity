@@ -183,13 +183,13 @@
 						<div collapse='isCollapsed'>-->
 						<h4 class='text-info'>Event Details</h4>
 							<dt>Description</dt>
-							<dd class='clearfix'>{{ gig.description}}&nbsp; </dd>
+							<dd class='clearfix' ng-bind-html="gig.description | linky"></dd>
 							<dt>Public Description</dt>
-							<dd class='clearfix'>{{ gig.public_description}}&nbsp; </dd>
+							<dd class='clearfix' ng-bind-html="gig.public_description | linky"></dd>
 							<dt>Organizer</dt>
 							<dd class='clearfix'>{{ gig.who}}&nbsp; </dd>
 							<dt>Contact</dt>
-							<dd class='clearfix'>{{ gig.contact}}&nbsp; </dd>
+							<dd class='clearfix' ng-bind-html="gig.contact | linky"></dd>
 							<div gig-details='1'></div>
 							<!--</div>-->
 
