@@ -50,6 +50,9 @@ function getGigTextDescription($gig, $type='email') {
 			$availables[$member['available']] .= "$member[name], ";
 		}
 		$gig["who's_coming"] = "\n\tYes: $availables[Yes]\n\tMaybe: $availables[Maybe]\n\tNo: $availables[No]"; 
+		foreach(array('tactical', 'musical') as $type) {
+			$gig[$type] = $gig['availability'][$gig[$type]]['name'];
+		}
 		foreach(array('event_time', 'meet_time', 'band_play_time', 'location', 'tactical', 'musical', 'colors', "who's_coming", 'notes') as $key) {
 			$gig_details .= str_replace('_', ' ', strtoupper($key)).": $gig[$key]\n\n";
 		}	
