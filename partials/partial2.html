@@ -1,25 +1,11 @@
 <!--
 -->
 		<div class='alert'style='display:none;' id='status'></div>
-    <div class='mobile-nav navbar-inverse navbar-static-top'><div class='navbar-inner text-center'>
-		<h3 class='navbar-text' style='display: inline;' >{{gig.title}}</h3>
-		<br/><span class='navbar-text' ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}</span>
-	</div>
+   		<div id='content' class='row-fluid {{mobileView}}' ng-class="{mobile:mobile}">
 
-		<div id='mobile_counts'>
-			<span class='btn-group'>
-			<span ng-click="editAvailable('Yes')" class='btn btn-mini btn-success'>{{(membersList | availableFilter:['Yes', gig]).length }} <i class='icon-smile'></i></span><span ng-click="editAvailable('Maybe')" class='btn btn-mini btn-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} <i class='icon-meh'></i></span><span ng-click="editAvailable('No')" class='btn btn-mini btn-danger'>{{(membersList | availableFilter:['No', gig]).length }} <i class='icon-frown'></i></span>
-			</span>
-		</div>
-		<a class='btn-prev btn' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
-		<a class='btn-next btn' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
-
-	</div>
-		<div id='content' class='row-fluid'>
-
-	<div class='span4 well well-small' id='nav' >
+			<div class='well well-small'ng-class='{span4: !mobile}' id='nav' >
 <div class='nav navbar navbar-inverse'><div class='navbar-inner'>
-	<div class='container-fluid'>
+	<div class='container-fluid' resize>
 		<a class="brand" href="#"><img style='width:20px;' src='img/giggity.png'/>Giggity</a>
 		<ul class='nav pull-right'>
 			<li><a tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
@@ -45,7 +31,8 @@
 				</td><td>
 				<span class='date'>{{current_gig.date+'T08' | date:'M/d'}}</span>
 				</td>
-				<td>
+				<td style='width: 100%'>
+				<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='icon-chevron-right'></i></span>
 				<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='icon-pencil'></i> Edit</span>
 				<a href=''ng-class='{muted: current_gig.approved == -1}'>{{current_gig.title}} </a>
 				<div ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-error': getAvailability(current_gig.gig_id) == 'Unknown'}">
@@ -68,13 +55,31 @@
 		</tbody>
 		</table>
 	</div>
+	<div class='mobile-nav navbar-inverse navbar-static-top'>
+
+	<div class='navbar-inner text-center'>
+		<i class='icon-chevron-left navbar-text' id='mobile_nav_link' ng-click="location.search({})"></i>
+				<h3 class='navbar-text' style='display: inline;' >{{gig.title}}</h3>
+				<br/><span class='navbar-text' ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}</span>
+			</div>
+
+				<div id='mobile_counts'>
+					<span class='btn-group'>
+					<span ng-click="editAvailable('Yes')" class='btn btn-mini btn-success'>{{(membersList | availableFilter:['Yes', gig]).length }} <i class='icon-smile'></i></span><span ng-click="editAvailable('Maybe')" class='btn btn-mini btn-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} <i class='icon-meh'></i></span><span ng-click="editAvailable('No')" class='btn btn-mini btn-danger'>{{(membersList | availableFilter:['No', gig]).length }} <i class='icon-frown'></i></span>
+					</span>
+				</div>
+				<a class='btn-prev btn' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
+				<a class='btn-next btn' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
+
+			</div>
+
 	<div style='' class='span8' id='gig'>
 		<div id='gig_loading' fade-in='gig_loading' style='display:none;'>
 			<div>
 				<h1 class='text-center alert alert-info'><i class='icon-refresh icon-spin'></i> Loading</h1>
 			</div>
 		</div>
-
+		
 		<div class='page-header'>
 			<h1>{{gig.title}}<br/><small ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}&nbsp; <span gig-status='{{gig.approved}}'></span></small>
 			<div id='availableCounts' class='pull-right'>

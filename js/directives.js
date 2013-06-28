@@ -3,12 +3,6 @@
 /* Directives */
 var app = angular.module('myApp.directives', []);
 
-app.directive('appVersion', ['version', function(version) {
-    return function(scope, elm, attrs) {
-      elm.text(version);
-    };
-  }]);
-
 app.directive('memberComments', [function() { 
 	return {
 		restrict: 'A',
@@ -131,27 +125,42 @@ app.directive('addclassonhover',
 });
 
 app.directive('timepicker',
-   function() {
-      return {
-		 restrict: 'A',
-         require: '?ngModel',
-		 link : function(scope, element, attrs, ngModel) {
-			if (! ngModel) { return; }
-			element.bind('blur keyup change', function() {
-				if(! scope.$$phase) {
-					scope.$apply(read);
+	function() {
+		return {
+			restrict: 'A',
+			require: '?ngModel',
+			link : function(scope, element, attrs, ngModel) {
+				if (! ngModel) { return; }
+				element.bind('blur keyup change', function() {
+					if(! scope.$$phase) {
+						scope.$apply(read);
+					}
+				});
+				scope.$watch('gig.'+element.id, function(value, oldval) {
+					if (element.has_time) { return; }
+					element.timepicker({defaultTime:ngModel.value });
+					element.has_time = 1;
+				});
+
+				function read() {
+					ngModel.$setViewValue(element.val());
 				}
-			});
-			scope.$watch('gig.'+element.id, function(value, oldval) {
-				if (element.has_time) { return; }
-				element.timepicker({defaultTime:ngModel.value });
-				element.has_time = 1;
-			});
+		   }
+	   };
+	}
+);
 
-			function read() {
-				ngModel.$setViewValue(element.val());
+app.directive('resize',
+	function ($window) {
+		return function (scope) {
+			function updateMobile() { 
+				scope.mobile = $window.innerWidth < 480;
 			}
-
-       }
-   };
+			angular.element($window).bind('resize', function () {
+				scope.$apply(function () {
+					updateMobile();
+				});
+			});
+			updateMobile();
+		};
 });
