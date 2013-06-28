@@ -26,18 +26,24 @@ angular.module('myApp.controllers', []).
 		$scope.location = $location; 
 		$scope.savingText = "<i class='icon-spin icon-refresh'></i> Saving...";
 		$scope.current_tab = 'gig_details';
-
+		$scope.mobile = $(window).width() <= 480;
+		$scope.mobileView = 'mobile-view-nav';
 		$scope.$on('$routeUpdate', function() {
 			$scope.setView();
 		});
 		
 		$scope.setView = function(first) {
 			var gig_id = $location.search().gig_id;
-			if (! first) { 
-				$scope.changeGig(gig_id);
+			if (! $scope.mobile || gig_id) { 
+				$scope.mobileView = 'mobile-view-gig';
+				if (! first) { 
+					$scope.changeGig(gig_id);
+				} else {
+					$scope.setGig(gig_id);
+				}	
 			} else {
-				$scope.setGig(gig_id);
-			}	
+				$scope.mobileView = 'mobile-view-nav';
+			}
 		};
 
 		$scope.changeUser = function() {
