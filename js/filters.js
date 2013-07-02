@@ -4,12 +4,6 @@
 
 var app = angular.module('myApp.filters', []);
 
-app.filter('interpolate', ['version', function(version) {
-    return function(text) {
-      return String(text).replace(/\%VERSION\%/mg, version);
-    }
-  }]);
-
 app.filter('toArray', function() { return function(obj) {
 		if (!(obj instanceof Object)) return obj;
 		return $.map(obj, function(val, key) {
@@ -28,13 +22,15 @@ app.filter('length', function() {
 		return array.length;
 }});
 
-app.filter('name', function() {
-	return function(array) {
-		var names = [];
+app.filter('memberProperty', function() {
+	return function(array, args) {
+		var property = args[0];
+		var separator = args[1] ? args[1] : ', ';
+		var items = [];
 		$(array).each(function(i, m) { 
-			names.push(m.name);
+			items.push(m[property]);
 		});
-		return names.join(', ');
+		return items.join(separator);
 }});
 
 app.filter('available', function() { 
@@ -67,9 +63,12 @@ app.filter('availableFilter', function() {
 		var filtered = [];
 		var value = args[0];
 		if(args[1] && args[1]['availability']) { 
+			var gig = args[1]['availability'];
 			$(items).each(function(i, m) {
-				if(args[1]['availability'][m['id']]) { 
-					if(args[1]['availability'][m['id']]['available'] == value || value == '') {
+				if(gig[m['id']]) { 
+					if (value == 'Coming' && (gig[m['id']]['available'] == 'Yes' || gig[m['id']]['available'] == 'Maybe')) {
+						filtered.push(m);
+					} else if(gig[m['id']]['available'] == value || value == '') {
 						filtered.push(m);
 					}
 				}
