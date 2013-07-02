@@ -1,8 +1,10 @@
 'use strict';
 
-
 // Declare app level module which depends on filters, and services
 angular.module('myApp', ['myApp.filters', 'myApp.services', 'myApp.directives', 'myApp.controllers', 'ui.bootstrap', 'ngSanitize']).
+  config(['$compileProvider', function ($compileProvider) {
+	  $compileProvider.urlSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms):/);
+  }]).
   config(['$routeProvider', function($routeProvider) {
     $routeProvider.when('/gigs', {
 		templateUrl: 'partials/partial2.html', 

@@ -167,9 +167,11 @@
 						<dd class='clearfix'>{{ gig.colors}}&nbsp; </dd>
 						<dt>Who's Coming</dt>
 							<dd class='clearfix'>
-							<strong>Yes:</strong> {{(membersList | availableFilter:['Yes', gig] | name)}}
-							<br/><strong>Maybe:</strong> {{(membersList |  availableFilter:['Maybe', gig] | name)}}
-							<br/><strong>No:</strong> {{(membersList |  availableFilter:['No', gig] | name)}}
+								<strong>Yeses:</strong> {{(membersList | availableFilter:['Yes', gig] | memberProperty:['name'])}}
+								<br/><strong>Maybes:</strong> {{(membersList |  availableFilter:['Maybe', gig] |  memberProperty:['name'])}}
+								<br/><strong>Noes:</strong> {{(membersList |  availableFilter:['No', gig] |  memberProperty:['name'])}}
+								<br/>Contact Yeses and Maybes: <a href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a> |
+								<a href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
 							</dd>
 
 						<dt>Notes</dt>

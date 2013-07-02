@@ -174,7 +174,7 @@ function gigs_setAvailability($request) {
 }
 
 function gigs_fetchMembers() { 
-	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, lastname, email, group_concat(group_name) as groups from blo_abook.addressbook join blo_abook.address_in_groups b using(id) left join blo_abook.address_in_groups c using(id) left join blo_abook.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
+	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, lastname, email, if(mobile= '', home, mobile) as phone, group_concat(group_name) as groups from blo_abook.addressbook join blo_abook.address_in_groups b using(id) left join blo_abook.address_in_groups c using(id) left join blo_abook.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
 	return $members;
 }
 
