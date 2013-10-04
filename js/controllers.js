@@ -50,7 +50,7 @@ angular.module('myApp.controllers', []).
 			$scope.currentUser = null;
 			$scope.currentUserName= null;
 			$scope.user = null;
-			delete localStorage.currentUser;
+			localStorage.removeItem('currentUser');
 			$('#current_user_input').val();
 			$('#loginModal').modal('show');
 			$('#loginModal').on('shown', function() {
