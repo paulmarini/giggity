@@ -235,15 +235,21 @@ function saveToCalendar($gig, $calendartype='private') {
 	$event->setEnd(newDateTime($gig['date'], $gig[$end_field]));	
 	$event->setDescription($gig_details);
 	$createdEvent = '';
-	if ($gig[$id_field]) {
-		$event->setSequence(time());
-		$createdEvent = $cal->events->update($calendar_id, $gig[$id_field], $event); 
-	} else {
-		$createdEvent = $cal->events->insert($calendar_id, $event); 
-		$google_gig_id = $createdEvent->getId();
-		dbwrite("update gigs set $id_field = '".dbEscape($google_gig_id)."' where gig_id = $gig[gig_id]");
+	try { 
+		if ($gig[$id_field]) {
+			$event->setSequence(time());
+			$createdEvent = $cal->events->update($calendar_id, $gig[$id_field], $event); 
+		} else {
+			$createdEvent = $cal->events->insert($calendar_id, $event); 
+			$google_gig_id = $createdEvent->getId();
+			dbwrite("update gigs set $id_field = '".dbEscape($google_gig_id)."' where gig_id = $gig[gig_id]");
+		}
+	} catch (Exception $e) { 
+		//trigger_error('Error creating google calendar entry: '.$e->getMessage(), E_USER_ERROR); 
 	}
-	if(! $createdEvent) { trigger_error('Error creating google calendar entry', E_USER_ERROR); };
+	if(! $createdEvent) { 
+		//trigger_error('Error creating google calendar entry', E_USER_ERROR); 
+	};
 }
 
 function deleteFromCalendar($gig, $calendartype='private') {
@@ -288,7 +294,7 @@ function sendEmails($gig) {
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
 	foreach($emails as $email_address) {
-		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\n"); 
+		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\n"); 
 	}
 }
 
