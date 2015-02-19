@@ -101,7 +101,7 @@ h1 small { font-size: 20px; }
 }
 @media (max-width: 480px) {
 	#nav { height: 100%; }
-	.mobile-nav { display: block; }
+	.mobile-nav { display: block; z-index: 100; }
 	#container { padding: 0px;}
 	#gig, #edit_gig, .tabbable, .tab-content { 
 		height: 100%; 
