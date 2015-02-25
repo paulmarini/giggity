@@ -154,10 +154,8 @@ function gigs_fetchGig($request) {
 	}
 	$gigs = dbLookupArray("select * $times from gigs where gig_id = $gig_id");
 	$gigs = fetchAvailability($gigs);
-	$gig = array_values($gigs)[0];
-
-	// $gigs = array_values(gigs_fetchGigs($request));
-	return $gig;
+	$gig = array_values($gigs);
+	return $gig[0];
 }
 
 function fetchAvailability($gigs) {
@@ -242,13 +240,15 @@ function saveToCalendar($gig, $calendartype='private') {
 	$gig_details = "";
 	$title = $gig['title'];
 	if ($calendartype == 'private') {
-		$prefix = 'Proposed';
-		if ($gig['approved'] == 1) {
-			$prefix = 'Gig';
-		} else if ($gig['approved'] == -1) {
-			$prefix = 'Declined';
+		if ($gig['type'] == 'Gig') {
+			$prefix = 'Proposed';
+			if ($gig['approved'] == 1) {
+				$prefix = 'Gig';
+			} else if ($gig['approved'] == -1) {
+				$prefix = 'Declined';
+			}
+			$title = "$prefix: $title";
 		}
-		$title = "$prefix: $title";
 		$gig_details = getGigTextDescription($gig, 'calendar');
 		if (! $gig[$start_field]) { $start_field = 'band_start'; }
 	} else {

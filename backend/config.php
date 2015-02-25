@@ -1,32 +1,33 @@
 <?php
-require_once('config.local.php');
 
 require_once('dbaccess.php');
 
-$calendars = [
-	'private'=>[
+$calendars = array(
+	'private'=>array(
 		'calendar_id'=> "",
 		'id_field'=> "google_calendar_id",
 		'start_field'=> "meet_time",
 		'end_field'=> "band_end",
-	],
-	'public'=>[
+	),
+	'public'=>array(
 		'calendar_id'=> "",
 		'id_field'=> "google_public_calendar_id",
 		'start_field'=> "start_time",
 		'end_field'=> "end_time",
-	],
-];
+	),
+);
 
-$emails = ['foo@bar.com'];
+$emails = array('foo@bar.com');
 
-$google_api = [
+$google_api = array(
 	'accessToken'=>"",
 	'ApplicationName'=>"Giggity App",
 	'ClientId'=>'',
 	'ClientSecret'=>'',
 	'RedirectUri'=>''
-];
+);
+
+require_once('config.local.php');
 
 
 function xml2array($xml) {
