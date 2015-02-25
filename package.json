@@ -1,0 +1,26 @@
+{
+  "name": "giggity",
+  "version": "0.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/michalgm/giggity.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/michalgm/giggity/issues"
+  },
+  "devDependencies": {
+    "bower-files": "^3.4.4",
+    "gulp-concat": "^2.5.0",
+    "gulp-filter": "^2.0.2",
+    "gulp-inject": "^1.1.1",
+    "main-bower-files": "^2.5.0",
+    "stream-series": "^0.1.1"
+  }
+}

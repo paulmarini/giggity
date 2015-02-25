@@ -1,389 +1,496 @@
 <!--
 -->
-		<div class='alert'style='display:none;' id='status'></div>
-   		<div id='content' class='row-fluid {{mobileView}}' ng-class="{mobile:mobile}">
-
-			<div class='well well-small'ng-class='{span4: !mobile}' id='nav' >
-<div class='nav navbar navbar-inverse'><div class='navbar-inner'>
-	<div class='container-fluid' resize>
-		<a class="brand" href="#"><img style='width:20px;' src='img/giggity.png'/>Giggity</a>
-		<ul class='nav pull-right'>
-			<li><a tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()' class='nav pull-right'><i class='icon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
-			</li>
-			<li>
-			<p class='nav navbar-text pull-right'><small data-tooltip='{{ gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(gigsList | userUnknownCount:currentUser) == 0 && 'text-success' || 'text-error'">&nbsp;({{ gigsList | userUnknownCount:currentUser }})</small></p>
-			 </li>
-		</ul>
-	</div>
-</div></div>
-		<table id='list_container' class='nav nav-list table table-striped table-condensed table-hover'>
-			<tbody id='gig_list'>
-			<tr style='display:none;'>
-				<td colspan='3'>
-					<button ng-click='newGig()' id='create_gig' class='btn btn-mini btn-info pull-right'><i class="icon-plus"></i> Create New Gig</button>
-				</td>
-			</tr>
-
-			<tr ng-repeat="current_gig in gigsList" ng-class="{active:current_gig.gig_id == gig.gig_id }" ng-click='location.search("gig_id", current_gig.gig_id)'  id='{{current_gig.gig_id}}' addclassonhover='hover'>
-			
-				<td>
-					<i class='approve_icon' ng-class="{'icon-thumbs-up': current_gig.approved==1, 'icon-thumbs-down':current_gig.approved==-1, 'icon-question-sign': current_gig.approved==0}"></i> 	
-				</td><td>
-				<span class='date'>{{current_gig.date+'T08' | date:'M/d'}}</span>
-				</td>
-				<td style='width: 100%'>
-				<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='icon-chevron-right'></i></span>
-				<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='icon-pencil'></i> Edit</span>
-				<a href=''ng-class='{muted: current_gig.approved == -1}'>{{current_gig.title}} </a>
-				<div ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-error': getAvailability(current_gig.gig_id) == 'Unknown'}">
-					<small>Your Availability:</small>
-					<select ng-change='setAvailabilityFromList(current_gig.gig_id)' ng-model='gigs[current_gig.gig_id].availability[currentUser].available' class='gig_list_availability_edit input-small' eat-click=1>
-						<option value='Yes' data-icon='icon-smile'>Available</option>
-						<option value='No' data-icon='icon-frown'>Unavailable</option>
-						<option data-icon='icon-meh'>Maybe</option>
-						<option data-icon='icon-question'>Unknown</option>
-					</select>
-					<small class='gig_list_availability'>
-						<i ng-class="{'icon-smile': gigs[current_gig.gig_id].availability[currentUser].available == 'Yes', 'icon-frown': gigs[current_gig.gig_id].availability[currentUser].available == 'No', 'icon-meh': gigs[current_gig.gig_id].availability[currentUser].available == 'Maybe', 'icon-question': gigs[current_gig.gig_id].availability[currentUser].available == 'Unknown'}"></i>&nbsp;{{gigs[current_gig.gig_id].availability[currentUser].available | available }}
-					</small>
-					<button data-loading-text='{{savingText}}' class='btn btn-inverse btn-mini availability-save-button' type='button'></button>
-
+<div class='alert'style='display:none;' id='status'></div>
+<div id='content' class='{{mobileView}}' ng-class="{mobile:mobile}">
+	<div class='well well-small' ng-class='{"col-sm-4": !mobile}' id='nav' >
+		<nav class="navbar navbar-inverse scroll-header">
+			<div class="container-fluid">
+				<div class="navbar-header">
+					<a href="#" class="navbar-brand"><img style='width:20px;display: inline' src='img/giggity.png'/> Giggity</a>
 				</div>
-			</td>
-			
-			</tr>
-		</tbody>
+				<!-- <p class='navbar-text navbar-right'>
+					<small class='navbar-text label' data-tooltip='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && 'text-success' || 'label-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small>
+				</p> -->
+				<ul class="nav navbar-nav navbar-right">
+					<li>
+						<a class='user-link' tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()'><i class='glyphicon glyphicon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
+					</li>
+					<li>
+						<a><small class='badge' data-tooltip='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && ' ' || 'badge-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small></a>
+					</li>
+					<li class="dropdown" ng-hide='mobile'>
+						<a class="dropdown-toggle" href='' data-toggle="dropdown"><i class='glyphicon glyphicon-cog'></i></a>
+						<ul class='dropdown-menu'>
+							<li>
+								<div class='checkbox'>
+									<label> <input type='checkbox' ng-model='fetchAllGigs'> Show All Gigs</label>
+								</div>
+							</li>
+						</ul>
+					</li>
+				</ul>
+			</div><!-- /.container-fluid -->
+		</nav>
+		<table id='list_container' class='nav nav-list table table-striped table-condensed table-hover scroll-container'>
+			<tbody id='gig_list' class='scroll-body'>
+				<tr ng-show='Gigs.gigsList.length > gigLimit'>
+					<td colspan='3' class='text-center'>
+					</td>
+				</tr>
+				<tr style='display:none;'>
+					<td colspan='3'>
+						<button ng-click='newGig()' id='create_gig' class='btn btn-xs btn-info pull-right'><i class="glyphicon glyphicon-plus"></i> Create New Gig</button>
+					</td>
+				</tr>
+				<tr>
+					<td colspan='3' class='text-center' ng-show='Gigs.gigsList.length > gigLimit'>
+						<pagination class="pagination-sm" ng-model='page' items-per-page='gigLimit' max-size='5' total-items='Gigs.gigsList.length'></pagination>
+					</td>
+				</tr>
+				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
+					<td>
+						<i class='approve_icon glyphicon' ng-class="{'glyphicon-thumbs-up': current_gig.approved==1, 'glyphicon-thumbs-down':current_gig.approved==-1, 'glyphicon-question-sign': current_gig.approved==0 && current_gig.type == 'gig', 'glyphicon-heart text-danger': current_gig.type == 'rehearsal'}"></i>
+					</td>
+					<td>
+						<span ng-if='fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd/yy'}}</span>
+						<span ng-if='!fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd'}}</span>
+					</td>
+					<td style='width: 100%' class='form-inline'>
+						<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='glyphicon glyphicon-chevron-right'></i></span>
+						<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='glyphicon glyphicon-pencil'></i> Edit</span>
+						<a href='' ng-class='{"text-muted": current_gig.approved == -1}'>{{current_gig.title}} </a>
+						<div class='form-inline' ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-danger': getAvailability(current_gig.gig_id) == 'Unknown'}">
+							<small>Your Availability:</small>
+							<select style='display: none;' loading-feedback='setAvailability({{currentUser}}, {{current_gig.gig_id}})' ng-model='Gigs.gigs[current_gig.gig_id].availability[currentUser].available' class='gig_list_availability_edit form-control input-xs' eat-click=1>
+								<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+								<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+								<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+								<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+							</select>
+							<small class='gig_list_availability'>
+								<i ng-class="{'glyphicon glyphicon-smile': Gigs.gigs[current_gig.gig_id].availability[currentUser].available == 'Yes', 'glyphicon glyphicon-frown': Gigs.gigs[current_gig.gig_id].availability[currentUser].available == 'No', 'glyphicon glyphicon-meh': Gigs.gigs[current_gig.gig_id].availability[currentUser].available == 'Maybe', 'glyphicon glyphicon-question': Gigs.gigs[current_gig.gig_id].availability[currentUser].available == 'Unknown'}"></i>&nbsp;{{Gigs.gigs[current_gig.gig_id].availability[currentUser].available | available }}
+							</small>
+							<!-- <button data-loading-text='{{savingText}}' class='btn btn-default btn-xs availability-save-button' type='button'></button> -->
+						</div>
+					</td>
+				</tr>
+			</tbody>
 		</table>
 	</div>
-	<div class='mobile-nav navbar-inverse navbar-static-top'>
-
-	<div class='navbar-inner text-center'>
-		<i class='icon-chevron-left navbar-text' id='mobile_nav_link' ng-click="location.search({})"></i>
-				<h3 class='navbar-text' style='display: inline;' >{{gig.title}}</h3>
-				<br/><span class='navbar-text' ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}</span>
+	<div class='mobile-nav navbar-inverse navbar-static-top container-fluid'>
+		<div class='navbar-inner text-center row'>
+			<i class='glyphicon glyphicon-menu-hamburger' id='mobile_nav_link' ng-click="setView(true)"></i>
+			<h3 class='navbar-text'>{{gig.title}}</h3>
+		</div>
+		<div class='row mobile-nav-controls'>
+			<div class='col-xs-12 text-center mobile-nav-date'>
+				<span class='navbar-text' ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}</span>
 			</div>
-
-				<div id='mobile_counts'>
-					<span class='btn-group'>
-					<span ng-click="editAvailable('Yes')" class='btn btn-mini btn-success'>{{(membersList | availableFilter:['Yes', gig]).length }} <i class='icon-smile'></i></span><span ng-click="editAvailable('Maybe')" class='btn btn-mini btn-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} <i class='icon-meh'></i></span><span ng-click="editAvailable('No')" class='btn btn-mini btn-danger'>{{(membersList | availableFilter:['No', gig]).length }} <i class='icon-frown'></i></span>
-					</span>
-				</div>
-				<a class='btn-prev btn' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
-				<a class='btn-next btn' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
-
+			<div class='col-xs-2 text-left'>
+				<a class='btn-prev btn-circle btn btn-primary' ng-show='Gigs.gigsList[currentGigIndex-1]' ng-click='changeGig(Gigs.gigsList[currentGigIndex-1].gig_id)'><i class='glyphicon glyphicon-menu-left'></i></a>
 			</div>
+			<div class='col-xs-8 text-center'>
+				<span class='btn-group'>
+					<button class='btn btn-primary btn-sm' feedback-button ng-click='saveGig()'><i class='glyphicon glyphicon-ok'></i> Save Gig</button>
+					<button class='btn btn-danger btn-sm' feedback-button ng-click='showModal="confirm"'><i class='glyphicon glyphicon-remove'></i> Delete Gig</button>
+				</span>
+			</div>
+			<div class='col-xs-2 text-right'>
+				<a class='btn-next btn-circle btn btn-primary' ng-show='Gigs.gigsList[currentGigIndex+1]' ng-click='changeGig(Gigs.gigsList[currentGigIndex+1].gig_id)'><i class='glyphicon glyphicon-menu-right'></i></a>
+			</div>
+		</div>
+	</div>
 
-	<div style='' class='span8' id='gig'>
-		<div id='gig_loading' fade-in='gig_loading' style='display:none;'>
+	<div style='' class='col-md-8' id='gig'>
+		<div id='gig_loading' ng-show='gig_loading' fade-in='gig_loading'>
 			<div>
-				<h1 class='text-center alert alert-info'><i class='icon-refresh icon-spin'></i> Loading</h1>
+				<h1 class='text-center alert alert-info'><i class='glyphicon glyphicon-refresh glyphicon glyphicon-spin'></i> Loading</h1>
 			</div>
 		</div>
-		
-		<div class='page-header'>
-			<h1>{{gig.title}}<br/><small ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}&nbsp; <span gig-status='{{gig.approved}}'></span></small>
-			<div id='availableCounts' class='pull-right'>
-				<small>
-				<span ng-click="editAvailable('Yes')" class='text-success'>{{(membersList | availableFilter:['Yes', gig]).length }} Available</span>
-				<span ng-click="editAvailable('Maybe')" class='text-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} Maybes</span>
-				<span ng-click="editAvailable('No')" class='text-error'>{{(membersList | availableFilter:['No', gig]).length }} Unavailable</span>
-				</small>
-			</div>
-			</h1>
-		</div>
-		<div class='pull-right btn-group clearfix' id='page_controls'>
-			<a class='pull-left btn btn-mini' ng-show='gigsList[currentGigIndex-1]' href='#/gigs?gig_id={{gigsList[currentGigIndex-1].gig_id}}'><i class='icon-double-angle-left'></i> Previous Gig</a>
-			<a class='pull-right btn btn-mini' ng-show='gigsList[currentGigIndex+1]' href='#/gigs?gig_id={{gigsList[currentGigIndex+1].gig_id}}'>Next Gig <i class='icon-double-angle-right'></i></a>
-		</div>
-
-
-		<form id='edit_gig' class='form-horizontal clearfix' ng-submit="saveGig()">
-
-			<input type='hidden' name='gig_id' ng-model='gig.gig_id'/>
-			<tabs>
-				<pane heading='Gig Details' class='active tab-pane' id='gig_details' active="current_tab == 'gig_details'">
-					<dl id='gig_details_list' class='dl-horizontal' style='clear:both'>
-						<dt>Approval Status</dt>
-						<dd class='clearfix' gig-status='{{gig.approved}}'></dd>
-
-						<div ng-show='currentUser' id='availability_info' ng-class="getAvailability() == 'Unknown' && 'alert-error' || 'alert-info'" class='alert alert-info'>
-							<div class='text-error lead' ng-show="getAvailability() == 'Unknown'">You haven't entered your availability for this gig.</div>
-							<dt>Your Availability</dt>
-							<dd id='user_availability' class='user_gig_details'>
-								<div class='user_gig_details_none'>
-									<i ng-class="{'icon-smile': gig.availability[currentUser].available == 'Yes', 'icon-frown': gig.availability[currentUser].available == 'No', 'icon-meh': gig.availability[currentUser].available == 'Maybe', 'icon-question': gig.availability[currentUser].available == 'Unknown'}"></i> {{gig.availability[currentUser].available | available }}
-									<span class='btn btn-mini' ng-click='editUserAttrib("user_availability")'><i class='icon-edit'></i> Edit</span>
-								</div>
-								<div class='user_gig_details_edit'>
-									<select id='user_availability_input' ng-model='gig.availability[currentUser].available' class='input-small'>
-										<option value='Yes' data-icon='icon-smile'>Available</option>
-										<option value='No' data-icon='icon-frown'>Unavailable</option>
-										<option data-icon='icon-meh'>Maybe</option>
-										<option data-icon='icon-question'>Unknown</option>
-									</select>
-									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
-								</div>
-							</dd>
-							<dt ng-hide='gig.approved==0' ></dt>
-							<dd ng-hide='gig.approved==0' >
-								Comments have been closed because the gig has been {{ gig.approved == -1 && 'denied' || 'approved' }}.	
-							</dd>
-							<dt ng-hide='gig.approved!=0' >Your Concerns</dt>
-							<dd ng-hide='gig.approved!=0' id='user_concerns' class='user_gig_details'>
-								<div class='user_gig_details_edit'>
-									<textarea class='input-xlarge' id='user_concerns_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].concerns' placeholder="Do you have concerns about the BLO supporting this gig?"></textarea>
-									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
-								</div>
-								<div class='user_gig_details_none'>
-									{{gig.availability[currentUser].concerns || 'None' }}
-									<span class='btn btn-mini' ng-click='editUserAttrib("user_concerns")'><i class='icon-edit'></i> Edit</span>
-								</div>
-							</dd>
-							<dt ng-hide='gig.approved!=0'>Your Comments</dt>
-							<dd ng-hide='gig.approved!=0' id='user_comments' class='user_gig_details'>
-								<div class='user_gig_details_edit'>
-									<textarea class='input-xlarge' id='user_comments_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].comments' placeholder="Enter any questions or comments you have about the gig"></textarea>
-									<button ng-click='setAvailability($event)' data-loading-text='{{savingText}}' class='btn btn-primary' type='button' value='Save'><i class='icon-ok icon-white'></i>Save</button>
-								</div>
-								<div class='user_gig_details_none'>
-									{{gig.availability[currentUser].comments || 'None' }}
-									<span class='btn btn-mini' ng-click='editUserAttrib("user_comments")'><i class='icon-edit'></i> Edit<span>
-								</div>
-							</dd>
-					</div>
-						<dt>When</dt>
-						<dd class='clearfix'><span ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }} from {{gig.start_time | time }} - {{ gig.end_time  | time}}
-							<br/>Meet at {{ gig.meet_time | time }}	
-							<br/>Band play time from {{gig.band_start | time }} to {{gig.band_end | time}}
-							</span>&nbsp;
-						</dd>
-						<dt>Where</dt>
-						<dd class='clearfix'>{{ gig.location}} <span ng-show='gig.location'>[<small><a href='http://maps.google.com?q={{gig.location | URIencode }}' target='map'><i class='icon-map-marker'></i>Map</a></small>]</span>&nbsp; </dd>
-						<dt>Tactical</dt>
-						<dd class='clearfix'><a href='mailto:{{gig.tactical.email}}'>{{ gig.tactical.name }}</a>&nbsp; </dd>
-						<dt>Musical</dt>
-						<dd class='clearfix'><a href='mailto:{{gig.musical.email}}'>{{ gig.musical.name }}</a>&nbsp; </dd>
-						<dt>Colors</dt>
-						<dd class='clearfix'>{{ gig.colors}}&nbsp; </dd>
-						<dt>Who's Coming</dt>
-							<dd class='clearfix'>
-								<strong>Yeses:</strong> {{(membersList | availableFilter:['Yes', gig] | memberProperty:['name'])}}
-								<br/><strong>Maybes:</strong> {{(membersList |  availableFilter:['Maybe', gig] |  memberProperty:['name'])}}
-								<br/><strong>Noes:</strong> {{(membersList |  availableFilter:['No', gig] |  memberProperty:['name'])}}
-								<br/>Contact Yeses and Maybes: <a href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a> |
-								<a href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
-							</dd>
-
-						<dt>Notes</dt>
-						<dd class='clearfix'>{{ gig.notes}}&nbsp; </dd>
-						<div ng-class="{'alert alert-error':(membersList | concernFilter:gig).length > 0}"> 
-							<dt>Member Concerns</dt>
-							<dd class='clearfix'>
-								<span class='' member-comments></span>
-							</dd>
+		<div ng-if='gig.gig_id'>
+			<div class='page-header'>
+				<h1>
+					<div class='pull-right text-right'>
+						<div class='btn-group'>
+							<button class='btn btn-primary' feedback-button ng-click='saveGig()'><i class='glyphicon glyphicon-ok'></i> Save Gig</button>
+							<button class='btn btn-danger' feedback-button ng-click='$parent.showModal="confirm"'><i class='glyphicon glyphicon-remove'></i> Delete Gig</button>
 						</div>
-						<dt>Member Comments</dt>
-							<dd class='clearfix'>
-								<span class='' member-comments type='comments'></span>
-							</dd>
-						<!--<div ng-show='isCollapsed'><dt><a href='' ng-click="isCollapsed = !isCollapsed">More details…</a></dt><dd>&nbsp;</dd></div>
-						<div collapse='isCollapsed'>-->
-						<h4 class='text-info'>Event Details</h4>
-							<dt>Description</dt>
-							<dd class='clearfix' ng-bind-html="gig.description | linky"></dd>
-							<dt>Public Description</dt>
-							<dd class='clearfix' ng-bind-html="gig.public_description | linky"></dd>
-							<dt>Organizer</dt>
-							<dd class='clearfix'>{{ gig.who}}&nbsp; </dd>
-							<dt>Contact</dt>
-							<dd class='clearfix' ng-bind-html="gig.contact | linky"></dd>
-							<div gig-details='1'></div>
-							<!--</div>-->
-
-					</dl>
-				</pane>
-				<pane heading='Edit Band Info' class='tab-pane' id='band_details' active="current_tab == 'band_details'">
-					<div class='alert alert-error' ng-show="gig.approved == 1 && !gig.public_description">This gig has been approved, but can't be published to the public calendar until a public description has been entered below.</div>
-					<div class='btn-group pull-right'>
-						<button class='btn btn-primary save-gig-button' data-loading-text='{{savingText}}' type='submit' value='Save Gig'><i class='icon-ok icon-white'></i> Save Gig</button>
-						<button class='btn btn-danger' type='button' ng-click='toggleDeleteModal()' value='Delete Gig'><i class='icon-remove icon-white'></i> Delete Gig</button>
-					</div>	
-					<div class='control-group'>
-						<label class='control-label' for='title'>Title</label>
-						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.title'/></div>
 					</div>
-					<div class='control-group'>
-						<label class="control-label">Band Approval</label>
-						<div class="controls">
-							<div class="btn-group">
-								<button type="button" class="btn" ng-click='gig.approved=1' ng-class="{'active btn-success': gig.approved == 1}"><i class='icon-thumbs-up'ng-class="{'icon-white': gig.approved == 1}"></i> Approved</button>
-								<button type="button" class="btn" ng-click='gig.approved=0' ng-class="{'active btn-warning': gig.approved == 0}" ><i class='icon-question-sign' ng-class="{'icon-white': gig.approved == 0}"></i> Undecided</button>
-								<button type="button" class="btn" ng-click='gig.approved=-1' ng-class="{'active btn-danger': gig.approved == -1}" ><i class='icon-thumbs-down'ng-class="{'icon-white': gig.approved == -1}"></i> Declined</button>
+					{{gig.title}}<br/>
+					<small ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }}&nbsp; <span ng-if='gig.type == "gig"' gig-status='{{gig.approved}}'></span></small>
+				</h1>
+						<div class='col-xs-2'>
+							<a class='btn btn-xs btn-default' ng-show='Gigs.gigsList[currentGigIndex-1]' ng-click="changeGig(Gigs.gigsList[currentGigIndex-1].gig_id)"><i class='glyphicon glyphicon-menu-left'></i> Previous Gig</a>
+						</div>
+						<div class='col-xs-8 text-center' id='availableCounts'>
+							<h4>
+								<span ng-click="editAvailable('Yes')" class='label label-success'>{{(membersList | availableFilter:['Yes', gig]).length }} Available</span>
+								<span ng-click="editAvailable('Maybe')" class='label label-warning'>{{(membersList | availableFilter:['Maybe', gig]).length }} Maybes</span>
+								<span ng-click="editAvailable('No')" class='label label-danger'>{{(membersList | availableFilter:['No', gig]).length }} Unavailable</span>
+							</h4>
+						</div>
+						<div class='col-xs-2 text-right'>
+							<a class='btn btn-xs btn-default' ng-show='Gigs.gigsList[currentGigIndex+1]' ng-click="changeGig(Gigs.gigsList[currentGigIndex+1].gig_id)">Next Gig <i class='glyphicon glyphicon-menu-right'></i></a>
+						</div>
+			</div>
+
+			<form ng-show='gig.type == "rehearsal"' id='edit_gig' class='form-horizontal clearfix rehearsal-form' ng-submit="saveGig()">
+				<input style='visibility: hidden; position: absolute; top:0px; left: 0px; width: 1px; height: 1px;' type='submit'/>
+				<input type='hidden' name='gig_id' ng-model='gig.gig_id'/>
+				<div class='form-horizontal container-fluid'>
+					<div ng-show='currentUser' class='form-group'>
+						<label class='col-md-4 control-label text-right'>Your Availability</label>
+						<div class='col-md-8' ng-class="getAvailability() == 'Unknown' && 'bg-danger' || ''">
+							<div class='alert-danger' ng-show="getAvailability() == 'Unknown'">You haven't entered your availability for this rehearsal.</div>
+								<div class='user_gig_details_edit form-inline' ng-init='saving=false' feedback='saving'>
+									<select id='user_availability_input' ng-model='gig.availability[currentUser].available' class='form-control' loading-feedback='setAvailability()'>
+										<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+										<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+										<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+										<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+									</select>
+								</div>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right' for='title'>Title</label>
+						<div class='col-md-8'>
+							<input class='form-control' type='text' ng-model='gig.title'/>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right' for='date'>Date</label>
+						<div class='col-md-8'><input class='form-control' type='date' ng-model='gig.date'/></div>
+					</div>
+					<div class='form-group'>
+						<label class="col-md-4 control-label text-right">Time</label>
+						<div class='col-md-8'>
+							<time-picker model="gig.band_start"></time-picker>
+							<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
+							<time-picker model="gig.band_end"></time-picker>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right' for='location'>Location</label>
+						<div class='col-md-8'>
+							<input class='form-control' type='text' ng-model='gig.location'/>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right' for='tactical'>Facilitator</label>
+						<div class='col-md-8'>
+							<input class='form-control' autocomplete='off' type='text' ng-model='gig.tactical' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' />
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right' for='notes'>Notes</label>
+						<div class='col-md-8'>
+							<textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.notes'></textarea>
+						</div>
+					</div>
+					<div class='form-group'>
+						<label class='col-md-4 control-label text-right'>Who's Coming</label>
+						<div class='col-md-8'>
+							<strong>Yeses:</strong> {{(membersList | availableFilter:['Yes', gig] | memberProperty:['name'])}}
+							<br/><strong>Maybes:</strong> {{(membersList |  availableFilter:['Maybe', gig] |  memberProperty:['name'])}}
+							<br/><strong>Noes:</strong> {{(membersList |  availableFilter:['No', gig] |  memberProperty:['name'])}}
+							<br/>Contact Yeses and Maybes: <a href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a> |
+							<a href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
+						</div>
+					</div>
+				</div>
+			</form>
+
+			<form ng-show='gig.type == "gig"' id='edit_gig' class='form-horizontal clearfix gig-form' ng-submit="saveGig()">
+				<input style='visibility: hidden; position: absolute; top:0px; left: 0px; width: 1px; height: 1px;' type='submit'/>
+				<input type='hidden' name='gig_id' ng-model='gig.gig_id'/>
+				<tabset justified="!mobile">
+					<tab heading='Details' class='form-inline' id='gig_details' active="tab['gig_details']">
+						<dl id='gig_details_list' class='dl-horizontal' style='clear:both'>
+							<dt>Approval Status</dt>
+							<dd class='clearfix' gig-status='{{gig.approved}}'></dd>
+
+							<div ng-show='currentUser' id='availability_info' ng-class="getAvailability() == 'Unknown' && 'alert-danger' || 'alert-info'" class='alert alert-info'>
+								<div class='lead' ng-show="getAvailability() == 'Unknown'">You haven't entered your availability for this gig.</div>
+								<dt>Your Availability</dt>
+								<dd id='user_availability' class='user_gig_details'>
+									<div class='user_gig_details_none'>
+										<i ng-class="{'glyphicon glyphicon-smile': gig.availability[currentUser].available == 'Yes', 'glyphicon glyphicon-frown': gig.availability[currentUser].available == 'No', 'glyphicon glyphicon-meh': gig.availability[currentUser].available == 'Maybe', 'glyphicon glyphicon-question': gig.availability[currentUser].available == 'Unknown'}"></i> {{gig.availability[currentUser].available | available }}
+										<span class='btn btn-xs btn-default' ng-click='editUserAttrib("user_availability")'><i class='glyphicon glyphicon-edit'></i> Edit</span>
+									</div>
+									<div class='user_gig_details_edit form-inline'>
+										<select id='user_availability_input' ng-model='gig.availability[currentUser].available' class='form-control input-sm' loading-feedback='setAvailability()'>
+											<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+											<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+											<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+											<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+										</select>
+									</div>
+								</dd>
+								<dt ng-hide='gig.approved==0' ></dt>
+								<dd ng-hide='gig.approved==0' >
+									Comments have been closed because the gig has been {{ gig.approved == -1 && 'denied' || 'approved' }}.
+								</dd>
+								<dt ng-hide='gig.approved!=0' >Your Concerns</dt>
+								<dd ng-hide='gig.approved!=0' id='user_concerns' class='user_gig_details' edit-toggle>
+									<textarea class='form-control user_gig_details_edit' id='user_concerns_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].concerns' placeholder="Do you have concerns about the BLO supporting this gig?" loading-feedback='setAvailability()'></textarea>
+									<apan class='user_gig_details_none'>{{gig.availability[currentUser].concerns || 'None' }}</span>
+								</dd>
+								<dt ng-hide='gig.approved!=0'>Your Comments</dt>
+								<dd ng-hide='gig.approved!=0' id='user_comments' class='user_gig_details' edit-toggle>
+									<textarea class='form-control user_gig_details_edit' id='user_comments_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].comments' placeholder="Enter any questions or comments you have about the gig"  loading-feedback='setAvailability()'></textarea>
+									<span class='user_gig_details_none'>{{gig.availability[currentUser].comments || 'None' }}</span>
+								</dd>
+						</div>
+							<dt>When</dt>
+							<dd class='clearfix'><span ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }} from {{gig.start_time | time }} - {{ gig.end_time  | time}}
+								<br/>Meet at {{ gig.meet_time | time }}
+								<br/>Band play time from {{gig.band_start | time }} to {{gig.band_end | time}}
+								</span>&nbsp;
+							</dd>
+							<dt>Where</dt>
+							<dd class='clearfix'>{{ gig.location}} <span ng-show='gig.location'>[<small><a href='http://maps.google.com?q={{gig.location | URIencode }}' target='map'><i class='glyphicon glyphicon-map-marker'></i>Map</a></small>]</span>&nbsp; </dd>
+							<dt>Tactical</dt>
+							<dd class='clearfix'><a href='mailto:{{gig.tactical.email}}'>{{ gig.tactical.name }}</a>&nbsp; </dd>
+							<dt>Musical</dt>
+							<dd class='clearfix'><a href='mailto:{{gig.musical.email}}'>{{ gig.musical.name }}</a>&nbsp; </dd>
+							<dt>Colors</dt>
+							<dd class='clearfix'>{{ gig.colors}}&nbsp; </dd>
+							<dt>Who's Coming</dt>
+								<dd class='clearfix'>
+									<strong>Yeses:</strong> {{(membersList | availableFilter:['Yes', gig] | memberProperty:['name'])}}
+									<br/><strong>Maybes:</strong> {{(membersList |  availableFilter:['Maybe', gig] |  memberProperty:['name'])}}
+									<br/><strong>Noes:</strong> {{(membersList |  availableFilter:['No', gig] |  memberProperty:['name'])}}
+									<br/>Contact Yeses and Maybes: <a href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a> |
+									<a href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
+								</dd>
+
+							<dt>Notes</dt>
+							<dd class='clearfix'>{{ gig.notes}}&nbsp; </dd>
+							<div ng-class="{'alert alert-danger':(membersList | concernFilter:gig).length > 0}">
+								<dt>Member Concerns</dt>
+								<dd class='clearfix'>
+									<span class='' member-comments></span>
+								</dd>
+							</div>
+							<dt>Member Comments</dt>
+								<dd class='clearfix'>
+									<span class='' member-comments type='comments'></span>
+								</dd>
+							<!--<div ng-show='isCollapsed'><dt><a href='' ng-click="isCollapsed = !isCollapsed">More details…</a></dt><dd>&nbsp;</dd></div>
+							<div collapse='isCollapsed'>-->
+							<h4 class='text-info'>Event Details</h4>
+								<dt>Description</dt>
+								<dd class='clearfix' ng-bind-html="gig.description | linky"></dd>
+								<dt>Public Description</dt>
+								<dd class='clearfix' ng-bind-html="gig.public_description | linky"></dd>
+								<dt>Organizer</dt>
+								<dd class='clearfix'>{{ gig.who}}&nbsp; </dd>
+								<dt>Contact</dt>
+								<dd class='clearfix' ng-bind-html="gig.contact | linky"></dd>
+								<div gig-details='1'></div>
+								<!--</div>-->
+
+						</dl>
+					</tab>
+					<tab heading='Band Info' class='tab-pane' id='band_details' active="tab['band_details']">
+						<div class='alert alert-danger' ng-show="gig.approved == 1 && !gig.public_description">This gig has been approved, but can't be published to the public calendar until a public description has been entered below.</div>
+						<div class='form-horizontal container-fluid'>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='title'>Title</label>
+								<div class='col-md-8'>
+									<input class='form-control' type='text' ng-model='gig.title'/>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class="col-md-4 control-label text-right">Band Approval</label>
+								<div class="col-md-8">
+									<div class="btn-group">
+										<button type="button" class="btn btn-default" ng-click='gig.approved=1' ng-class="{'active btn-success': gig.approved == 1}"><i class='glyphicon glyphicon-thumbs-up'></i> Approved</button>
+										<button type="button" class="btn btn-default" ng-click='gig.approved=0' ng-class="{'active btn-warning': gig.approved == 0}" ><i class='glyphicon glyphicon-question-sign'></i> Undecided</button>
+										<button type="button" class="btn btn-default" ng-click='gig.approved=-1' ng-class="{'active btn-danger': gig.approved == -1}" ><i class='glyphicon glyphicon-thumbs-down'></i> Declined</button>
+									</div>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class="col-md-4 control-label text-right">Band Meet Time</label>
+								<div class='col-md-8'>
+										<time-picker model='gig.meet_time'></time-picker>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class="col-md-4 control-label text-right">Band Play Time</label>
+								<div class='col-md-8'>
+									<time-picker model="gig.band_start"></time-picker>
+									<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
+									<time-picker model="gig.band_end"></time-picker>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='tactical'>Tactical</label>
+								<div class='col-md-8'>
+									<input class='form-control' autocomplete='off' type='text' ng-model='gig.tactical' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' />
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='musical'>Musical</label>
+								<div class='col-md-8'>
+									<input class='form-control' autocomplete='off' type='text' typeahead='member as member.name for member in membersList | filter:{name: $viewValue}' ng-model='gig.musical'/>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='colors'>Colors</label>
+								<div class='col-md-8'>
+									<input class='form-control' type='text' autocomplete='off' typeahead="c for c in ['Red and Black', 'Pink and Black', 'Black and Black'] | filter:$viewValue" ng-model='gig.colors'/>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='public_description'>Public Description</label>
+								<div class='col-md-8'>
+									<textarea placeholder='Enter a short (2-3 lines) description for the public calendar and website' class='form-control' spellcheck="true" ng-model='gig.public_description'></textarea>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='notes'>Notes</label>
+								<div class='col-md-8'>
+									<textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.notes'></textarea>
+								</div>
 							</div>
 						</div>
-					</div>
-					<div class='control-group'>
-					<span class="control-label">Band Meet Time</span>
-						<div class='controls form-inline'>
-							<span class='input-append bootstrap-timepicker'>
-								<input class='input-small' id='meet_time' timepicker type='text' ng-model='gig.meet_time'/>
-								<span class="add-on"><i class="icon-time"></i></span>
-							</span>
-						</div>
-					</div>
-					<div class='control-group'>
-					<span class="control-label">Band Play Time</span>
-						<div class='controls form-inline'>
-							<span class='input-append bootstrap-timepicker'>
-								<input class='input-small' type='text' id='band_start' timepicker ng-model='gig.band_start'/>
-								<span class="add-on"><i class="icon-time"></i></span>
-							</span>
-							<span class='input-append bootstrap-timepicker'>
-								<label for='band_end'>To</label>
-								<input class='input-small' type='text' id='band_end' timepicker ng-model='gig.band_end'/>
-								<span class="add-on"><i class="icon-time"></i></span>
-							</span>
-						</div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='tactical'>Tactical</label>
-						<div class='controls'><input class='input-xlarge' autocomplete='off' type='text' ng-model='gig.tactical' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' /></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='musical'>Musical</label>
-						<div class='controls'><input class='input-xlarge' autocomplete='off' type='text' typeahead='member as member.name for member in membersList | filter:{name: $viewValue}' ng-model='gig.musical'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='colors'>Colors</label>
-						<div class='controls'><input class='input-xlarge' type='text' autocomplete='off' typeahead="c for c in ['Red and Black', 'Pink and Black', 'Black and Black'] | filter:$viewValue" ng-model='gig.colors'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='public_description'>Public Description</label>
-						<div class='controls'><textarea placeholder='Enter a short (2-3 lines) description for the public calendar and website' class='input-xlarge' spellcheck="true" ng-model='gig.public_description'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='notes'>Notes</label>
-						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=5 ng-model='gig.notes'/></div>
-					</div>
+					</tab>
+					<tab heading='Event Info' class='tab-pane' id='event_details' active="tab['event_details']">
+						<div class='form-horizontal container-fluid'>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='title'>Title</label>
+								<div class='col-md-8'>
+									<input class='form-control' type='text' ng-model='gig.title'/>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='date'>Date</label>
+								<div class='col-md-8'><input class='form-control' type='date' ng-model='gig.date'/></div>
+							</div>
+							<div class='form-group'>
+								<label class="col-md-4 control-label text-right">Event Time</label>
+								<div class='col-md-8'>
+									<time-picker model="gig.start_time"></time-picker>
+									<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
+									<time-picker model="gig.end_time"></time-picker>
 
-				</pane>
-				<pane heading='Edit Event Info' class='tab-pane' id='event_details'>
-					<div class='btn-group pull-right'>
-						<button class='btn btn-primary save-gig-button' data-loading-text='{{savingText}}' type='submit' value='Save Gig'><i class='icon-ok icon-white'></i> Save Gig</button>
-						<button class='btn btn-danger' type='button' ng-click='toggleDeleteModal()' value='Delete Gig'><i class='icon-remove icon-white'></i> Delete Gig</button>
-					</div>	
-					<div class='control-group'>
-						<label class='control-label' for='title'>Title</label>
-						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.title'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='date'>Date</label>
-						<div class='controls'><input class='input-xlarge' type='date' ng-model='gig.date'/></div>
-					</div>
-					<div class='control-group'>
-						<span class="control-label">Event Time</span>
-						<div class='controls form-inline'>
-							<span class='bootstrap-timepicker input-append'>
-							<input class='input-small' type='text' id='start_time' timepicker ng-model='gig.start_time'/>
-							<span class="add-on"><i class="icon-time"></i></span>
-							</span>
-							<span class='bootstrap-timepicker input-append'>
-							<label for='end_time'>To</label>
-							<input class='input-small' type='text' id='end_time' timepicker ng-model='gig.end_time'/>
-							<span class="add-on"><i class="icon-time"></i></span>
-							</span>
+									<!-- <span class='bootstrap-timepicker input-append'>
+									<input class='form-control input-sm' type='text' id='start_time' timepicker ng-model='gig.start_time'/>
+									<span class="add-on"><i class="glyphicon glyphicon-time"></i></span>
+									</span>
+									<span class='bootstrap-timepicker input-append'>
+									<label for='end_time'>To</label>
+									<input class='form-control input-sm' type='text' id='end_time' timepicker ng-model='gig.end_time'/>
+									<span class="add-on"><i class="glyphicon glyphicon-time"></i></span>
+									</span> -->
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='location'>Location</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.location'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='description'>Description</label>
+								<div class='col-md-8'><textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.description'></textarea></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='who'>Organizer</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.who'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='contact'>Contact</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.contact'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='details'>Details</label>
+								<div class='col-md-8'><textarea class='form-control' spellcheck="true" rows=8 ng-model='gig.details'></textarea></div>
+							</div>
 						</div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='location'>Location</label>
-						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.location'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='description'>Description</label>
-						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=5 ng-model='gig.description'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='who'>Organizer</label>
-						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.who'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='contact'>Contact</label>
-						<div class='controls'><input class='input-xlarge' type='text' ng-model='gig.contact'/></div>
-					</div>
-					<div class='control-group'>
-						<label class='control-label' for='details'>Details</label>
-						<div class='controls'><textarea class='input-xlarge' spellcheck="true" rows=8 ng-model='gig.details'/></div>
-					</div>
-				</pane>
-				<pane id='availability-tab' heading='Band Availability' class='tab-pane' id='event_details' active="current_tab == 'availability'">
-					<fieldset class='form-inline well well-small'>
-							<label><strong>Filters:</strong></label>
-							<span style='display:inline-block'>
-							<label for='name_filter'>Name:</label>
-							<input name='name_filter' autocomplete='off' style='margin-right: 20px;' class='input-small' type='text' ng-model='membernamefilter'/>
-							</span>
-							<span style='display:inline-block'>
-							<label for='availability_filter'>Availability:</label>
-							<select name='availability_filter' class='input-small' ng-model='memberavailablefilter' id='member_availability_filter'>
-								<option value='' data-icon='icon-smile'>All</option>
-								<option value='Yes' data-icon='icon-smile'>Available</option>
-								<option value='No' data-icon='icon-frown'>Unavailable</option>
-								<option data-icon='icon-meh'>Maybe</option>
-								<option data-icon='icon-question'>Unknown</option>
-							</select>
-							</span>
-					</fieldset>
-					<table class="table table-bordered table-hover table-striped" id='availability_grid'>
-						<thead><tr>
-								<th>Name</th><th>Available</th><th>Maybe</th><th>Not Available</th><th>Unknown</th>
-						</tr></thead>
-						<tbody>
-							<tr ng-class="{'success': getAvailability(gig.gig_id, member.id) == 'Yes', 'error':  getAvailability(gig.gig_id, member.id) == 'No', 'warning': getAvailability(gig.gig_id, member.id) == 'Maybe'}" ng-repeat="member in membersList | filter:{name:membernamefilter} | availableFilter:[memberavailablefilter, gig]" id="availability_{{member.id}}">
-								<td>{{member.name}} <small>({{member.groups}})</small>
-									<button data-loading-text='{{savingText}}' class='btn btn-info availability-save-button' type='button'></button>
-								</td>
-								<td><input ng-change='setAvailabilityFromGrid(member.id)' type='radio' value='Yes' ng-model='gig.availability[member.id].available' name='{{member.id}}_available'/></td>
-								<td><input ng-change='setAvailabilityFromGrid(member.id)' type='radio' value='Maybe' ng-model='gig.availability[member.id].available' name='{{member.id}}_available'/></td>
-								<td><input ng-change='setAvailabilityFromGrid(member.id)' type='radio' value='No' ng-model='gig.availability[member.id].available' name='{{member.id}}_available'/></td>
-								<td><input ng-change='setAvailabilityFromGrid(member.id)' type='radio' value='Unknown' ng-model='gig.availability[member.id].available' name='{{member.id}}_available'/></td>
-							</tr>
-						</tbody>
-					</table>
-
-				</pane>
-			</tab>
-			
-		</form>
+					</tab>
+					<tab heading='Availability' class='tab-pane' id='availability' active="tab['availability']">
+						<div class='band-availability'>
+							<fieldset class='form-inline well well-small'>
+									<span class='col-xs-6'>
+										<label for='name_filter'>Name:</label>
+										<input name='name_filter' autocomplete='off' style='margin-right: 20px;' class='form-control input-sm' type='text' ng-model='membernamefilter'/>
+									</span>
+									<span class='col-xs-6'>
+										<label for='availability_filter'>Availability:</label>
+										<select name='availability_filter' class='form-control input-sm' ng-model='memberavailablefilter' id='member_availability_filter'>
+											<option value='' data-icon='glyphicon glyphicon-smile'>All</option>
+											<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+											<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+											<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+											<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+										</select>
+									</span>
+							</fieldset>
+							<ul class='list-group'>
+								<li ng-class="{
+										'list-group-item-success': gig.availability[member.id].available == 'Yes',
+										'list-group-item-warning': gig.availability[member.id].available == 'Maybe',
+										'list-group-item-danger': gig.availability[member.id].available == 'No'
+									}" class='list-group-item' ng-repeat="member in membersList | filter:{name:membernamefilter} | availableFilter:[memberavailablefilter, gig]" id="availability_{{member.id}}">
+									<div class='row'>
+										<span class='col-xs-5'>
+											{{member.name}} <small ng-style="{display: mobile ? 'block': ''}">({{member.groups}})</small>
+										</span>
+										<span class='col-xs-7'>
+											<div class="btn-group btn-group" ng-class='{"btn-group-xs": mobile}' ng-click='update()' loading-feedback="setAvailability({{member.id}})">
+													<label class="btn btn-default" ng-class="{'btn-success': gig.availability[member.id].available == 'Yes'}" ng-model="gig.availability[member.id].available" btn-radio="'Yes'">Yes</label>
+													<label class="btn btn-default" ng-class="{'btn-warning': gig.availability[member.id].available == 'Maybe'}" ng-model="gig.availability[member.id].available" btn-radio="'Maybe'">Maybe</label>
+													<label class="btn btn-default" ng-class="{'btn-danger': gig.availability[member.id].available == 'No'}" ng-model="gig.availability[member.id].available" btn-radio="'No'">No</label>
+													<label class="btn btn-default" ng-model="gig.availability[member.id].available" btn-radio="'Unknown'">Unknown</label>
+											</div>
+										</span>
+									</div>
+								</li>
+							</ul>
+						</div>
+					</tab>
+				</tabset>
+			</form>
+		</div>
 	</div>
 </div>
-<div id='loginModal' data-keyboard='true' class="modal hide fade">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Sign In!</h3>
-  </div>
-  <div class="modal-body form-inline" style='max-height: 10000px; overflow: visible;'>
-	  <p>This will make it easier for you to set your gig availability</p>
-	  <form id='login_form' class='control-group' ng-submit='setUser()'>
-		<span id='login_error' class="help-inline" style='display: none;'>The name you typed isn't recognized. Please select a name from the dropdown. </span>
-		  <input autocomplete='off' id='current_user_input' type='text' ng-model='user' placeholder='Just type your name' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' />
+<div modal='{{showModal}}'></div>
 
-    <button type='submit' class="btn btn-primary">OK</button>
-    <button type='button' data-toggle='modal' data-target='#loginModal' class="btn">Sign Out</button>
-		</form>
-  </div>
-</div>
-
-<div id='deleteModal' data-keyboard='true' class="modal hide fade">
-  <div class="modal-header">
-    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
-    <h3>Delete '{{gig.title}}'?</h3>
-  </div>
-  <div class="modal-body">
-    <p>Are you sure?</p>
-  </div>
-  <div class="modal-footer">
-    <a href="" ng-click='deleteGig(gig.gig_id)' class="btn btn-primary">Yes</a>
-    <a href="" ng-click='toggleDeleteModal()' class="btn">Cancel</a>
-  </div>
-</div>
-
+<script type="text/ng-template" id="modal.html">
+	<div id='modal' class='modal fade' data-keyboard='true' data-backdrop='true'>
+		<div class="modal-dialog">
+			<div class="modal-content">
+				<div ng-show='showModal == "login"'>
+					<div class="modal-header">
+				    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				    <h3>Sign In!</h3>
+				  </div>
+				  <div class="modal-body" style='max-height: 10000px; overflow: visible;'>
+					  <p>This will make it easier for you to set your gig availability</p>
+					  <form id='login_form' class='form-inline' ng-submit='setUser()'>
+							<span id='login_error' class="help-inline text-danger" style='display: none;'>The name you typed isn't recognized. Please select a name from the dropdown. </span>
+						  <input class='form-control' autocomplete='off' id='current_user_input' type='text' ng-model='user' placeholder='Just type your name' typeahead='member as member.name for member in membersList | filter:{name:$viewValue}' />
+					    <button type='submit' class="btn btn-primary">OK</button>
+					    <button type='button' ng-click='showModal=false' class="btn btn-default">Sign Out</button>
+						</form>
+					</div>
+				</div>
+				<div ng-show='showModal == "confirm"'>
+					<div class="modal-header">
+						<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+						<h3>Delete '{{gig.title}}'?</h3>
+					</div>
+					<div class="modal-body">
+						<p>Are you sure?</p>
+					</div>
+					<div class="modal-footer">
+						<a href="" ng-click='deleteGig(gig.gig_id)' class="btn btn-primary">Yes</a>
+						<a href="" ng-click='showModal=false' class="btn btn-default">Cancel</a>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
+</script>

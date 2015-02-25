@@ -1,11 +1,5 @@
 <?php
-$db = "";
-$dbhost = '';
-$dblogin = '';
-$dbpass = '';
-$dbname = '';
-$dbport = "3306";
-$dbsocket = "";
+require_once('config.local.php');
 
 require_once('dbaccess.php');
 

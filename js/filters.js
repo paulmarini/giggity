@@ -2,7 +2,7 @@
 
 /* Filters */
 
-var app = angular.module('myApp.filters', []);
+var app = angular.module('Giggity.filters', []);
 
 app.filter('toArray', function() { return function(obj) {
 		if (!(obj instanceof Object)) return obj;
@@ -11,7 +11,7 @@ app.filter('toArray', function() { return function(obj) {
 		});
 	}});
 
-app.filter('nlBr', function() { 
+app.filter('nlBr', function() {
 	return function(string) {
 		if (! string) { return }
 		return string.replace(/\n\n/g, '<br/>');
@@ -27,13 +27,13 @@ app.filter('memberProperty', function() {
 		var property = args[0];
 		var separator = args[1] ? args[1] : ', ';
 		var items = [];
-		$(array).each(function(i, m) { 
+		$(array).each(function(i, m) {
 			items.push(m[property]);
 		});
 		return items.join(separator);
 }});
 
-app.filter('available', function() { 
+app.filter('available', function() {
 	return function(string) {
 		if (! string) { return }
 		string = (string == 'Yes') ? 'Available' : (string == 'No' ? 'Unavailable' : string);
@@ -62,10 +62,10 @@ app.filter('availableFilter', function() {
 	return function(items, args) {
 		var filtered = [];
 		var value = args[0];
-		if(args[1] && args[1]['availability']) { 
+		if(args[1] && args[1]['availability']) {
 			var gig = args[1]['availability'];
 			$(items).each(function(i, m) {
-				if(gig[m['id']]) { 
+				if(gig[m['id']]) {
 					if (value == 'Coming' && (gig[m['id']]['available'] == 'Yes' || gig[m['id']]['available'] == 'Maybe')) {
 						filtered.push(m);
 					} else if(gig[m['id']]['available'] == value || value == '') {
@@ -73,7 +73,7 @@ app.filter('availableFilter', function() {
 					}
 				}
 			})
-			return filtered;	
+			return filtered;
 		} else { return items; }
 }});
 
@@ -81,15 +81,15 @@ app.filter('commentFilter', function() {
 	return function(items, gig) {
 		var type = 'comments';
 		var filtered = [];
-		if(gig && gig['availability']) { 
+		if(gig && gig['availability']) {
 			$(items).each(function(i, m) {
-				if(gig['availability'][m['id']]) { 
+				if(gig['availability'][m['id']]) {
 					if(gig['availability'][m['id']][type]) {
 						filtered.push(m);
 					}
 				}
 			})
-			return filtered;	
+			return filtered;
 		} else { return items; }
 }});
 
@@ -97,15 +97,15 @@ app.filter('concernFilter', function() {
 	return function(items, gig) {
 		var type = 'concerns';
 		var filtered = [];
-		if(gig && gig['availability']) { 
+		if(gig && gig['availability']) {
 			$(items).each(function(i, m) {
-				if(gig['availability'][m['id']]) { 
+				if(gig['availability'][m['id']]) {
 					if(gig['availability'][m['id']][type]) {
 						filtered.push(m);
 					}
 				}
 			})
-			return filtered;	
+			return filtered;
 		} else { return items; }
 }});
 
@@ -115,7 +115,7 @@ app.filter('member', function() {
 		return obj.name;
 }});
 
-app.filter('time', function() { 
+app.filter('time', function() {
 	return function(string) {
 		if (! string) { return null; }
 		if (string.indexOf('M') >= 0) { return string; }
@@ -126,7 +126,7 @@ app.filter('time', function() {
 		if (hours > 12) {
 			hours -= 12;
 			ampm = 'PM';
-		} else if (hours == 12) { 
+		} else if (hours == 12) {
 			ampm = 'PM';
 		} else if (hours == 0 ) {
 			hours = 12;
@@ -135,4 +135,11 @@ app.filter('time', function() {
 	}
 });
 
-
+app.filter('slice', function() {
+	return function(data, offset, limit) {
+		if (!(data instanceof Array)) {
+			return data;
+		}
+		return data.slice(offset).slice(0, limit);
+	}
+});

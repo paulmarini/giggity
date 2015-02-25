@@ -1,20 +1,20 @@
 'use strict';
 
 /* Directives */
-var app = angular.module('myApp.directives', []);
+var app = angular.module('Giggity.directives', []);
 
-app.directive('memberComments', [function() { 
+app.directive('memberComments', [function() {
 	return {
 		restrict: 'A',
 		link:function(scope, elm, attrs) {
 			var type = attrs.type ? attrs.type : 'concerns';
-			function updateConcerns(availability) { 
+			function updateConcerns(availability) {
 				if (! availability) { return; }
 				var concerns = scope.membersList;
 				var output = '';
 				$(concerns).each(function(i, m) {
 					if (availability[m.id]) {
-						if (availability[m.id][type]) { 
+						if (availability[m.id][type]) {
 							var name = m.name;
 							var detail = scope.gig.availability[m.id][type];
 							output += "<strong>"+name+"</strong>:&nbsp;&nbsp;<span>"+detail+"</span><br/>";
@@ -37,21 +37,20 @@ app.directive('fadeIn', function () {
 		link: function (scope, element, attribs) {
 			scope.$watch(attribs.fadeIn, function (value) {
 				if (value) {
-					element.fadeIn();
+					$(element).fadeIn();
 				} else {
-					element.hide(); // hide immediately; don't fade out
+					$(element).hide(); // hide immediately; don't fade out
 				}
 			});
 		}
 	};
 });
 
-
-app.directive('gigDetails', [function() { 
+app.directive('gigDetails', [function() {
 	return {
 		restrict: 'A',
 		link:function(scope, elm, attrs) {
-			function updateDetails(string) { 
+			function updateDetails(string) {
 				if (! string) { return; }
 				var output = '';
 				$(string.split('\n\n')).each( function(i, item) {
@@ -69,6 +68,7 @@ app.directive('gigDetails', [function() {
 		}
 	}
 }]);
+
 app.directive('eatClick', function() {
 	return function(scope, element, attrs) {
 		$(element).click(function(event) {
@@ -78,22 +78,48 @@ app.directive('eatClick', function() {
 	}
 });
 
-app.directive('gigStatus', [function() { 
+app.directive('feedbackButton', function($rootScope) {
+	return {
+		restrict: 'A',
+		scope: {
+			'status': '@',
+		},
+		link:function(scope, element, attribs) {
+			scope.rootScope = $rootScope;
+			element.bind('click', function(e) {
+				scope.$apply(function() {
+					scope.rootScope.remoteAction = 'pending';
+					attribs.$set('disabled', true);
+					$(element).find('.glyphicon').hide();
+					element.prepend("<span class='processing-spinner glyphicon glyphicon-refresh glyphicon-spin'></span>");
+				})
+			})
+			scope.$watch('rootScope.remoteAction', function(value, old) {
+				if (! scope.rootScope.remoteAction) {
+					attribs.$set('disabled', null);
+					$(element).find('.processing-spinner').remove();
+					$(element).find('.glyphicon').show();
+				}
+			})
+		}
+	}
+});
+
+app.directive('gigStatus', [function() {
 	return {
 		restrict: 'A',
 		link:function(scope, elm, attrs) {
-
-			function updateStatus(string) { 
+			function updateStatus(string) {
 				//var string = attrs.gigStatus;
-				var icon = 'icon-thumbs-up';
+				var icon = 'glyphicon glyphicon-thumbs-up';
 				var color = 'text-success';
 				var text = 'Approved';
-				if(string == -1) { 
-					icon = 'icon-thumbs-down';
+				if(string == -1) {
+					icon = 'glyphicon glyphicon-thumbs-down';
 					color = 'text-error';
 					text = 'Declined';
 				} else if(string == 0 ) {
-					icon = 'icon-question-sign';
+					icon = 'glyphicon glyphicon-question-sign';
 					color = 'text-warning';
 					text = 'Undecided';
 				}
@@ -107,60 +133,195 @@ app.directive('gigStatus', [function() {
 	}
 }]);
 
-app.directive('addclassonhover',
-   function() {
-      return {
-         link : function(scope, element, attrs) {
+app.directive('addclassonhover', function() {
+	return {
+  	link : function(scope, element, attrs) {
 			var classname = attrs.addclassonhover;
 			$(element).mouseenter(function() {
 				$('.'+classname).removeClass(classname);
-                element.addClass(classname);
-            });
+        element.addClass(classname);
+      });
 			$(element).mouseleave(function(e) {
 				if (e.target.nodeName == 'SELECT') { return; }
-                 element.removeClass(classname);
-            });
-       }
-   };
+      	element.removeClass(classname);
+      });
+    }
+  };
 });
 
-app.directive('timepicker',
-	function() {
-		return {
-			restrict: 'A',
-			require: '?ngModel',
-			link : function(scope, element, attrs, ngModel) {
-				if (! ngModel) { return; }
-				element.bind('blur keyup change', function() {
-					if(! scope.$$phase) {
-						scope.$apply(read);
-					}
+app.directive('editToggle', function($compile){
+	return {
+		scope: true,
+		link: function(scope, element, attrs) {
+			scope.editing = false;
+			scope.showEdit = function() {
+				scope.editing = true;
+				element.addClass('edit');
+				$(element).find('textarea').focus();
+			}
+			element.find('span').after($compile("<span ng-hide='editing' class='btn btn-default btn-xs' ng-click='showEdit()'><i class='glyphicon glyphicon-edit'></i> Edit<span>")(scope));
+			element.find('textarea').on('blur', function() {
+				scope.$apply(function() {
+					element.removeClass('edit');
+					scope.editing = false;
 				});
-				scope.$watch('gig.'+element.id, function(value, oldval) {
-					if (element.has_time) { return; }
-					element.timepicker({defaultTime:ngModel.value });
-					element.has_time = 1;
-				});
-
-				function read() {
-					ngModel.$setViewValue(element.val());
-				}
-		   }
-	   };
+			});
+		}
 	}
-);
+});
 
-app.directive('resize',
-	function ($window) {
-		return function (scope) {
-			function updateMobile() { 
-				scope.mobile = $window.innerWidth < 480;
+app.directive('loadingFeedback', function($parse) {
+	return {
+		restrict: 'A',
+		link: function(scope, element, attrs) {
+			scope.update = function(){
+				element.parent().append("<span class='label label-primary feedback' type='button'><i class='glyphicon glyphicon-refresh glyphicon glyphicon-spin'></i> Saving...</button>");
+				var action = $parse(attrs.loadingFeedback);
+				action(scope).then(function() {
+					$(element).nextAll('.feedback').remove();
+				});
+			}
+			element.on('change', scope.update);
+		}
+	}
+})
+
+app.directive('resize', function ($window) {
+	return {
+		link: function (scope) {
+			function updateMobile() {
+				scope.mobile = $window.innerWidth < 768;
 			}
 			angular.element($window).bind('resize', function () {
+				scope.$broadcast('windowResize');
 				scope.$apply(function () {
 					updateMobile();
 				});
 			});
 			updateMobile();
-		};
+		}
+	}
 });
+
+app.directive('modal', function($rootScope) {
+	return {
+		restrict: 'A',
+		templateUrl: 'modal.html',
+		link: function(scope, element, attrs) {
+			scope.setUser = function() {
+				if(scope.user && scope.user.id) {
+					scope.currentUser = scope.user.id;
+					localStorage.currentUser = scope.user.id;
+					scope.currentUserName = scope.members[scope.currentUser].name;
+					$('#login_error').hide();
+					$('#login_form').removeClass('has-error');
+					scope.showModal = false;
+				} else {
+					$('#login_form').addClass('has-error');
+					$('#login_error').show();
+				}
+			}
+
+			$('#modal').on('hidden.bs.modal', function() {
+				scope.$apply(function() { scope.showModal = false; });
+			});
+
+			scope.$watch('showModal', function(value) {
+				if (value == false) {
+					$('#modal').modal('hide');
+					$rootScope.remoteAction = false;
+				} else {
+					$('#modal').modal('show');
+					$('#modal').on('shown.bs.modal', function() {
+						$('#current_user_input').focus();
+					});
+				}
+			})
+		}
+	}
+})
+
+app.directive('timePicker', function($filter) {
+	return {
+		restrict: 'E',
+		template:
+			'<div class="input-group time-picker col-xs-5">'+
+			'<input ng-click="isOpen = false" ng-keyup="updateTime()" timepicker-options="options" class="form-control" type="text" datetime-picker="hh:mm a" now-text="Now" is-open="isOpen" enable-date="false" ng-model="time"/>'+
+			'<span ng-click="open($event)" class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>',
+		scope: {
+			model: '='
+		},
+		link: function(scope, element, attrs) {
+			scope.isOpen = false;
+			scope.options = {
+				'minuteStep': 10
+			};
+
+			var setTime = function(s) {
+				if (! s) { return; }
+				var d = new Date();
+				var parts = s.match(/(\d+):(\d+) ?(\w+)/);
+				var hours = /am/i.test(parts[3]) ? (parts[1] == 12 ? 0 : parseInt(parts[1], 10)) : parseInt(parts[1], 10) + 12;
+				var minutes = parseInt(parts[2], 10);
+
+				d.setHours(hours);
+				d.setMinutes(minutes);
+				d.setSeconds(0);
+				d.setMilliseconds(0);
+				return d;
+			}
+
+			var debounce = function(func, wait, immediate) {
+				var timeout;
+				return function() {
+					var context = this, args = arguments;
+					var later = function() {
+						timeout = null;
+						if (!immediate) func.apply(context, args);
+					};
+					var callNow = immediate && !timeout;
+					clearTimeout(timeout);
+					timeout = setTimeout(later, wait);
+					if (callNow) func.apply(context, args);
+				};
+			};
+
+			scope.updateTime = debounce(function() {
+				var time = setTime(element.find('input').val());
+				if (! scope.time || time.getTime() != scope.time.getTime()) {
+					scope.$apply(function() {
+						scope.time = time;
+					});
+				}
+			}, 500);
+
+			scope.open = function(e) {
+				e.preventDefault();
+				e.stopPropagation();
+				scope.isOpen = true;
+			}
+
+			scope.time = setTime(scope.model);
+
+			scope.$watch('model', function(v, o) {
+				if (v != o) {
+					var time = setTime(scope.model);
+					if (scope.time != time) {
+						scope.time = time;
+					}
+				}
+			})
+
+			scope.$watch('time', function(v, o) {
+				if (v != o && v) {
+					// console.log(scope.model, v, o)
+					var time = $filter('time')(v.getHours() + ':'+(v.getMinutes() <10 ? '0'+ v.getMinutes() : v.getMinutes()));
+					if (time != scope.model) {
+						// console.log('ho!', scope.model, time);
+						scope.model = time
+					}
+				}
+			})
+		}
+	}
+})
