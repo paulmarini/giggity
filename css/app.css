@@ -18,7 +18,8 @@ ul.navbar-nav {margin-right: 0px; }
 /*.navbar .nav li a { padding: 10px 0px; background-image: linear-gradient(to bottom,#222,#111); }*/
 /*.navbar-brand { padding-left: 0px; }*/
 #availableCounts h4 {margin: 0px; }
-.page-header { margin-bottom: 5px; margin-top: 10px; overflow: auto; }
+.page-header { margin-bottom: 5px; margin-top: 0px; overflow: auto; }
+.page-header h1 { margin-top: 0px; }
 .gig_list_edit { display: inline; visibility: hidden; }
 .active .gig_list_edit, .nav tr:hover .gig_list_edit { visibility: visible;}
 /*#gig_list .approve_icon { color: #444; }*/
@@ -30,7 +31,7 @@ html, body {height: 100%; margin:0px; padding:0px;}
 #nav { padding: 0px; }
 #list_container { padding: 0px 10px;}
 
-.tab-content .form-horizontal, .rehearsal-form, .band-availability { max-width: 600px; margin: 0px; padding-top: 10px}
+.tab-content .form-horizontal, .rehearsal-container, .band-availability { max-width: 600px; margin: 0px; padding-top: 10px}
 .rehearsal-form .bg-danger { padding: 15px; }
 .tab-content { padding-top: 0px !important; }
 #gig_details_list { margin-top: 0px; }
@@ -167,18 +168,22 @@ float: right!important;
 }
 .navbar-header { float: left; }
 
-#nav {
+.scroll-container, .gig-form>div {
 	display: flex;
 	flex-flow: column;
-}
+	min-height: 0px;
 
-.navbar {
-	flex: 0 1 auto;
+}
+.scroll-body, .tab-content {
+	flex: 1 1 auto;
+	overflow: auto;
+	min-height: 0px;
+}
+.scroll-header, .nav-tabs {
+	flex: 0 0 auto;
 }
 
 #list_container {
-	flex: 1 1 auto;
-	overflow: auto;
 	display: block;
 }
 
