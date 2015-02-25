@@ -22,8 +22,8 @@
 						<a class="dropdown-toggle" href='' data-toggle="dropdown"><i class='glyphicon glyphicon-cog'></i></a>
 						<ul class='dropdown-menu'>
 							<li>
-								<div class='checkbox'>
-									<label> <input type='checkbox' ng-model='fetchAllGigs'> Show All Gigs</label>
+								<div style='padding: 0px 10px;' class='checkbox'>
+									<label> <input type='checkbox' ng-model='fetchAllGigs'> Show Past Gigs</label>
 								</div>
 							</li>
 						</ul>
@@ -44,7 +44,7 @@
 				</tr>
 				<tr>
 					<td colspan='3' class='text-center' ng-show='Gigs.gigsList.length > gigLimit'>
-						<pagination class="pagination-sm" ng-model='page' items-per-page='gigLimit' max-size='5' total-items='Gigs.gigsList.length'></pagination>
+						<pagination class="pagination-sm" ng-model='page' items-per-page='gigLimit' max-size='7' boundary-links='true' total-items='Gigs.gigsList.length'></pagination>
 					</td>
 				</tr>
 				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
