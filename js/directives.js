@@ -241,87 +241,124 @@ app.directive('modal', function($rootScope) {
 	}
 })
 
-app.directive('timePicker', function($filter) {
+app.directive('datePicker', function() {
 	return {
 		restrict: 'E',
 		template:
-			'<div class="input-group time-picker col-xs-5">'+
-			'<input ng-click="isOpen = false" ng-keyup="updateTime()" timepicker-options="options" class="form-control" type="text" datetime-picker="hh:mm a" now-text="Now" is-open="isOpen" enable-date="false" ng-model="time"/>'+
-			'<span ng-click="open($event)" class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>',
+			'<div class="input-group date-picker">'+
+			'<input class="form-control" ng-model="model" use-native="true" data-model-date-format="yyyy-MM-dd" data-date-format="MM/dd/yyyy" data-date-type="string" data-autoclose="1" bs-datepicker type="text">'+
+			'<span ng-click="focus()" class="input-group-addon"><i class="glyphicon glyphicon-calendar"></i></span></div>',
 		scope: {
 			model: '='
 		},
 		link: function(scope, element, attrs) {
-			scope.isOpen = false;
-			scope.options = {
-				'minuteStep': 10
-			};
-
-			var setTime = function(s) {
-				if (! s) { return; }
-				var d = new Date();
-				var parts = s.match(/(\d+):(\d+) ?(\w+)/);
-				var hours = /am/i.test(parts[3]) ? (parts[1] == 12 ? 0 : parseInt(parts[1], 10)) : parseInt(parts[1], 10) + 12;
-				var minutes = parseInt(parts[2], 10);
-
-				d.setHours(hours);
-				d.setMinutes(minutes);
-				d.setSeconds(0);
-				d.setMilliseconds(0);
-				return d;
+			scope.focus = function() {
+				$(element).find('input').focus();
 			}
-
-			var debounce = function(func, wait, immediate) {
-				var timeout;
-				return function() {
-					var context = this, args = arguments;
-					var later = function() {
-						timeout = null;
-						if (!immediate) func.apply(context, args);
-					};
-					var callNow = immediate && !timeout;
-					clearTimeout(timeout);
-					timeout = setTimeout(later, wait);
-					if (callNow) func.apply(context, args);
-				};
-			};
-
-			scope.updateTime = debounce(function() {
-				var time = setTime(element.find('input').val());
-				if (! scope.time || time.getTime() != scope.time.getTime()) {
-					scope.$apply(function() {
-						scope.time = time;
-					});
-				}
-			}, 500);
-
-			scope.open = function(e) {
-				e.preventDefault();
-				e.stopPropagation();
-				scope.isOpen = true;
-			}
-
-			scope.time = setTime(scope.model);
-
-			scope.$watch('model', function(v, o) {
-				if (v != o) {
-					var time = setTime(scope.model);
-					if (scope.time != time) {
-						scope.time = time;
-					}
-				}
-			})
-
-			scope.$watch('time', function(v, o) {
-				if (v != o && v) {
-					// console.log(scope.model, v, o)
-					var time = $filter('time')(v.getHours() + ':'+(v.getMinutes() <10 ? '0'+ v.getMinutes() : v.getMinutes()));
-					if (time != scope.model) {
-						// console.log('ho!', scope.model, time);
-						scope.model = time
-					}
-				}
-			})
 		}
 	}
-})
+});
+
+app.directive('timePicker', function() {
+	return {
+		restrict: 'E',
+		template:
+			'<div class="input-group time-picker col-xs-5">'+
+			'<input class="form-control" size="8" ng-model="model" use-native="true" data-time-type="string" data-autoclose="1" bs-timepicker data-model-time-format="hh:mm a" data-time-format="h:mm a" data-length="1" data-minute-step="1" data-arrow-behavior="picker" type="text">'+
+			'<span ng-click="focus()" class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>',
+		scope: {
+			model: '='
+		},
+		link: function(scope, element, attrs) {
+			scope.focus = function() {
+				$(element).find('input').focus();
+			}
+		}
+	}
+});
+
+//This was craziness for another timepicker directive, replaced by above.
+// app.directive('timePicker', function($filter, $timeout) {
+// 	return {
+// 		restrict: 'E',
+// 		template:
+// 			'<div class="input-group time-picker col-xs-5">'+
+// 			'<input ng-click="isOpen = false" ng-keyup="updateTime()" timepicker-options="options" class="form-control" type="text" datetime-picker="hh:mm a" now-text="Now" is-open="isOpen" enable-date="false" ng-model="time"/>'+
+// 			'<span ng-click="open($event)" class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>',
+// 		scope: {
+// 			model: '='
+// 		},
+// 		link: function(scope, element, attrs) {
+// 			scope.isOpen = false;
+// 			scope.options = {
+// 				'minuteStep': 10
+// 			};
+//
+// 			var setTime = function(s) {
+// 				if (! s) { return; }
+// 				var d = new Date();
+// 				var parts = s.match(/(\d+):(\d+) ?(\w+)/);
+// 				var hours = /am/i.test(parts[3]) ? (parts[1] == 12 ? 0 : parseInt(parts[1], 10)) : parseInt(parts[1], 10) + 12;
+// 				var minutes = parseInt(parts[2], 10);
+//
+// 				d.setHours(hours);
+// 				d.setMinutes(minutes);
+// 				d.setSeconds(0);
+// 				d.setMilliseconds(0);
+// 				return d;
+// 			}
+//
+// 			var debounce = function(func, wait, immediate) {
+// 				var timeout;
+// 				return function() {
+// 					var context = this, args = arguments;
+// 					var later = function() {
+// 						timeout = null;
+// 						if (!immediate) func.apply(context, args);
+// 					};
+// 					var callNow = immediate && !timeout;
+// 					clearTimeout(timeout);
+// 					timeout = setTimeout(later, wait);
+// 					if (callNow) func.apply(context, args);
+// 				};
+// 			};
+//
+// 			scope.updateTime = debounce(function() {
+// 				var time = setTime(element.find('input').val());
+// 				if (! scope.time || time.getTime() != scope.time.getTime()) {
+// 					scope.$apply(function() {
+// 						scope.time = time;
+// 					});
+// 				}
+// 			}, 500);
+//
+// 			scope.open = function(e) {
+// 				e.preventDefault();
+// 				e.stopPropagation();
+// 				scope.isOpen = true;
+// 			}
+//
+// 			scope.time = setTime(scope.model);
+//
+// 			scope.$watch('model', function(v, o) {
+// 				if (v != o) {
+// 					var time = setTime(scope.model);
+// 					if (scope.time != time) {
+// 						scope.time = time;
+// 					}
+// 				}
+// 			})
+//
+// 			scope.$watch('time', function(v, o) {
+// 				if (v != o && v) {
+// 					// console.log(scope.model, v, o)
+// 					var time = $filter('time')(v.getHours() + ':'+(v.getMinutes() <10 ? '0'+ v.getMinutes() : v.getMinutes()));
+// 					if (time != scope.model) {
+// 						// console.log('ho!', scope.model, time);
+// 						scope.model = time
+// 					}
+// 				}
+// 			})
+// 		}
+// 	}
+// })

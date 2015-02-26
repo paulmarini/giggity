@@ -161,12 +161,14 @@
 						</div>
 						<div class='form-group'>
 							<label class='col-md-4 control-label text-right' for='date'>Date</label>
-							<div class='col-md-8'><input class='form-control' type='date' ng-model='gig.date'/></div>
+							<div class='col-md-8'>
+								<date-picker model='gig.date'></date-picker>
+							</div>
 						</div>
 						<div class='form-group'>
 							<label class="col-md-4 control-label text-right">Time</label>
 							<div class='col-md-8'>
-								<time-picker model="gig.band_start"></time-picker>
+								<time-picker model='gig.band_start'></time-picker>
 								<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
 								<time-picker model="gig.band_end"></time-picker>
 							</div>
@@ -370,7 +372,9 @@
 							</div>
 							<div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='date'>Date</label>
-								<div class='col-md-8'><input class='form-control' type='date' ng-model='gig.date'/></div>
+								<div class='col-md-8'>
+									<date-picker model="gig.date"></date-picker>
+								</div>
 							</div>
 							<div class='form-group'>
 								<label class="col-md-4 control-label text-right">Event Time</label>
@@ -378,16 +382,6 @@
 									<time-picker model="gig.start_time"></time-picker>
 									<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
 									<time-picker model="gig.end_time"></time-picker>
-
-									<!-- <span class='bootstrap-timepicker input-append'>
-									<input class='form-control input-sm' type='text' id='start_time' timepicker ng-model='gig.start_time'/>
-									<span class="add-on"><i class="glyphicon glyphicon-time"></i></span>
-									</span>
-									<span class='bootstrap-timepicker input-append'>
-									<label for='end_time'>To</label>
-									<input class='form-control input-sm' type='text' id='end_time' timepicker ng-model='gig.end_time'/>
-									<span class="add-on"><i class="glyphicon glyphicon-time"></i></span>
-									</span> -->
 								</div>
 							</div>
 							<div class='form-group'>
