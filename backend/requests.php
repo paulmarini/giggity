@@ -67,7 +67,7 @@ function getGigTextDescription($gig, $type='email') {
 			$label = str_replace('_', ' ', strtoupper($key));
 			if ($gig['type'] != 'gig') {
 				if (! in_array($key, array('location', 'tactical', "who's_coming", 'notes'))) { continue; }
-				if ($key == 'tactical') { $label = 'Facilitator'; }
+				if ($key == 'tactical') { $label = 'FACILITATOR'; }
 			}
 			$gig_details .= "$label: $gig[$key]\n\n";
 		}
@@ -248,6 +248,9 @@ function saveToCalendar($gig, $calendartype='private') {
 				$prefix = 'Declined';
 			}
 			$title = "$prefix: $title";
+		} else {
+			$members = gigs_fetchMembers();
+			$title .= ": ".$members[$gig['tactical']]['name'];
 		}
 		$gig_details = getGigTextDescription($gig, 'calendar');
 		if (! $gig[$start_field]) { $start_field = 'band_start'; }
