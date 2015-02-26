@@ -4,14 +4,18 @@ var filter = require('gulp-filter');
 var bower  = require('bower-files')();
 var inject = require("gulp-inject");
 var series = require('stream-series');
+var uglify = require('gulp-uglify');
+var minifyCSS = require('gulp-minify-css');
 
 gulp.task('bower', function(){
   gulp.src(bower.ext('js').files)
     .pipe(concat('third-party.js'))
+    .pipe(uglify())
     .pipe(gulp.dest('./lib'))
 
   gulp.src(bower.ext('css').files)
     .pipe(concat('third-party.css'))
+    .pipe(minifyCSS())
     .pipe(gulp.dest('./lib'))
 
 console.log(bower.files);
