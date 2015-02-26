@@ -227,6 +227,7 @@ function setResponse($statusCode, $statusString, $data="") {
 
 function handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	global $debug;
+	$debug = 1;
 	$data = array();
 	if ($debug) { $errstr = "'$errstr' in file $errfile line $errline "; } //(".print_r($errcontext, 1).")"; }
 	setResponse($errno, "$errstr", $data);
