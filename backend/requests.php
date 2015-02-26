@@ -258,7 +258,7 @@ function saveToCalendar($gig, $calendartype='private') {
 				$prefix = 'Declined';
 			}
 			$title = "$prefix: $title";
-		} else {
+		} else if ($gig['tactical']) {
 			$members = gigs_fetchMembers();
 			$title .= ": ".$members[$gig['tactical']]['name'];
 		}
