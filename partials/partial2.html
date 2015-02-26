@@ -231,8 +231,8 @@
 										</select>
 									</div>
 								</dd>
-								<dt>Your Concerns</dt>
-								<dd id='user_concerns' class='user_gig_details' edit-toggle>
+								<dt ng-hide='gig.approved==0'>Your Concerns</dt>
+								<dd ng-hide='gig.approved==0' id='user_concerns' class='user_gig_details' edit-toggle>
 									<textarea class='form-control user_gig_details_edit' id='user_concerns_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].concerns' placeholder="Do you have concerns about the BLO supporting this gig?" loading-feedback='setAvailability()'></textarea>
 									<apan class='user_gig_details_none'>{{gig.availability[currentUser].concerns || 'None' }}</span>
 								</dd>
