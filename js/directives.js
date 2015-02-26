@@ -203,7 +203,7 @@ app.directive('resize', function ($window) {
 	}
 });
 
-app.directive('modal', function($rootScope) {
+app.directive('modal', function($rootScope, Gigs) {
 	return {
 		restrict: 'A',
 		templateUrl: 'modal.html',
@@ -216,6 +216,7 @@ app.directive('modal', function($rootScope) {
 					$('#login_error').hide();
 					$('#login_form').removeClass('has-error');
 					scope.showModal = false;
+					scope.fetchGigs();
 				} else {
 					$('#login_form').addClass('has-error');
 					$('#login_error').show();

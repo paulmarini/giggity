@@ -27,8 +27,8 @@ app.service('Gigs', function(Requests, $filter) {
 	service.updateGigsList = function() {
 		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), 'date');
 	}
-	service.fetchGigs = function(fetchAllGigs) {
-		return Requests.fetch('fetchGigs', {fetchAllGigs: fetchAllGigs}).then(function(data) {
+	service.fetchGigs = function(user_id, fetchAllGigs) {
+		return Requests.fetch('fetchGigs', {fetchAllGigs: fetchAllGigs, user_id: user_id}).then(function(data) {
 			service.gigs = data;
 			service.updateGigsList();
 		});
@@ -52,6 +52,7 @@ app.service('Requests', function($http, $rootScope) {
 				statusString = response.statusString;
 			}
 			$('#status').html(message+": "+statusString).removeClass().addClass('alert alert-danger').show();
+			$rootScope.app_loaded = true;
 			return;
 		} else {
 			$('#status').hide();

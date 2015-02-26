@@ -142,7 +142,9 @@ function gigs_fetchGigs($request) {
 		$where = " and date > DATE_SUB(NOW(), INTERVAL 1 DAY) ";
 	}
 	$gigs = dbLookupArray("select gig_id, approved, title, date, type from gigs where deleted = 0 $where order by date desc, band_start desc");
-	$gigs = fetchAvailability($gigs);
+	if (isset($request['user_id'])) {
+		$gigs = fetchAvailability($gigs, $request['user_id']);
+	}
 	return $gigs;
 }
 
@@ -158,12 +160,19 @@ function gigs_fetchGig($request) {
 	return $gig[0];
 }
 
-function fetchAvailability($gigs) {
+function fetchAvailability($gigs, $user=false) {
 	global $addressbook_table;
 	if ($gigs) {
 		$where = " and a.gig_id in(".implode(',', array_keys($gigs)).")";
-
-		$availability = dbLookupArray("select concat(a.gig_id, '_', b.id) as a_id, a.gig_id, b.id as member_id,concat(b.firstname, ' ', b.lastname) as name,  d.available, d.comments, d.concerns, d.other from gigs a join $addressbook_table.addressbook b join $addressbook_table.address_in_groups c using(id) left join gigs_availability d on a.gig_id = d.gig_id and b.id = d.member_id where deleted=0 and group_id in( 3,10) $where");
+		if ($user) {
+			$where .= " and b.id = ".dbEscape($user);
+		}
+		$availability = dbLookupArray("select concat(a.gig_id, '_', b.id) as a_id, a.gig_id, b.id as member_id,concat(b.firstname, ' ', b.lastname) as name,  d.available, d.comments, d.concerns, d.other
+		from gigs a
+		join $addressbook_table.addressbook b
+		join $addressbook_table.address_in_groups c using(id)
+		left join gigs_availability d on a.gig_id = d.gig_id and b.id = d.member_id
+		where deleted=0 and group_id in( 3,10) $where");
 		foreach($availability as $av) {
 			$gig = &$gigs[$av['gig_id']];
 			if(! isset($gig['availability'])) { $gig['availability'] = array(); }

@@ -111,6 +111,9 @@ angular.module('Giggity.controllers', [])
 				$scope.setGig(gig);
 			})
 		}
+    $scope.fetchGigs = function() {
+      return $scope.Gigs.fetchGigs($scope.currentUser, $scope.fetchAllGigs);
+    }
 
 		$scope.newGig = function() {
 			$scope.gig = {title:'New Gig', availability: {}};
@@ -174,7 +177,7 @@ angular.module('Giggity.controllers', [])
 		if (! $scope.currentUser) { $scope.changeUser(); }
     $scope.$watch('fetchAllGigs', function(v, o) {
       if (v != o) {
-        $scope.Gigs.fetchGigs($scope.fetchAllGigs);
+        $scope.fetchGigs();
       }
     })
 
@@ -183,7 +186,7 @@ angular.module('Giggity.controllers', [])
       $scope.membersList = Members.membersList;
       if ($scope.members) {
         $scope.currentUserName = $scope.members[$scope.currentUser] ? $scope.members[$scope.currentUser].name : '';
-        $scope.Gigs.fetchGigs().then(function(){
+        $scope.fetchGigs().then(function(){
           if ($scope.Gigs.gigsList.length) {
             if ($routeParams.action && $routeParams.gig_id && $scope.currentUser) {
               $scope.Gigs.gigs[$routeParams.gig_id].availability[$scope.currentUser].available = $routeParams.action;

@@ -1,7 +1,7 @@
 <!--
 -->
 <div class='alert'style='display:none;' id='status'></div>
-<div id='content' class='{{mobileView}}' ng-class="{mobile:mobile}">
+<div id='content' class='{{mobileView}}' ng-class="{'mobile scroll-container':mobile}">
 	<div class='well well-small scroll-container' ng-class='{"col-sm-4": !mobile}' id='nav' >
 		<nav class="navbar navbar-inverse scroll-header">
 			<div class="container-fluid">
@@ -77,7 +77,7 @@
 			</tbody>
 		</table>
 	</div>
-	<div class='mobile-nav navbar-inverse navbar-static-top container-fluid'>
+	<div class='mobile-nav navbar-inverse navbar-static-top container-fluid scroll-header'>
 		<div class='navbar-inner text-center row'>
 			<i class='glyphicon glyphicon-menu-hamburger' id='mobile_nav_link' ng-click="setView(true)"></i>
 			<h3 class='navbar-text'>{{gig.title}}</h3>

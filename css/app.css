@@ -85,9 +85,27 @@ html, body {height: 100%; margin:0px; padding:0px;}
 h1 { font-size: 30px; line-height: 1; }
 h1 small { font-size: 20px; }
 .mobile-nav { display: none; }
-/*@media (max-width: 767px) {
-	#nav { height: 200px; }
-}*/
+
+
+.scroll-container, .gig-form>div {
+	display: flex;
+	flex-flow: column;
+	min-height: 0px;
+
+}
+.scroll-body, .tab-content {
+	flex: 1 1 auto;
+	overflow: auto;
+	min-height: 0px;
+}
+.scroll-header, .nav-tabs {
+	flex: 0 0 auto;
+}
+
+#list_container {
+	display: block;
+}
+
 @media (max-width: 768px) {
 	#nav { height: 100%; }
 	.mobile-nav { display: block; z-index: 100; }
@@ -122,6 +140,24 @@ h1 small { font-size: 20px; }
 	.mobile_nav_arrow { font-size: 2em; padding-top: 7px; color: #CCC;}
   .mobile-nav-controls { position: absolute; bottom: 5px; left: 5px; right: 5px; margin: 0px;}
   .mobile-nav-date { margin-bottom: 5px; }
+
+	.tab-content {
+		overflow: visible;
+	}
+	/*.scroll-container, .gig-form>div {
+		display: block;
+		flex-flow: initial;
+		min-height: 0px;
+
+	}
+	.scroll-body, .tab-content {
+		flex: initial;
+		overflow: initial;
+		min-height: 0px;
+	}
+	.scroll-header, .nav-tabs {
+		flex: initial;
+	}*/
  }
 
 
@@ -167,25 +203,6 @@ float: left !important;
 float: right!important;
 }
 .navbar-header { float: left; }
-
-.scroll-container, .gig-form>div {
-	display: flex;
-	flex-flow: column;
-	min-height: 0px;
-
-}
-.scroll-body, .tab-content {
-	flex: 1 1 auto;
-	overflow: auto;
-	min-height: 0px;
-}
-.scroll-header, .nav-tabs {
-	flex: 0 0 auto;
-}
-
-#list_container {
-	display: block;
-}
 
 .glyphicon-spin{
 		-webkit-transform-origin: 50% 50%;
