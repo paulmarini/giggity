@@ -22,6 +22,12 @@ angular.module('Giggity', ['Giggity.filters', 'Giggity.services', 'Giggity.direc
 
   }])
   .run(['$route', '$rootScope', '$location', function ($route, $rootScope, $location) {
+      var params = $location.search();
+      if (params.gig_id) {
+        $location.path('/gigs/'+params.gig_id);
+        $location.search('gig_id', null);
+      }
+
       var original = $location.path;
       $location.path = function (path, reload) {
           if (reload === false) {
