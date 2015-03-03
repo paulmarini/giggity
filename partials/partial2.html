@@ -404,43 +404,47 @@
 					</tab>
 					<tab heading='Availability' class='tab-pane' id='availability' active="tab['availability']">
 						<div class='band-availability'>
-							<fieldset class='form-inline well well-small'>
-									<span class='col-xs-6'>
-										<label for='name_filter'>Name:</label>
-										<input name='name_filter' autocomplete='off' style='margin-right: 20px;' class='form-control input-sm' type='text' ng-model='membernamefilter'/>
-									</span>
-									<span class='col-xs-6'>
-										<label for='availability_filter'>Availability:</label>
-										<select name='availability_filter' class='form-control input-sm' ng-model='memberavailablefilter' id='member_availability_filter'>
-											<option value='' data-icon='glyphicon glyphicon-smile'>All</option>
-											<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
-											<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
-											<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
-											<option data-icon='glyphicon glyphicon-question'>Unknown</option>
-										</select>
-									</span>
-							</fieldset>
-							<ul class='list-group'>
-								<li ng-class="{
-										'list-group-item-success': gig.availability[member.id].available == 'Yes',
-										'list-group-item-warning': gig.availability[member.id].available == 'Maybe',
-										'list-group-item-danger': gig.availability[member.id].available == 'No'
-									}" class='list-group-item' ng-repeat="member in membersList | filter:{name:membernamefilter} | availableFilter:[memberavailablefilter, gig]" id="availability_{{member.id}}">
-									<div class='row'>
-										<span class='col-xs-5'>
-											{{member.name}} <small ng-style="{display: mobile ? 'block': ''}">({{member.groups}})</small>
+							<div class='panel panel-default'>
+								<div class='panel-heading'>
+									<div class='row form-inline text-center'>
+										<span class='col-xs-6'>
+											<label for='name_filter'>Name:</label>
+											<input name='name_filter' autocomplete='off' style='margin-right: 20px;' class='form-control input-sm' type='text' ng-model='membernamefilter'/>
 										</span>
-										<span class='col-xs-7'>
-											<div class="btn-group btn-group" ng-class='{"btn-group-xs": mobile}' ng-click='update()' loading-feedback="setAvailability({{member.id}})">
-													<label class="btn btn-default" ng-class="{'btn-success': gig.availability[member.id].available == 'Yes'}" ng-model="gig.availability[member.id].available" btn-radio="'Yes'">Yes</label>
-													<label class="btn btn-default" ng-class="{'btn-warning': gig.availability[member.id].available == 'Maybe'}" ng-model="gig.availability[member.id].available" btn-radio="'Maybe'">Maybe</label>
-													<label class="btn btn-default" ng-class="{'btn-danger': gig.availability[member.id].available == 'No'}" ng-model="gig.availability[member.id].available" btn-radio="'No'">No</label>
-													<label class="btn btn-default" ng-model="gig.availability[member.id].available" btn-radio="'Unknown'">Unknown</label>
-											</div>
+										<span class='col-xs-6'>
+											<label for='availability_filter'>Availability:</label>
+											<select name='availability_filter' class='form-control input-sm' ng-model='memberavailablefilter' id='member_availability_filter'>
+												<option value='' data-icon='glyphicon glyphicon-smile'>All</option>
+												<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+												<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+												<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+												<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+											</select>
 										</span>
 									</div>
-								</li>
-							</ul>
+								</div>
+								<ul class='list-group'>
+									<li ng-class="{
+											'list-group-item-success': gig.availability[member.id].available == 'Yes',
+											'list-group-item-warning': gig.availability[member.id].available == 'Maybe',
+											'list-group-item-danger': gig.availability[member.id].available == 'No'
+										}" class='list-group-item' ng-repeat="member in membersList | filter:{name:membernamefilter} | availableFilter:[memberavailablefilter, gig]" id="availability_{{member.id}}">
+										<div class='row'>
+											<span class='col-xs-5'>
+												{{member.name}} <small ng-style="{display: mobile ? 'block': ''}">({{member.groups}})</small>
+											</span>
+											<span class='col-xs-7'>
+												<div class="btn-group btn-group" ng-class='{"btn-group-xs": mobile}' ng-click='update()' loading-feedback="setAvailability({{member.id}})">
+														<label class="btn btn-default" ng-class="{'btn-success': gig.availability[member.id].available == 'Yes'}" ng-model="gig.availability[member.id].available" btn-radio="'Yes'">Yes</label>
+														<label class="btn btn-default" ng-class="{'btn-warning': gig.availability[member.id].available == 'Maybe'}" ng-model="gig.availability[member.id].available" btn-radio="'Maybe'">Maybe</label>
+														<label class="btn btn-default" ng-class="{'btn-danger': gig.availability[member.id].available == 'No'}" ng-model="gig.availability[member.id].available" btn-radio="'No'">No</label>
+														<label class="btn btn-default" ng-model="gig.availability[member.id].available" btn-radio="'Unknown'">Unknown</label>
+												</div>
+											</span>
+										</div>
+									</li>
+								</ul>
+							</div>
 						</div>
 					</tab>
 				</tabset>
