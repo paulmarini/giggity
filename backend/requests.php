@@ -55,7 +55,7 @@ function getGigTextDescription($gig, $type='email') {
 	#$url = preg_replace('/backend\/requests.php/', "#/gigs/$gig[gig_id]", "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 	if($type == 'email') {
-		foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'who', 'contact') as $key) {
+		foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'who', 'contact', 'url') as $key) {
 			$gig_details .= str_replace('_', ' ', strtoupper($key)).": $gig[$key]\n\n";
 		}
 		$gig_details.="---=== DETAILS ===---\n\n$gig[details]";
@@ -80,7 +80,7 @@ function getGigTextDescription($gig, $type='email') {
 			$gig_details .= "$label: $gig[$key]\n\n";
 		}
 		if ($gig['type'] == 'gig') {
-			$gig_details.="---=== DETAILS ===---\n\nDESCRIPTION: $gig[description]\n\nWHO: $gig[who]\n\nCONTACT: $gig[contact]\n\n$gig[details]";
+			$gig_details.="---=== DETAILS ===---\n\nDESCRIPTION: $gig[description]\n\nWHO: $gig[who]\n\nCONTACT: $gig[contact]\n\nURL: $gig[url]\n\n$gig[details]";
 		}
 	}
 
@@ -384,7 +384,7 @@ function sendEmails($gig) {
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
 	foreach($emails as $email_address) {
-		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\n");
+		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n;");
 	}
 }
 

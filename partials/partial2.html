@@ -305,6 +305,8 @@
 								<dd class='clearfix'>{{ gig.who}}&nbsp; </dd>
 								<dt>Contact</dt>
 								<dd class='clearfix' ng-bind-html="gig.contact | linky"></dd>
+								<dt>URL</dt>
+								<dd class='clearfix' ng-bind-html="gig.url | linky"></dd>
 								<div gig-details='1'></div>
 								<!--</div>-->
 
@@ -404,6 +406,10 @@
 							<div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='description'>Description</label>
 								<div class='col-md-8'><textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.description'></textarea></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='url'>URL</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.url'/></div>
 							</div>
 							<div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='who'>Organizer</label>
