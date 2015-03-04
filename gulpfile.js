@@ -11,6 +11,7 @@ var del 				= require('del');
 var ngAnnotate 	= require('gulp-ng-annotate');
 var templates 	= require('gulp-angular-templates');
 var gulpMerge 	= require('gulp-merge');
+var git 				= require('gulp-git');
 
 gulp.task('clean', function(cb){
 	del.sync(['lib/*', 'fonts/*']);
@@ -74,4 +75,7 @@ gulp.task('dev', function() {
 		.pipe(gulp.dest(''));
 });
 
-gulp.task('default', ['index']);
+gulp.task('default', ['index'], function() {
+	return gulp.src('./lib/')
+		.pipe(git.add());
+});
