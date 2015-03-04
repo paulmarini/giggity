@@ -33,6 +33,8 @@ app.service('Gigs', function(Requests, $filter) {
 			service.updateGigsList();
 		});
 	}
+	var user = localStorage.currentUser || null
+	service.fetchGigs(user, false);
 
 	return service;
 });
