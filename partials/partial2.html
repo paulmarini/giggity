@@ -251,9 +251,23 @@
 							<dt>Where</dt>
 							<dd class='clearfix'>{{ gig.location}} <span ng-show='gig.location'>[<small><a href='http://maps.google.com?q={{gig.location | URIencode }}' target='map'><i class='glyphicon glyphicon-map-marker'></i>Map</a></small>]</span>&nbsp; </dd>
 							<dt>Tactical</dt>
-							<dd class='clearfix'><a href='mailto:{{gig.tactical.email}}'>{{ gig.tactical.name }}</a>&nbsp; </dd>
+							<dd class='clearfix'>
+								{{gig.tactical.name}} &nbsp;
+								<span ng-show='gig.tactical'>
+									<a class='btn btn-info btn-xs' href='mailto:{{gig.tactical.email}}'>Email</a>
+									<a class='btn btn-info btn-xs' href='smsto:{{gig.tactical.phone}}'>Text</a>
+									<a class='btn btn-info btn-xs' href='tel:{{gig.tactical.phone}}'>Call</a>
+								</span>
+							</dd>
 							<dt>Musical</dt>
-							<dd class='clearfix'><a href='mailto:{{gig.musical.email}}'>{{ gig.musical.name }}</a>&nbsp; </dd>
+							<dd class='clearfix'>
+								{{ gig.musical.name }} &nbsp;
+								<span ng-show='gig.musical'>
+									<a class='btn btn-info btn-xs' href='mailto:{{gig.musical.email}}'>Email</a>
+									<a class='btn btn-info btn-xs' href='sms:{{gig.musical.phone}}'>Text</a>
+									<a class='btn btn-info btn-xs' href='tel:{{gig.musical.phone}}'>Call</a>
+								</span>
+							</dd>
 							<dt>Colors</dt>
 							<dd class='clearfix'>{{ gig.colors}}&nbsp; </dd>
 							<dt>Who's Coming</dt>
@@ -261,8 +275,11 @@
 									<strong>Yeses:</strong> {{(membersList | availableFilter:['Yes', gig] | memberProperty:['name'])}}
 									<br/><strong>Maybes:</strong> {{(membersList |  availableFilter:['Maybe', gig] |  memberProperty:['name'])}}
 									<br/><strong>Noes:</strong> {{(membersList |  availableFilter:['No', gig] |  memberProperty:['name'])}}
-									<br/>Contact Yeses and Maybes: <a href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a> |
-									<a href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
+									<br/>Contact Yeses and Maybes:
+									<span ng-show='gig.tactical'>
+										<a class='btn btn-info btn-xs' href="mailto:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['email', ';'])}}">Email</a>
+										<a class='btn btn-info btn-xs' href="sms:{{(membersList | availableFilter:['Coming', gig] | memberProperty:['phone'])}}">Text</a>
+									</span>
 								</dd>
 
 							<dt>Notes</dt>
