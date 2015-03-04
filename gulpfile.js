@@ -1,14 +1,16 @@
-var gulp   = require('gulp');
-var concat = require('gulp-concat');
-var filter = require('gulp-filter');
-var bower  = require('bower-files')();
-var inject = require("gulp-inject");
-var series = require('stream-series');
-var uglify = require('gulp-uglify');
-var minifyCSS = require('gulp-minify-css');
-var rev = require('gulp-rev');
-var del = require('del');
-var ngAnnotate = require('gulp-ng-annotate');
+var gulp   			= require('gulp');
+var concat 			= require('gulp-concat');
+var filter 			= require('gulp-filter');
+var bower  			= require('bower-files')();
+var inject		 	= require("gulp-inject");
+var series 			= require('stream-series');
+var uglify 			= require('gulp-uglify');
+var minifyCSS 	= require('gulp-minify-css');
+var rev 				= require('gulp-rev');
+var del 				= require('del');
+var ngAnnotate 	= require('gulp-ng-annotate');
+var templates 	= require('gulp-angular-templates');
+var gulpMerge 	= require('gulp-merge');
 
 gulp.task('clean', function(cb){
 	del.sync(['lib/*', 'fonts/*']);
@@ -16,8 +18,6 @@ gulp.task('clean', function(cb){
 });
 
 gulp.task('bower', ['clean'], function(cb){
-	console.log('start');
-
   var libjs = gulp.src(bower.ext('js').files)
     .pipe(concat('third-party.js'))
     .pipe(uglify())
@@ -33,9 +33,14 @@ gulp.task('bower', ['clean'], function(cb){
   var fonts = gulp.src(bower.ext(['eot', 'woff', 'woff2', 'ttf', 'svg']).files)
     .pipe(gulp.dest('./fonts'))
 
-	console.log(bower.files);
+	// console.log(bower.files);
+	var partials = gulp.src('partials/*.html')
+		.pipe(templates({module:'Giggity', basePath: 'partials/'}))
 
-	var appjs = gulp.src(['./js/*.js'])
+	var appjs = gulpMerge(
+			gulp.src(['./js/*.js']),
+			partials
+		)
 		.pipe(concat('app.js'))
 		.pipe(ngAnnotate())
 		.pipe(uglify())
@@ -48,7 +53,6 @@ gulp.task('bower', ['clean'], function(cb){
 		.pipe(rev())
 		.pipe(gulp.dest('./lib'))
 
-		console.log('end');
 	return series(libjs, libcss, fonts, appjs, appcss);
 
 });
@@ -58,9 +62,16 @@ gulp.task('index', ['bower'], function (cb) {
   // It's not necessary to read the files (will speed up things), we're only after their paths:
 	var libSources = gulp.src(['./lib/third-party*'], {read: false});
   var sources = gulp.src(['./lib/app*'], {read: false});
-  // var sources = gulp.src(['./js/*.js', './css/*.css'], {read: false});
   return target.pipe(inject(series(libSources, sources), {relative: true}))
     .pipe(gulp.dest(''));
+});
+
+gulp.task('dev', function() {
+	var target = gulp.src('index.html');
+	var libSources = gulp.src(['./lib/third-party*'], {read: false});
+	var sources = gulp.src(['./js/*', './css/*'], {read: false});
+	return target.pipe(inject(series(libSources, sources), {relative: true}))
+		.pipe(gulp.dest(''));
 });
 
 gulp.task('default', ['index']);
