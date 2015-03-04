@@ -191,8 +191,6 @@ angular.module('Giggity.controllers', [])
     });
 
     var initWatch = $scope.$watch(function() {
-        console.log($scope.members);
-        console.log($scope.Gigs.gigsList);
         return $scope.members && $scope.Gigs.gigsList && $scope.Gigs.gigsList.length;
       }, function(v) {
         if (v) {
