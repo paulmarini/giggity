@@ -212,10 +212,9 @@ function gigs_setAvailability($request) {
 
 function gigs_fetchMembers() {
 	global $addressbook_table;
-	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, lastname, email, if(mobile= '', home, mobile) as phone, group_concat(group_name) as groups from $addressbook_table.addressbook join $addressbook_table.address_in_groups b using(id) left join $addressbook_table.address_in_groups c using(id) left join $addressbook_table.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
+	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, email, if(mobile= '', home, mobile) as phone, group_concat(group_name) as groups from $addressbook_table.addressbook join $addressbook_table.address_in_groups b using(id) left join $addressbook_table.address_in_groups c using(id) left join $addressbook_table.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
 	return $members;
 }
-
 
 function setResponse($statusCode, $statusString, $data="") {
 	$response = array('statusCode'=>$statusCode, 'statusString'=>$statusString, 'data'=>$data);
