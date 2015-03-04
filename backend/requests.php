@@ -258,7 +258,7 @@ function saveToCalendar($gig, $calendartype='private') {
 	$gig_details = "";
 	$title = $gig['title'];
 	if ($calendartype == 'private') {
-		if ($gig['type'] == 'Gig') {
+		if ($gig['type'] == 'gig') {
 			$prefix = 'Proposed';
 			if ($gig['approved'] == 1) {
 				$prefix = 'Gig';
