@@ -17,6 +17,14 @@ if (0 && $setgooglecal) {
 	}
 }
 
+if(isset($argv[1])) {
+	$action = $argv[1];
+	if ($action == 'addRehearsal') {
+		addRehearsal();
+	}
+	exit();
+}
+
 if (isset($_SERVER['CONTENT_TYPE']) && strstr($_SERVER['CONTENT_TYPE'],'application/json')) {
 	$request = json_decode(file_get_contents('php://input'), true);
 } else {
@@ -26,9 +34,9 @@ if (isset($_SERVER['CONTENT_TYPE']) && strstr($_SERVER['CONTENT_TYPE'],'applicat
 if(isset($request['action'])) {
 	$function = 'gigs_'.$request['action'];
 	if (function_exists($function)) {
-		if ($function == 'gigs_fetchGigs') {
-			checkRehearsals();
-		}
+		// if ($function == 'gigs_fetchGigs') {
+		// 	checkRehearsals();
+		// }
 		$data = $function($request);
 		setResponse(1, 'Success', $data);
 	} else {
@@ -93,7 +101,7 @@ function gigs_saveGig($request) {
 	$gig_id = dbEscape(isset($request['gig_id']) ? $request['gig_id'] : '');
 	$fields = array();
 	$gig = $request['data'];
-	foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors') as $key) {
+	foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url') as $key) {
 		if(isset($gig[$key])) {
 			if (in_array($key, array('start_time','end_time','meet_time', 'band_start','band_end'))) {
 				$gig[$key] = date('H:i', strtotime($gig[$key]));
@@ -130,7 +138,7 @@ function gigs_saveGig($request) {
 	} elseif ($gig['approved'] == -1) {
 		deleteFromCalendar($gig, 'public');
 	}
-	if ($new_gig) {
+	if ($new_gig && $gig['type'] == 'gig') {
 		sendEmails($gig);
 	}
 	return $gig;
@@ -328,29 +336,48 @@ function newDateTime($date, $time) {
 	return $datetime;
 }
 
-function checkRehearsals() {
-	$number = 6;
-	$x = 1;
-	$default_location = 'Greenpeace Warehouse';
-	$default_time = '17:00';
-	$default_end = '20:00';
+// function checkRehearsals() {
+// 	$number = 6;
+// 	$x = 1;
+// 	$default_location = 'Greenpeace Warehouse';
+// 	$default_time = '17:00';
+// 	$default_end = '20:00';
+//
+// 	$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and deleted = 0 and date > DATE_SUB(NOW(), INTERVAL 1 DAY)") ?: 0;
+// 	$time = time();
+// 	while ($x <= $number) {
+// 		$time = strtotime("next sunday", $time);
+// 		$date = date("Y-m-d", $time);
+// 		if ($count - $x < 0) {
+// 			dbwrite("insert ignore into gigs set date = '$date', type='rehearsal', title='Rehearsal', band_start = '$default_time', band_end='$default_end', location = '$default_location'");
+// 			$id = getInsertId();
+// 			$request['gig_id'] = $id;
+// 			$gig = gigs_fetchGig($request);
+// 			saveToCalendar($gig);
+// 		}
+// 		$x++;
+// 	}
+// }
 
-	$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and deleted = 0 and date > DATE_SUB(NOW(), INTERVAL 1 DAY)") ?: 0;
-	$time = time();
-	while ($x <= $number) {
-		$time = strtotime("next sunday", $time);
-		$date = date("Y-m-d", $time);
-		if ($count - $x < 0) {
-			dbwrite("insert ignore into gigs set date = '$date', type='rehearsal', title='Rehearsal', band_start = '$default_time', band_end='$default_end', location = '$default_location'");
-			$id = getInsertId();
-			$request['gig_id'] = $id;
-			$gig = gigs_fetchGig($request);
-			saveToCalendar($gig);
+function addRehearsal() {
+		$default_location = 'Greenpeace Warehouse';
+		$default_time = '17:00';
+		$default_end = '20:00';
+
+		$date = date('Y-m-d', strtotime('next sunday + 5 weeks'));
+		$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and date = '$date'") ?: 0;
+		if ($count == 0) {
+			$request['data'] = array(
+				'date'=>$date,
+				'type'=>'rehearsal',
+				'title'=>'Rehearsal',
+				'band_start'=>$default_time,
+				'band_end'=>$default_end,
+				'location'=>$default_location
+			);
+			gigs_saveGig($request);
 		}
-		$x++;
-	}
 }
-
 
 function sendEmails($gig) {
 	global $emails;
