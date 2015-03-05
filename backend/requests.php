@@ -383,7 +383,7 @@ function sendEmails($gig) {
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
 	foreach($emails as $email_address) {
-		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n;");
+		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n");
 	}
 }
 
