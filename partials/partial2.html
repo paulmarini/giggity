@@ -217,19 +217,14 @@
 							<div ng-show='currentUser' id='availability_info' ng-class="getAvailability() == 'Unknown' && 'alert-danger' || 'alert-info'" class='alert alert-info'>
 								<div class='lead' ng-show="getAvailability() == 'Unknown'">You haven't entered your availability for this gig.</div>
 								<dt>Your Availability</dt>
-								<dd id='user_availability' class='user_gig_details'>
-									<div class='user_gig_details_none'>
-										<i ng-class="{'glyphicon glyphicon-smile': gig.availability[currentUser].available == 'Yes', 'glyphicon glyphicon-frown': gig.availability[currentUser].available == 'No', 'glyphicon glyphicon-meh': gig.availability[currentUser].available == 'Maybe', 'glyphicon glyphicon-question': gig.availability[currentUser].available == 'Unknown'}"></i> {{gig.availability[currentUser].available | available }}
-										<span class='btn btn-xs btn-default' ng-click='editUserAttrib("user_availability")'><i class='glyphicon glyphicon-edit'></i> Edit</span>
-									</div>
-									<div class='user_gig_details_edit form-inline'>
-										<select id='user_availability_input' ng-model='gig.availability[currentUser].available' class='form-control input-sm' loading-feedback='setAvailability()'>
-											<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
-											<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
-											<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
-											<option data-icon='glyphicon glyphicon-question'>Unknown</option>
-										</select>
-									</div>
+								<dd id='user_availability' class='user_gig_details form-inline' edit-toggle>
+									<select id='user_availability_input' ng-model='gig.availability[currentUser].available' class='form-control input-sm user_gig_details_edit' loading-feedback='setAvailability()'>
+										<option value='Yes' data-icon='glyphicon glyphicon-smile'>Available</option>
+										<option value='No' data-icon='glyphicon glyphicon-frown'>Unavailable</option>
+										<option data-icon='glyphicon glyphicon-meh'>Maybe</option>
+										<option data-icon='glyphicon glyphicon-question'>Unknown</option>
+									</select>
+									<span class='user_gig_details_none'>{{gig.availability[currentUser].available | available }}</span>
 								</dd>
 								<dt ng-hide='gig.approved!=0'>Your Concerns</dt>
 								<dd ng-hide='gig.approved!=0' id='user_concerns' class='user_gig_details' edit-toggle>
@@ -241,7 +236,7 @@
 									<textarea class='form-control user_gig_details_edit' id='user_comments_input' spellcheck="true" rows=5 ng-model='gig.availability[currentUser].comments' placeholder="Enter any questions or comments you have about the gig"  loading-feedback='setAvailability()'></textarea>
 									<span class='user_gig_details_none'>{{gig.availability[currentUser].comments || 'None' }}</span>
 								</dd>
-						</div>
+							</div>
 							<dt>When</dt>
 							<dd class='clearfix'><span ng-show='gig.date'>{{ gig.date+'T08' | date:'EEEE, MMMM d, y' }} from {{gig.start_time | time }} - {{ gig.end_time  | time}}
 								<br/>Meet at {{ gig.meet_time | time }}

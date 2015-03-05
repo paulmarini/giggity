@@ -157,10 +157,13 @@ app.directive('editToggle', function($compile){
 			scope.showEdit = function() {
 				scope.editing = true;
 				element.addClass('edit');
-				$(element).find('textarea').focus();
+				$(element).find('textarea, select').focus();
 			}
-			element.find('span').after($compile("<span ng-hide='editing' class='btn btn-default btn-xs' ng-click='showEdit()'><i class='glyphicon glyphicon-edit'></i> Edit<span>")(scope));
-			element.find('textarea').on('blur', function() {
+			element.find('span').after($compile(
+				"<span ng-show='editing' class='btn btn-default btn-sm'><i class='glyphicon glyphicon-check'></i> Save</span>" +
+				"<span ng-hide='editing' class='btn btn-default btn-xs' ng-click='showEdit()'><i class='glyphicon glyphicon-edit'></i> Edit<span>"
+			)(scope));
+			$(element).find('textarea, select').on('blur', function() {
 				scope.$apply(function() {
 					element.removeClass('edit');
 					scope.editing = false;
@@ -175,6 +178,7 @@ app.directive('loadingFeedback', function($parse) {
 		restrict: 'A',
 		link: function(scope, element, attrs) {
 			scope.update = function(){
+				$(element).trigger('blur');
 				element.parent().append("<span class='label label-primary feedback' type='button'><i class='glyphicon glyphicon-refresh glyphicon glyphicon-spin'></i> Saving...</button>");
 				var action = $parse(attrs.loadingFeedback);
 				action(scope).then(function() {
