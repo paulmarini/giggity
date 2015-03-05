@@ -79,6 +79,8 @@ html, body {height: 100%; margin:0px; padding:0px;}
 #nav tr.hover.saving .gig_list_availability_edit { display: none; }
 #nav .saving .gig_list_availability { display: none; }
 #page_controls { position: absolute; right: 20px; }
+.user_gig_details_none { margin-right: 5px; }
+
 .time-picker {cursor: pointer !important; display: inline-table; }
 .time-picker .dropdown-menu { left:0; right: inherit; }
 
