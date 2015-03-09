@@ -1,5 +1,3 @@
-<!--
--->
 <div class='alert'style='display:none;' id='status'></div>
 <div id='content' class='{{mobileView}}' ng-class="{'mobile scroll-container':mobile}">
 	<div class='well well-small scroll-container' ng-class='{"col-sm-4": !mobile}' id='nav' >
@@ -8,9 +6,6 @@
 				<div class="navbar-header">
 					<a href="#" class="navbar-brand"><img style='width:20px;display: inline' src='img/giggity.png'/> Giggity</a>
 				</div>
-				<!-- <p class='navbar-text navbar-right'>
-					<small class='navbar-text label' data-tooltip='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && 'text-success' || 'label-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small>
-				</p> -->
 				<ul class="nav navbar-nav navbar-right">
 					<li>
 						<a class='user-link' tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()'><i class='glyphicon glyphicon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
@@ -18,7 +13,7 @@
 					<li>
 						<a><small class='badge' data-tooltip='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && ' ' || 'badge-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small></a>
 					</li>
-					<li class="dropdown" ng-hide='mobile'>
+					<li class="dropdown" ng-hide='mobile' tooltip-placement='bottom' data-tooltip='Options'>
 						<a class="dropdown-toggle" href='' data-toggle="dropdown"><i class='glyphicon glyphicon-cog'></i></a>
 						<ul class='dropdown-menu'>
 							<li>
@@ -26,7 +21,11 @@
 									<label> <input type='checkbox' ng-model='fetchAllGigs'> Show Past Gigs</label>
 								</div>
 							</li>
+							<li><a href='/gig_request.php' target='_blank'>Add a new gig</a></li>
 						</ul>
+					</li>
+					<li tooltip-placement='bottom' data-tooltip='Refresh gigs'>
+						<a href='' ng-click='fetchGigs()' ><i class='glyphicon glyphicon-refresh' ng-class='{"glyphicon-spin": fetchingGigs}'></i></a>
 					</li>
 				</ul>
 			</div><!-- /.container-fluid -->

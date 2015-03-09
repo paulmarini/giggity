@@ -25,6 +25,7 @@ angular.module('Giggity.controllers', [])
     $scope.gigLimit = 15;
     $scope.page = 1;
     $scope.fetchAllGigs = false;
+    $scope.fetchingGigs = false;
 
 		$scope.$on('$routeUpdate', function() {
 			$scope.setView();
@@ -111,8 +112,12 @@ angular.module('Giggity.controllers', [])
 				$scope.setGig(gig);
 			})
 		}
+
     $scope.fetchGigs = function() {
-      return $scope.Gigs.fetchGigs($scope.currentUser, $scope.fetchAllGigs);
+      $scope.fetchingGigs = true;
+      return $scope.Gigs.fetchGigs($scope.currentUser, $scope.fetchAllGigs).then(function() {
+        $scope.fetchingGigs = false;
+      });
     }
 
 		$scope.newGig = function() {
