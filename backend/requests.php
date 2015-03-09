@@ -363,7 +363,7 @@ function addRehearsal() {
 		$default_time = '17:00';
 		$default_end = '20:00';
 
-		$date = date('Y-m-d', strtotime('next sunday + 5 weeks'));
+		$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
 		$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and date = '$date'") ?: 0;
 		if ($count == 0) {
 			$request['data'] = array(
