@@ -222,7 +222,7 @@ function gigs_fetchMembers() {
 
 function gigs_fetchSongs() {
 	$songs = array();
-	foreach(scandir("../../sheetmusic") as $song) {
+	foreach(scandir("../../../sheetmusic") as $song) {
 			if ($song[0] == "." || $song == 'Solo_Scales') { continue; }
 			$songs[] = str_replace("_", " ", $song);
 	}
