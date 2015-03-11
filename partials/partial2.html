@@ -278,6 +278,10 @@
 
 							<dt>Notes</dt>
 							<dd class='clearfix'>{{ gig.notes}}&nbsp; </dd>
+							<dt>Set List</dt>
+							<dd class='clearfix'>
+								<span ng-repeat='song in gig.setlist'><strong>{{$index+1}}.</strong> {{song}} </span>&nbsp;
+							</dd>
 							<div ng-class="{'alert alert-danger':(membersList | concernFilter:gig).length > 0}">
 								<dt>Member Concerns</dt>
 								<dd class='clearfix'>
@@ -290,6 +294,7 @@
 								</dd>
 							<!--<div ng-show='isCollapsed'><dt><a href='' ng-click="isCollapsed = !isCollapsed">More details…</a></dt><dd>&nbsp;</dd></div>
 							<div collapse='isCollapsed'>-->
+
 							<h4 class='text-info'>Event Details</h4>
 								<dt>Description</dt>
 								<dd class='clearfix' ng-bind-html="gig.description | linky"></dd>
@@ -368,6 +373,10 @@
 								<div class='col-md-8'>
 									<textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.notes'></textarea>
 								</div>
+							</div>
+							<div class='form-group'>
+								<h4 class='text-center'>Set List</h4>
+									<div set-list songs='songs' setlist='gig.setlist'></div>
 							</div>
 						</div>
 					</tab>
@@ -470,6 +479,60 @@
 	</div>
 </div>
 <div modal='{{showModal}}'></div>
+
+<script type="text/ng-template" id="setList.html">
+	<div class='col-xs-12 setlist'>
+		<div class='text-center'>
+			Drag or double-click songs from the left to create a set list on the right. Drag to reorder the set list. Drag or double-click to remove songs from the set list.
+		</div>
+
+		<div sv-root class="multi-sortable">
+			<div class="sortable-container panel panel-default col-xs-6" sv-part="songs">
+				<div class='panel-heading clearfix'>
+					<strong>BLO Repertoire</strong>
+					<br/>
+					<!--this is just a placeholder to make lists line up-->
+					<form style='visibility: hidden;' class='input-group input-group-sm'><input class='form-control'></form>
+				</div>
+				<ul class='list-group'>
+					<li ng-repeat="item in songs" ng-dblclick="addSong(item)" sv-element class="list-group-item">
+						<div class='media'>
+							<div sv-handle ng-if='$parent.$parent.$parent.mobile' class="media-left">
+								<img src='img/dndHandle.gif'/>
+							</div>
+							<div class='media-body'>
+								{{item}}
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+			<div class="sortable-container panel panel-info col-xs-6" sv-part="setlist">
+				<div class='panel-heading'>
+					<strong>Set List</strong>
+						<br/>
+						<form class='input-group input-group-sm' ng-submit='addSong()'>
+							<input ng-model='$parent.newsong' class='form-control' placeholder='Add a song not on the list'>
+							<span ng-click='addSong()' class='input-group-addon'><i class='glyphicon glyphicon-plus'></i></span>
+							<input type="submit" style="position: absolute; left: -9999px; width: 1px; height: 1px;"/>
+						</form>
+				</div>
+				<ul class='list-group'>
+					<li ng-repeat="item in setlist" ng-dblclick="removeSong(item)" sv-element class="list-group-item">
+						<div class='media'>
+							<div sv-handle ng-if='$parent.$parent.$parent.mobile' class="media-left">
+								<img src='img/dndHandle.gif'/>
+							</div>
+							<div class='media-body'>
+								{{$index+1}}. {{item}}
+							</div>
+						</div>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</script>
 
 <script type="text/ng-template" id="modal.html">
 	<div id='modal' class='modal fade' data-keyboard='true' data-backdrop='true'>

@@ -282,6 +282,54 @@ app.directive('timePicker', function() {
 	}
 });
 
+app.directive('setList', function($filter, $timeout) {
+	return {
+		restrict: 'A',
+		templateUrl: 'setList.html',
+		scope: {
+			repertoire: '=songs',
+			setlist: '=',
+		},
+		link:function(scope, element, attribs) {
+			scope.newsong = '';
+
+			scope.addSong = function(song) {
+				var song = song || scope.newsong;
+				if (! song) { return; }
+
+				//If it's already in the list, append a number
+				var count = $filter('count')(scope.setlist.map(function(i) { return i.replace(/ \(\d+\)$/, '')}), song);
+				if (count) {
+					song += " ("+(count+1)+")";
+				}
+				scope.newsong = '';
+				scope.setlist.push(song);
+
+				if (scope.songs.indexOf(song) >= 0) {
+					scope.songs.splice(scope.songs.indexOf(song), 1);
+				}
+			}
+
+			scope.removeSong = function(song) {
+				scope.songs.push(song);
+				scope.setlist.splice(scope.setlist.indexOf(song), 1);
+			}
+
+			var updateRep = function() {
+				scope.songs = angular.copy($filter('filterArray')(scope.repertoire, scope.setlist));
+			}
+
+			scope.$on('gigSet', function() {
+				$timeout(function() {
+					updateRep()
+				})
+			});
+			scope.$watch('repertoire', updateRep);
+		}
+	}
+});
+
+
 //This was craziness for another timepicker directive, replaced by above.
 // app.directive('timePicker', function($filter, $timeout) {
 // 	return {

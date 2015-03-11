@@ -11,6 +11,7 @@ angular.module('Giggity.controllers', [])
 		$scope.gig = {};
 		$scope.members = [];
 		$scope.membersList = [];
+    $scope.songs = [];
 		$scope.currentGigIndex = 0;
 		$scope.gig_loading = 0;
 		$scope.membernamefilter = '';
@@ -101,6 +102,7 @@ angular.module('Giggity.controllers', [])
 			$scope.memberavailablefilter = '';
 			$scope.gig_loading = 0;
       $rootScope.app_loaded = true;
+      $scope.$broadcast('gigSet');
 		}
 
 		$scope.fetchGig = function(gig_id) {
@@ -118,6 +120,17 @@ angular.module('Giggity.controllers', [])
       return $scope.Gigs.fetchGigs($scope.currentUser, $scope.fetchAllGigs).then(function() {
         $scope.fetchingGigs = false;
       });
+    }
+
+    $scope.fetchSongs = function() {
+      return Requests.fetch('fetchSongs').then(function(results) {
+        $scope.songs = results;
+      });
+    }
+
+    $scope.refreshData = function() {
+      $scope.fetchSongs();
+      $scope.fetchGigs();
     }
 
 		$scope.newGig = function() {
@@ -194,6 +207,8 @@ angular.module('Giggity.controllers', [])
         $scope.currentUserName = $scope.members[$scope.currentUser] ? $scope.members[$scope.currentUser].name : '';
       }
     });
+
+    $scope.fetchSongs();
 
     var initWatch = $scope.$watch(function() {
         return $scope.members && $scope.Gigs.gigsList && $scope.Gigs.gigsList.length;

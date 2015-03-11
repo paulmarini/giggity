@@ -121,6 +121,9 @@ function gigs_saveGig($request) {
 		}
 		array_push($fields, "details='".dbEscape($details)."'");
 	}
+	if (isset($gig['setlist'])) {
+		array_push($fields, "setlist='".dbEscape(implode(",", $gig['setlist']))."'");
+	}
 	//$title = dbEscape($gig['title']);
 	$new_gig = 0;
 	if ($gig_id) {
@@ -165,6 +168,7 @@ function gigs_fetchGig($request) {
 	$gigs = dbLookupArray("select * $times from gigs where gig_id = $gig_id");
 	$gigs = fetchAvailability($gigs);
 	$gig = array_values($gigs);
+	$gig[0]['setlist'] = array_filter(explode(",", $gig[0]['setlist']));
 	return $gig[0];
 }
 
@@ -214,6 +218,15 @@ function gigs_fetchMembers() {
 	global $addressbook_table;
 	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, email, if(mobile= '', home, mobile) as phone, group_concat(group_name) as groups from $addressbook_table.addressbook join $addressbook_table.address_in_groups b using(id) left join $addressbook_table.address_in_groups c using(id) left join $addressbook_table.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
 	return $members;
+}
+
+function gigs_fetchSongs() {
+	$songs = array();
+	foreach(scandir("../../sheetmusic") as $song) {
+			if ($song[0] == "." || $song == 'Solo_Scales') { continue; }
+			$songs[] = str_replace("_", " ", $song);
+	}
+	return $songs;
 }
 
 function setResponse($statusCode, $statusString, $data="") {

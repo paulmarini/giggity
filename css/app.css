@@ -206,6 +206,26 @@ float: right!important;
 }
 .navbar-header { float: left; }
 
+.setlist .panel {
+	user-select: none;
+	-webkit-user-select: none;
+	-moz-user-select: none;
+	padding: 0px;
+}
+
+.setlist .panel:last-child {
+	margin-left: 5px;
+	margin-right: -5px;
+}
+.setlist .list-group {
+	max-height: 200px;
+	overflow-y: auto;
+}
+
+.setlist .list-group-item {
+	cursor: move;
+}
+
 .glyphicon-spin{
 		-webkit-transform-origin: 50% 50%;
 		transform-origin:50% 50%;

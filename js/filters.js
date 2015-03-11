@@ -22,6 +22,23 @@ app.filter('length', function() {
 		return array.length;
 }});
 
+app.filter('count', function() {
+	return function(array, value) {
+		var found = $.grep(array, function (elem) {
+			return elem === value;
+		});
+		return found.length;
+	};
+})
+
+app.filter('filterArray', function() {
+	return function(array, other) {
+		return $.grep(array, function(value) {
+			return other.indexOf(value) < 0;
+		})
+	}
+})
+
 app.filter('memberProperty', function() {
 	return function(array, args) {
 		var property = args[0];
