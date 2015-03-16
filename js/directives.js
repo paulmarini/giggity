@@ -329,6 +329,43 @@ app.directive('setList', function($filter, $timeout) {
 	}
 });
 
+app.directive('emailInfo', function($filter, Members, Requests) {
+	return {
+		restrict: 'A',
+		templateUrl: 'emailInfo.html',
+		scope: {
+			gig: '=',
+		},
+		link:function(scope, element, attribs) {
+			scope.dateFormat = $filter('date');
+			scope.timeFormat = function(time) {
+				return time.replace(/^0+/, '');
+			}
+			scope.subject = "Gig Details: "+scope.dateFormat(scope.gig.date, 'M/d')+"@"+scope.timeFormat(scope.gig.band_start, 'h:m a')+' - '+scope.gig.title;
+			scope.body =
+				"When: "+scope.dateFormat(scope.gig.date, 'EEEE, M/d')+", Meet at "+scope.timeFormat(scope.gig.meet_time || '???', 'h:m a') + ", play from "+scope.timeFormat(scope.gig.band_start, 'h:m a')+" - "+scope.timeFormat(scope.gig.band_end, 'h:m a')+
+				"\nWhere: "+scope.gig.location+
+				"\nTactical: "+(scope.gig.tactical ? Members.members[scope.gig.tactical.id].name : '???')+
+				"\nMusical: "+(scope.gig.musical ? Members.members[scope.gig.musical.id].name : '???') +
+				"\nColors: "+(scope.gig.colors || '???') +
+				"\nYeses: "+$filter('memberProperty')($filter('availableFilter')(Members.membersList, ['Yes', scope.gig]), ['name'])+
+				"\nMaybes: "+$filter('memberProperty')($filter('availableFilter')(Members.membersList, ['Maybe', scope.gig]), ['name'])+
+				"\n\nDetails:\n"+(scope.gig.notes || 'Hey! You need to save the gig details into giggity!');
+
+			if (scope.gig.setlist.length) {
+				scope.body += '\n\nSet List: ';
+				$.each(scope.gig.setlist, function(i, song){
+					scope.body += '\n'+(i+1)+'. '+song;
+				});
+			}
+			scope.send = function() {
+				Requests.write('sendInfoEmail', {subject: scope.subject, body: scope.body}).then(function(response) {
+					scope.$parent.setModalState(false);
+				});
+			};
+		}
+	};
+});
 
 //This was craziness for another timepicker directive, replaced by above.
 // app.directive('timePicker', function($filter, $timeout) {

@@ -229,6 +229,14 @@ function gigs_fetchSongs() {
 	return $songs;
 }
 
+function gigs_sendInfoEmail($request) {
+	global $emails;
+	foreach($emails as $email_address) {
+		mail($email_address, $request['data']['subject'], $request['data']['body'], "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n");
+	}
+	return true;
+}
+
 function setResponse($statusCode, $statusString, $data="") {
 	$response = array('statusCode'=>$statusCode, 'statusString'=>$statusString, 'data'=>$data);
 	//if php version < 5.3.0 we need to emulate the object string

@@ -192,6 +192,10 @@ angular.module('Giggity.controllers', [])
       });
     }
 
+    $scope.setModalState = function(modal) {
+      $scope.showModal = modal;
+    }
+
 		if (! $scope.currentUser) { $scope.changeUser(); }
 
     $scope.$watch('fetchAllGigs', function(v, o) {
