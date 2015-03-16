@@ -5,6 +5,6 @@ ExpiresActive On
 ExpiresDefault "access plus 1 years"
 </FilesMatch>
 <filesMatch ".html$">
-	Header set Cache-Control "max-age=3600, private, must-revalidate"
+	Header set Cache-Control "max-age=0, private, must-revalidate"
 </filesMatch>
 
