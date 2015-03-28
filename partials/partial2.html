@@ -46,7 +46,7 @@
 						<pagination class="pagination-sm" ng-model='page' items-per-page='gigLimit' max-size='7' boundary-links='true' total-items='Gigs.gigsList.length'></pagination>
 					</td>
 				</tr>
-				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
+				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id, info: (current_gig.tactical == currentUser || current_gig.musical == currentUser || current_gig.tactical.id == currentUser || current_gig.musical.id == currentUser) }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
 					<td>
 						<i class='approve_icon glyphicon' ng-class="{'glyphicon-thumbs-up': current_gig.approved==1, 'glyphicon-thumbs-down':current_gig.approved==-1, 'glyphicon-question-sign': current_gig.approved==0 && current_gig.type == 'gig', 'glyphicon-heart text-danger': current_gig.type == 'rehearsal'}"></i>
 					</td>
@@ -545,7 +545,8 @@
 		<h3>Send Band Email</h3>
 		Review and edit the auto-generated email below.
 		<br/><b>Note: </b>If you are adding any more information, please enter and save those details in giggity first!
-		</h3>
+		<div ng-if="! gig.notes">You haven't entered any gig details. You should probably do that before sending the band an email</div>
+		<div ng-if="! gig.meet_time">You haven't entered a meetup time. You should probably do that before sending the band an email</div>
 	</div>
 	<div class="modal-body">
 		<div class='form form-horizontal'>

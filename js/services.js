@@ -25,7 +25,7 @@ app.service('Gigs', function(Requests, $filter) {
 	service.gigsList = null;
 
 	service.updateGigsList = function() {
-		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), 'date');
+		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start']);
 	}
 	service.fetchGigs = function(user_id, fetchAllGigs) {
 		return Requests.fetch('fetchGigs', {fetchAllGigs: fetchAllGigs, user_id: user_id}).then(function(data) {

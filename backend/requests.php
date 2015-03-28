@@ -152,7 +152,7 @@ function gigs_fetchGigs($request) {
 	if (! isset($request['fetchAllGigs']) || $request['fetchAllGigs'] != 'true') {
 		$where = " and date > DATE_SUB(NOW(), INTERVAL 1 DAY) ";
 	}
-	$gigs = dbLookupArray("select gig_id, approved, title, date, type from gigs where deleted = 0 $where order by date desc, band_start desc");
+	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical, musical from gigs where deleted = 0 $where order by date, band_start");
 	if (isset($request['user_id'])) {
 		$gigs = fetchAvailability($gigs, $request['user_id']);
 	}
