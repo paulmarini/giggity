@@ -269,7 +269,7 @@ app.directive('timePicker', function() {
 		restrict: 'E',
 		template:
 			'<div class="input-group time-picker col-xs-5">'+
-			'<input class="form-control" size="8" ng-model="model" use-native="true" data-time-type="string" data-autoclose="1" bs-timepicker data-model-time-format="hh:mm a" data-time-format="h:mm a" data-length="1" data-minute-step="1" data-arrow-behavior="picker" type="text">'+
+			'<input class="form-control" size="8" ng-model="model" use-native="true" data-time-type="string" data-autoclose="1" bs-timepicker data-model-time-format="H:mm" data-time-format="h:mm a" data-length="1" data-arrow-behavior="picker" type="text">'+
 			'<span ng-click="focus()" class="input-group-addon"><i class="glyphicon glyphicon-time"></i></span></div>',
 		scope: {
 			model: '='

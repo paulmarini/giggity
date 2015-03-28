@@ -20,6 +20,7 @@ if (0 && $setgooglecal) {
 if(isset($argv[1])) {
 	$action = $argv[1];
 	if ($action == 'addRehearsal') {
+		$date = isset($argv[2]) ? $argv[2] : null;
 		addRehearsal($argv[2]);
 	}
 	exit();
@@ -152,7 +153,7 @@ function gigs_fetchGigs($request) {
 	if (! isset($request['fetchAllGigs']) || $request['fetchAllGigs'] != 'true') {
 		$where = " and date > DATE_SUB(NOW(), INTERVAL 1 DAY) ";
 	}
-	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical, musical from gigs where deleted = 0 $where order by date, band_start");
+	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical, musical, band_start from gigs where deleted = 0 $where order by date, band_start");
 	if (isset($request['user_id'])) {
 		$gigs = fetchAvailability($gigs, $request['user_id']);
 	}
@@ -163,7 +164,7 @@ function gigs_fetchGig($request) {
 	$gig_id = isset($request['gig_id']) ? dbEscape($request['gig_id']) : '';
 	$times = "";
 	foreach(array('meet_time', 'band_start', 'band_end', 'start_time', 'end_time') as $t) {
-		$times .= ", time_format($t, '%h:%i %p') as $t ";
+		$times .= ", time_format($t, '%H:%i') as $t ";
 	}
 	$gigs = dbLookupArray("select * $times from gigs where gig_id = $gig_id");
 	$gigs = fetchAvailability($gigs);
