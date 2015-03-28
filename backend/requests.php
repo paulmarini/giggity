@@ -20,7 +20,7 @@ if (0 && $setgooglecal) {
 if(isset($argv[1])) {
 	$action = $argv[1];
 	if ($action == 'addRehearsal') {
-		addRehearsal();
+		addRehearsal($argv[2]);
 	}
 	exit();
 }
@@ -379,12 +379,14 @@ function newDateTime($date, $time) {
 // 	}
 // }
 
-function addRehearsal() {
+function addRehearsal($date) {
 		$default_location = 'Greenpeace Warehouse';
 		$default_time = '17:00';
 		$default_end = '20:00';
 
-		$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
+		if (! $date) { 
+			$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
+		}
 		$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and date = '$date'") ?: 0;
 		if ($count == 0) {
 			$request['data'] = array(
