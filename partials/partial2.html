@@ -46,7 +46,7 @@
 						<pagination class="pagination-sm" ng-model='page' items-per-page='gigLimit' max-size='7' boundary-links='true' total-items='Gigs.gigsList.length'></pagination>
 					</td>
 				</tr>
-				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id, info: (current_gig.tactical == currentUser || current_gig.musical == currentUser || current_gig.tactical.id == currentUser || current_gig.musical.id == currentUser) }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
+				<tr ng-click='changeGig(current_gig.gig_id)' ng-repeat="current_gig in Gigs.gigsList | slice:gigLimit*(page-1):gigLimit" ng-class="{active:current_gig.gig_id == gig.gig_id, info: current_gig.is_tactical == 1 || current_gig.is_musical == 1 }" id='{{current_gig.gig_id}}' addclassonhover='hover'>
 					<td>
 						<i class='approve_icon glyphicon' ng-class="{'glyphicon-thumbs-up': current_gig.approved==1, 'glyphicon-thumbs-down':current_gig.approved==-1, 'glyphicon-question-sign': current_gig.approved==0 && current_gig.type == 'gig', 'glyphicon-heart text-danger': current_gig.type == 'rehearsal'}"></i>
 					</td>
@@ -57,7 +57,7 @@
 					<td style='width: 100%' class='form-inline'>
 						<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='glyphicon glyphicon-chevron-right'></i></span>
 						<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='glyphicon glyphicon-pencil'></i> Edit</span>
-						<a href='' ng-class='{"text-muted": current_gig.approved == -1}'>{{current_gig.title}} </a>
+						<a href='' ng-class='{"text-muted": current_gig.approved == -1}' data-tooltip='{{(current_gig.is_tactical == 1 || current_gig.is_musical == 1) ? "You are "+(current_gig.is_tactical == 1 ? "tactical" : "musical")+" for this gig" : ""}}'>{{current_gig.title}} <span ng-if="(current_gig.is_tactical == 1 || current_gig.is_musical == 1)" class="glyphicon"  ng-class="{'glyphicon-bullhorn': current_gig.is_tactical == 1, 'glyphicon-music': current_gig.is_musical == 1}"></span></a>
 						<div class='form-inline' ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-danger': getAvailability(current_gig.gig_id) == 'Unknown'}">
 							<small>Your Availability:</small>
 							<select style='display: none;' loading-feedback='setAvailability({{currentUser}}, {{current_gig.gig_id}})' ng-model='Gigs.gigs[current_gig.gig_id].availability[currentUser].available' class='gig_list_availability_edit form-control input-xs' eat-click=1>

@@ -148,14 +148,15 @@ function gigs_saveGig($request) {
 	return $gig;
 }
 
-function gigs_fetchGigs($request) {
+function gigs_fetchGigsList($request) {
 	$where = "";
+	$user = isset($request['user_id']) ? dbEscape($request['user_id']) : "";
 	if (! isset($request['fetchAllGigs']) || $request['fetchAllGigs'] != 'true') {
 		$where = " and date > DATE_SUB(NOW(), INTERVAL 1 DAY) ";
 	}
-	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical, musical, band_start from gigs where deleted = 0 $where order by date, band_start");
-	if (isset($request['user_id'])) {
-		$gigs = fetchAvailability($gigs, $request['user_id']);
+	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical = '$user' as is_tactical, musical = '$user' as is_musical, band_start from gigs where deleted = 0 $where order by date, band_start");
+	if ($user) {
+		$gigs = fetchAvailability($gigs, $user);
 	}
 	return $gigs;
 }

@@ -65,6 +65,8 @@ angular.module('Giggity.controllers', [])
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.gig.tactical.id : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.gig.musical.id : '';
 			return Requests.write('saveGig', $scope.gig, $scope.gig.gig_id).then(function(gig) {
+        gig.is_musical = gig.musical == $scope.currentUser;
+        gig.is_tactical = gig.tactical == $scope.currentUser;
         $scope.Gigs.gigs[gig.gig_id] = gig;
         $scope.Gigs.updateGigsList();
 				$scope.setGig(gig);
