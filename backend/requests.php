@@ -21,7 +21,7 @@ if(isset($argv[1])) {
 	$action = $argv[1];
 	if ($action == 'addRehearsal') {
 		$date = isset($argv[2]) ? $argv[2] : null;
-		addRehearsal($argv[2]);
+		addRehearsal($date);
 	}
 	exit();
 }
