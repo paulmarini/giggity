@@ -21,11 +21,11 @@ gulp.task('bower', ['clean'], function(cb){
     .pipe($.minifyCss())
 		.pipe($.rev())
     .pipe(gulp.dest('./lib'))
-
+	
   var fonts = gulp.src($.bowerFiles().ext(['eot', 'woff', 'woff2', 'ttf', 'svg']).files)
     .pipe(gulp.dest('./fonts'))
 
-	// console.log(bower.files);
+	console.log($.bowerFiles().files);
 	var partials = gulp.src('partials/*.html')
 		.pipe($.angularTemplates({module:'Giggity', basePath: 'partials/'}))
 

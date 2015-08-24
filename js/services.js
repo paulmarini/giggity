@@ -23,9 +23,13 @@ app.service('Gigs', function(Requests, $filter) {
 	var service = this;
 	service.gigs = null;
 	service.gigsList = null;
+	service.hideRehearsals = false;
 
 	service.updateGigsList = function() {
-		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start']);
+		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start'])
+			.filter(function(g) {
+				return g.type == 'gig' || ! service.hideRehearsals;
+			});
 	}
 	service.fetchGigs = function(user_id, fetchAllGigs) {
 		return Requests.fetch('fetchGigsList', {fetchAllGigs: fetchAllGigs, user_id: user_id}).then(function(data) {

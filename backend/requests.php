@@ -6,16 +6,22 @@ if (! isIncluded()) {
 set_error_handler('handleError');
 require_once('config.php');
 
-// sleep(1);
-if (0 && $setgooglecal) {
-	if (isset($_GET['code'])) {
-		$stuff = getGoogleClient();
-		$client = $stuff[0];
-		  $client->authenticate();
-			$_SESSION['token'] = $client->getAccessToken();
-		print_r($_SESSION);
-	}
-}
+$client = getGoogleClient();
+
+   
+
+// $setgooglecal = 0;
+
+// if ($setgooglecal) {
+// 	if (isset($_GET['code'])) {
+// 	  $client->authenticate($_GET['code']);
+// 		$_SESSION['token'] = $client->getAccessToken();
+// 		print_r($_SESSION); exit();
+// 	} else {
+// 		$auth_url = $client->createAuthUrl();
+// 		header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
+// 	}
+// }
 
 if(isset($argv[1])) {
 	$action = $argv[1];
@@ -67,12 +73,13 @@ function getGigTextDescription($gig, $type='email') {
 			$availables[$member['available']] .= "$member[name], ";
 		}
 		$gig["who's_coming"] = "\n\tYes: $availables[Yes]\n\tMaybe: $availables[Maybe]\n\tNo: $availables[No]";
-		foreach(array('tactical', 'musical') as $role) {
-			if (isset($gig[$role]) && $gig[$role]) {
-				$gig[$role] = $members[$gig[$role]]['name'];
-			}
-		}
-		foreach(array('event_time', 'meet_time', 'band_play_time', 'location', 'tactical', 'musical', 'colors', "who's_coming", 'notes') as $key) {
+		// foreach(array('tactical', 'musical') as $role) {
+		// 	if (isset($gig[$role]) && $gig[$role]) {
+		// 		$gig[$role] = $members[$gig[$role]]['name'];
+		// 	}
+		// }
+		foreach(array('event_time', 'meet_time', 'band_play_time', 'location', "who's_coming") as $key) {
+		// foreach(array('event_time', 'meet_time', 'band_play_time', 'location', 'tactical', 'musical', 'colors', "who's_coming", 'notes') as $key) {
 			$label = str_replace('_', ' ', strtoupper($key));
 			if ($gig['type'] != 'gig') {
 				if (! in_array($key, array('location', 'tactical', "who's_coming", 'notes'))) { continue; }
@@ -81,7 +88,8 @@ function getGigTextDescription($gig, $type='email') {
 			$gig_details .= "$label: $gig[$key]\n\n";
 		}
 		if ($gig['type'] == 'gig') {
-			$gig_details.="---=== DETAILS ===---\n\nDESCRIPTION: $gig[description]\n\nWHO: $gig[who]\n\nCONTACT: $gig[contact]\n\nURL: $gig[url]\n\n$gig[details]";
+			$gig_details.="---=== DETAILS ===---\n\nDESCRIPTION: $gig[description]\n\nURL: $gig[url]";
+			// $gig_details.="---=== DETAILS ===---\n\nDESCRIPTION: $gig[description]\n\nWHO: $gig[who]\n\nCONTACT: $gig[contact]\n\nURL: $gig[url]\n\n$gig[details]";
 		}
 	}
 
@@ -102,6 +110,9 @@ function gigs_saveGig($request) {
 	$gig_id = dbEscape(isset($request['gig_id']) ? $request['gig_id'] : '');
 	$fields = array();
 	$gig = $request['data'];
+	if (isset($gig['type']) && $gig['type'] == 'rehearsal') {
+		$gig['meet_time'] = $gig['start_time'];
+	}
 	foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url') as $key) {
 		if(isset($gig[$key])) {
 			if (in_array($key, array('start_time','end_time','meet_time', 'band_start','band_end'))) {
@@ -137,9 +148,9 @@ function gigs_saveGig($request) {
 	}
 	$gig = gigs_fetchGig($gig);
 	saveToCalendar($gig);
-	if ($gig['approved'] == 1) {
+	if ($gig['approved'] == 1 && $gig['public_description']) {
 		saveToCalendar($gig, 'public');
-	} elseif ($gig['approved'] == -1) {
+	} else {
 		deleteFromCalendar($gig, 'public');
 	}
 	if ($new_gig && $gig['type'] == 'gig') {
@@ -184,9 +195,8 @@ function fetchAvailability($gigs, $user=false) {
 		$availability = dbLookupArray("select concat(a.gig_id, '_', b.id) as a_id, a.gig_id, b.id as member_id,concat(b.firstname, ' ', b.lastname) as name,  d.available, d.comments, d.concerns, d.other
 		from gigs a
 		join $addressbook_table.addressbook b
-		join $addressbook_table.address_in_groups c using(id)
 		left join gigs_availability d on a.gig_id = d.gig_id and b.id = d.member_id
-		where deleted=0 and group_id in( 3,10) $where");
+		where deleted=0 $where");
 		foreach($availability as $av) {
 			$gig = &$gigs[$av['gig_id']];
 			if(! isset($gig['availability'])) { $gig['availability'] = array(); }
@@ -218,13 +228,13 @@ function gigs_setAvailability($request) {
 
 function gigs_fetchMembers() {
 	global $addressbook_table;
-	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, email, if(mobile= '', home, mobile) as phone, group_concat(group_name) as groups from $addressbook_table.addressbook join $addressbook_table.address_in_groups b using(id) left join $addressbook_table.address_in_groups c using(id) left join $addressbook_table.group_list d on c.group_id = d.group_id and c.group_id in (6,7,8,9, null) where b.group_id in(3,10) group by id");
+	$members = dbLookupArray("select id, concat(firstname, ' ', lastname) as name, email, if(mobile= '', home, mobile) as phone from $addressbook_table.addressbook group by id");
 	return $members;
 }
 
 function gigs_fetchSongs() {
 	$songs = array();
-	foreach(scandir("../../../sheetmusic") as $song) {
+	foreach(scandir("../../uploads/files/Songs/") as $song) {
 			if ($song[0] == "." || $song == 'Solo_Scales') { continue; }
 			$songs[] = str_replace("_", " ", $song);
 	}
@@ -234,7 +244,7 @@ function gigs_fetchSongs() {
 function gigs_sendInfoEmail($request) {
 	global $emails;
 	foreach($emails as $email_address) {
-		mail($email_address, $request['data']['subject'], $request['data']['body'], "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n");
+		mail($email_address, $request['data']['subject'], $request['data']['body'], "From: Giggity <inspectorgadje@gmail.com>\r\nReply-To: inspectorgadje@googlegroups.com\r\nContent-type: text/plain; charset=utf-8\r\n");
 	}
 	return true;
 }
@@ -275,8 +285,8 @@ function saveToCalendar($gig, $calendartype='private') {
 
 	if ($calendartype == 'public' && ! $gig['public_description']) { return; }
 
-	$cal = getGoogleClient();
-	$event = new Google_Event();
+	$cal = getCalClient();
+	$event = new Google_Service_Calendar_Event();
 	$gig_details = "";
 	$title = $gig['title'];
 	if ($calendartype == 'private') {
@@ -297,11 +307,17 @@ function saveToCalendar($gig, $calendartype='private') {
 	} else {
 		$gig_details = $gig['public_description'];
    	}
-
+  $start_date = $end_date = $gig['date'];
+  // $end = newDateTime($gig['date'], $gig[$end_field]);
+  if ($gig[$start_field] > $gig[$end_field]) {
+  	$d = new DateTime($end_date);
+  	$d->modify("+1 day");
+  	$end_date= $d->format('Y-m-d');
+  }
 	$event->setSummary($title);
 	$event->setLocation($gig['location']);
-	$event->setStart(newDateTime($gig['date'], $gig[$start_field]));
-	$event->setEnd(newDateTime($gig['date'], $gig[$end_field]));
+	$event->setStart(newDateTime($start_date, $gig[$start_field]));
+	$event->setEnd(newDateTime($end_date, $gig[$end_field]));
 	$event->setDescription($gig_details);
 	$createdEvent = '';
 	try {
@@ -325,33 +341,73 @@ function deleteFromCalendar($gig, $calendartype='private') {
 	global $calendars;
 	extract($calendars[$calendartype]);
 	if(! $gig[$id_field]) { return; }
-	$cal = getGoogleClient();
-	$event = new Google_Event();
+	$cal = getCalClient();
+	$event = new Google_Service_Calendar_Event();
 	$cal->events->delete($calendar_id, $gig[$id_field]);
 	dbwrite("update gigs set $id_field = '' where gig_id = $gig[gig_id]");
 }
 
 function getGoogleClient() {
-	require_once('google-api-php-client/src/Google_Client.php');
-	require_once('google-api-php-client/src/contrib/Google_CalendarService.php');
+	require_once('google-api-php-client/src/Google/autoload.php');
+	// require_once('google-api-php-client/src/contrib/Google_CalendarService.php');
 
 	global $google_api;
 	extract($google_api);
 	$client = new Google_Client();
-	$client->setUseObjects(true);
 	$client->setAccessType('offline');
+	$client->addScope(Google_Service_Calendar::CALENDAR);
 	$client->setApplicationName($ApplicationName);
-	$client->setClientId($ClientId);
-	$client->setClientSecret($ClientSecret);
-	$client->setRedirectUri($RedirectUri);
+	$client->setAuthConfigFile('client_secrets.json');
+
+	// $client->setClientId($ClientId);
+	// $client->setClientSecret($ClientSecret);
+	// $client->setRedirectUri($RedirectUri);
+
+	if (isset($_GET['code'])) {
+	 	$client->authenticate($_GET['code']);  
+	 	$_SESSION['token'] = $client->getAccessToken();
+	 	// $_SESSION['token'] = $client->getAccessToken();
+	 	$token = json_decode($_SESSION['token']);
+	 	echo "Access Token = " . $token->access_token . '<br/>';
+	 	echo "Refresh Token = " . $token->refresh_token . '<br/>';
+	 	echo "Token type = " . $token->token_type . '<br/>';
+	 	echo "Expires in = " . $token->expires_in . '<br/>';
+	 	echo "ID Token = " . $token->id_token . '<br/>';
+	 	echo "Created = " . $token->created . '<br/>';
+	 	print_r($token);
+	 	print_r($client->getRefreshToken());
+	 	$client->refreshToken($_SESSION['token']->access_token);
+
+	 	$_SESSION['token'] = $client->getAccessToken();
+	 	$token = json_decode($_SESSION['token']);
+	 	print_r($token);
+
+	 	exit();
+	 	$redirect = 'http://' . $_SERVER['HTTP_HOST'] . $_SERVER['PHP_SELF'];
+	 	header('Location: ' . filter_var($redirect, FILTER_SANITIZE_URL));
+	// } else if (!$client->getAccessToken() && !isset($_SESSION['token'])) {
+	//    	$auth_url = $client->createAuthUrl();
+	//    	header('Location: ' . filter_var($auth_url, FILTER_SANITIZE_URL));
+	}
+
+	// $token = isset($_SESSION['token']) ? $_SESSION['token'] : $accessToken;
+	// $client->setRedirectUri('http://gadje.styrotopia.net/giggity/backend/requests.php');
+
+	// $client->setUseObjects(true);
+	
 	$client->refreshToken($accessToken);
-	$cal = new Google_CalendarService($client);
-	return $cal;
+	return $client;
+	// return $client;
+}
+
+function getCalClient() {
+	$client = getGoogleClient();
+	return new Google_Service_Calendar($client);
 }
 
 function newDateTime($date, $time) {
 	date_default_timezone_set('America/Los_Angeles');
-	$datetime = new Google_EventDateTime();
+	$datetime = new Google_Service_Calendar_EventDateTime();
 	$date = date('c', strtotime("$date $time"));
 	$datetime->setDateTime($date);
 	$datetime->setTimeZone('America/Los_Angeles');
@@ -383,8 +439,8 @@ function newDateTime($date, $time) {
 
 function addRehearsal($date) {
 		$default_location = 'Greenpeace Warehouse';
-		$default_time = '17:00';
-		$default_end = '20:00';
+		$default_time = '19:00';
+		$default_end = '22:00';
 
 		if (! $date) { 
 			$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
@@ -408,7 +464,7 @@ function sendEmails($gig) {
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
 	foreach($emails as $email_address) {
-		mail($email_address, $title, $gig_details, "From: BLO-bot <brassliberation@gmail.com>\r\nReply-To: blo@lists.riseup.net\r\nContent-type: text/plain; charset=utf-8\r\n");
+		mail($email_address, $title, $gig_details, "From: giggity <inspectorgadje@gmail.com>\r\nReply-To: inspectorgadje@googlegroups.com\r\nContent-type: text/plain; charset=utf-8\r\n");
 	}
 }
 
