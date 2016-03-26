@@ -26,10 +26,13 @@ app.service('Gigs', function(Requests, $filter) {
 	service.hideRehearsals = false;
 
 	service.updateGigsList = function() {
-		service.gigsList  = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start'])
-			.filter(function(g) {
-				return g.type == 'gig' || ! service.hideRehearsals;
-			});
+		
+		var list = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start'])
+		if (list) {
+			service.gigsList = list.filter(function(g) {
+					return g.type == 'gig' || ! service.hideRehearsals;
+				});
+		}
 	}
 	service.fetchGigs = function(user_id, fetchAllGigs) {
 		return Requests.fetch('fetchGigsList', {fetchAllGigs: fetchAllGigs, user_id: user_id}).then(function(data) {

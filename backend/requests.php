@@ -62,10 +62,11 @@ function getGigTextDescription($gig, $type='email') {
 	#$url = preg_replace('/backend\/requests.php/', "#/gigs/$gig[gig_id]", "http://$_SERVER[HTTP_HOST]$_SERVER[REQUEST_URI]");
 
 	if($type == 'email') {
-		foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'who', 'contact', 'url') as $key) {
+		//foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'who', 'contact', 'url') as $key) {
+		foreach(array('description', 'date', 'event_time', 'band_play_time', 'location', 'url') as $key) {
 			$gig_details .= str_replace('_', ' ', strtoupper($key)).": $gig[$key]\n\n";
 		}
-		$gig_details.="---=== DETAILS ===---\n\n$gig[details]";
+		//$gig_details.="---=== DETAILS ===---\n\n$gig[details]";
 	} else {
 		$members = gigs_fetchMembers();
 		$availables = array('Yes'=>'', 'No'=>'', 'Maybe'=>'', 'Unknown'=>'');

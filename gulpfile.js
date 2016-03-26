@@ -60,7 +60,8 @@ gulp.task('index', ['bower'], function (cb) {
 
 gulp.task('dev', function() {
 	var target = gulp.src('index.html');
-	var libSources = gulp.src(['./lib/third-party*'], {read: false});
+  var libSources = gulp.src($.bowerFiles().files)
+	// var libSources = gulp.src(['./lib/third-party*'], {read: false});
 	var sources = gulp.src(['./js/*', './css/*'], {read: false});
 	return target.pipe($.inject($.streamSeries(libSources, sources), {relative: true}))
 		.pipe(gulp.dest(''));
