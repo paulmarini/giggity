@@ -6,9 +6,9 @@ if (! isIncluded()) {
 set_error_handler('handleError');
 require_once('config.php');
 
-$client = getGoogleClient();
+if ($enableCalendar) { $client = getGoogleClient(); }
 
-   
+
 
 // $setgooglecal = 0;
 
@@ -111,12 +111,16 @@ function gigs_saveGig($request) {
 	$gig_id = dbEscape(isset($request['gig_id']) ? $request['gig_id'] : '');
 	$fields = array();
 	$gig = $request['data'];
+  $gig['public_title'] = $gig['public_title'] ? $gig['public_title'] : $gig['title'];
+  unset($gig['availability']);
+  unset($gig['gig_data']);
 	if (isset($gig['type']) && $gig['type'] == 'rehearsal') {
 		$gig['meet_time'] = $gig['start_time'];
 	}
-	foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url') as $key) {
+  // foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url', 'setlist') as $key) {
+	foreach(array('band_start', 'date', 'type') as $key) {
 		if(isset($gig[$key])) {
-			if (in_array($key, array('start_time','end_time','meet_time', 'band_start','band_end'))) {
+      if ($key == 'band_start') {
 				$gig[$key] = date('H:i', strtotime($gig[$key]));
 			} elseif ($key == 'date') {
 				$date = str_replace('/', '-', $gig[$key]);
@@ -128,15 +132,18 @@ function gigs_saveGig($request) {
 		}
 	}
 	if (! isset($gig['details'])) {
-		$details = "";
+		$gig['details'] = "";
 		foreach(array('cause','event_history','arrestable','has_permit','cops', 'people_of_color','relevant_communities','blo_role','other_groups','sound','other') as $key) {
-			$details .= strtoupper($key).": ".(isset($gig[$key]) ? $gig[$key] : '')."\n\n";
-		}
-		array_push($fields, "details='".dbEscape($details)."'");
+			$gig['details'] .= strtoupper($key).": ".(isset($gig[$key]) ? $gig[$key] : '')."\n\n";
+      unset($gig[$key]);
+	  }
+
+		// array_push($fields, "details='".dbEscape($details)."'");
 	}
-	if (isset($gig['setlist'])) {
-		array_push($fields, "setlist='".dbEscape(implode(",", $gig['setlist']))."'");
-	}
+	// if (isset($gig['setlist'])) {
+	// 	array_push($fields, "setlist='".dbEscape(implode(",", $gig['setlist']))."'");
+	// }
+  array_push($fields, "gig_data='".dbEscape(json_encode($gig))."'");
 	//$title = dbEscape($gig['title']);
 	$new_gig = 0;
 	if ($gig_id) {
@@ -149,7 +156,7 @@ function gigs_saveGig($request) {
 	}
 	$gig = gigs_fetchGig($gig);
 	saveToCalendar($gig);
-	if ($gig['approved'] == 1 && $gig['public_description']) {
+	if ($gig['approved'] == 1 && $gig['publish']) {
 		saveToCalendar($gig, 'public');
 	} else {
 		deleteFromCalendar($gig, 'public');
@@ -166,23 +173,50 @@ function gigs_fetchGigsList($request) {
 	if (! isset($request['fetchAllGigs']) || $request['fetchAllGigs'] != 'true') {
 		$where = " and date > DATE_SUB(NOW(), INTERVAL 1 DAY) ";
 	}
-	$gigs = dbLookupArray("select gig_id, approved, title, date, type, tactical = '$user' as is_tactical, musical = '$user' as is_musical, band_start from gigs where deleted = 0 $where order by date, band_start");
+	$gigs = dbLookupArray("select * from gigs where deleted = 0 $where order by date, band_start");
+  $gigs = parseGigs($gigs);
+  foreach ($gigs as $gig_id => &$gig) {
+    $gig['is_tactical'] = $gig['tactical'] == $user;
+    $gig['is_musical'] = $gig['musical'] == $user;
+    foreach($gig as $key => $value) {
+      if (! in_array($key, ['gig_id', 'approved', 'title', 'date', 'type', 'band_start','is_tactical', 'is_musical'])) {
+        unset($gig[$key]);
+      }
+    }
+  }
 	if ($user) {
 		$gigs = fetchAvailability($gigs, $user);
 	}
 	return $gigs;
 }
 
+function parseGigs($gigs) {
+  foreach ($gigs as $gig_id => &$gig) {
+    if ($gig['gig_data'] != "") {
+      $gig_data = json_decode($gig['gig_data'], true);
+      if ($gig_data) {
+        $gig = $gig_data;
+        $gig['gig_id'] = $gig_id;
+      }
+    } else {
+    }
+  }
+  return $gigs;
+}
 function gigs_fetchGig($request) {
 	$gig_id = isset($request['gig_id']) ? dbEscape($request['gig_id']) : '';
-	$times = "";
-	foreach(array('meet_time', 'band_start', 'band_end', 'start_time', 'end_time') as $t) {
-		$times .= ", time_format($t, '%H:%i') as $t ";
-	}
-	$gigs = dbLookupArray("select * $times from gigs where gig_id = $gig_id");
+	// $times = "";
+	// foreach(array('meet_time', 'band_start', 'band_end', 'start_time', 'end_time') as $t) {
+	// 	$times .= ", time_format($t, '%H:%i') as $t ";
+	// }
+	$gigs = dbLookupArray("select * from gigs where gig_id = $gig_id");
+  $gigs = parseGigs($gigs);
 	$gigs = fetchAvailability($gigs);
 	$gig = array_values($gigs);
-	$gig[0]['setlist'] = array_filter(explode(",", $gig[0]['setlist']));
+  // print_r($gig);
+  if (isset($gig[0]['setlist']) && is_string($gig[0]['setlist'])) {
+    $gig[0]['setlist'] = array_filter(explode(",", $gig[0]['setlist']));
+  }
 	return $gig[0];
 }
 
@@ -234,16 +268,20 @@ function gigs_fetchMembers() {
 }
 
 function gigs_fetchSongs() {
-	$songs = array();
-	foreach(scandir("../../uploads/files/Songs/") as $song) {
-			if ($song[0] == "." || $song == 'Solo_Scales') { continue; }
-			$songs[] = str_replace("_", " ", $song);
-	}
+  global $songs_dir;
+  $songs = array();
+  if ($songs_dir && file_exists($songs_dir)) {
+    foreach(scandir("../../uploads/files/Songs/") as $song) {
+  			if ($song[0] == "." || $song == 'Solo_Scales') { continue; }
+  			$songs[] = str_replace("_", " ", $song);
+  	}
+  }
 	return $songs;
 }
 
 function gigs_sendInfoEmail($request) {
-	global $emails;
+	global $emails, $enableEmail;
+  if (! $enableEmail) { return true; }
 	foreach($emails as $email_address) {
 		mail($email_address, $request['data']['subject'], $request['data']['body'], "From: Giggity <inspectorgadje@gmail.com>\r\nReply-To: inspectorgadje@googlegroups.com\r\nContent-type: text/plain; charset=utf-8\r\n");
 	}
@@ -260,9 +298,7 @@ function setResponse($statusCode, $statusString, $data="") {
 	}
 
 	//if ($statusCode != 1) {
-	if (! isIncluded()) {
-		exit;
-	}
+	if (! isIncluded()) { exit; }
 	//}
 }
 
@@ -275,21 +311,18 @@ function handleError($errno, $errstr, $errfile, $errline, $errcontext) {
 	return true;
 }
 
-
 function saveToCalendar($gig, $calendartype='private') {
-	// print_r($gig_details = getGigTextDescription($gig, 'calendar')); exit();
-
-	// return; //FIXME
-	global $calendars;
+	global $calendars, $enableCalendar;
+  if (! $enableCalendar) { return; }
 
 	extract($calendars[$calendartype]);
 
-	if ($calendartype == 'public' && ! $gig['public_description']) { return; }
+	if ($calendartype == 'public' && ! $gig['publish']) { return; }
 
 	$cal = getCalClient();
 	$event = new Google_Service_Calendar_Event();
 	$gig_details = "";
-	$title = $gig['title'];
+	$title = $gig['public_title'];
 	if ($calendartype == 'private') {
 		if ($gig['type'] == 'gig') {
 			$prefix = 'Proposed';
@@ -307,7 +340,13 @@ function saveToCalendar($gig, $calendartype='private') {
 		if (! $gig[$start_field]) { $start_field = 'band_start'; }
 	} else {
 		$gig_details = $gig['public_description'];
-   	}
+    if ($gig['facebook_url']) {
+      $gig_details .="\nFacebook: ".$gig['facebook_url'];
+    }
+    if ($gig['tickets_url']) {
+      $gig_details .="\nGet tickets here: ".$gig['facebook_url'];
+    }
+ 	}
   $start_date = $end_date = $gig['date'];
   // $end = newDateTime($gig['date'], $gig[$end_field]);
   if ($gig[$start_field] > $gig[$end_field]) {
@@ -339,7 +378,8 @@ function saveToCalendar($gig, $calendartype='private') {
 }
 
 function deleteFromCalendar($gig, $calendartype='private') {
-	global $calendars;
+	global $calendars, $enableCalendar;
+  if (! $enableCalendar) { return; }
 	extract($calendars[$calendartype]);
 	if(! $gig[$id_field]) { return; }
 	$cal = getCalClient();
@@ -365,7 +405,7 @@ function getGoogleClient() {
 	// $client->setRedirectUri($RedirectUri);
 
 	if (isset($_GET['code'])) {
-	 	$client->authenticate($_GET['code']);  
+	 	$client->authenticate($_GET['code']);
 	 	$_SESSION['token'] = $client->getAccessToken();
 	 	// $_SESSION['token'] = $client->getAccessToken();
 	 	$token = json_decode($_SESSION['token']);
@@ -395,7 +435,7 @@ function getGoogleClient() {
 	// $client->setRedirectUri('http://gadje.styrotopia.net/giggity/backend/requests.php');
 
 	// $client->setUseObjects(true);
-	
+
 	$client->refreshToken($accessToken);
 	return $client;
 	// return $client;
@@ -443,7 +483,7 @@ function addRehearsal($date) {
 		$default_time = '19:00';
 		$default_end = '22:00';
 
-		if (! $date) { 
+		if (! $date) {
 			$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
 		}
 		$count = fetchValue("select count(*) as count from gigs where type='rehearsal' and date = '$date'") ?: 0;
@@ -461,7 +501,8 @@ function addRehearsal($date) {
 }
 
 function sendEmails($gig) {
-	global $emails;
+	global $emails, $enableEmail;
+  if (! $enableEmail) { return; }
 	$gig_details = getGigTextDescription($gig, 'email');
 	$title = "Proposed Gig - $gig[date] - $gig[title]";
 	foreach($emails as $email_address) {

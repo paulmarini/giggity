@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 
 // load plugins
-var $ = require('gulp-load-plugins')({pattern: ['del', 'bower*', 'stream*', 'gulp-*']});
+var $ = require('gulp-load-plugins')({pattern: ['del', 'bower*', 'stream*', 'gulp-*', 'path']});
 
 gulp.task('clean', function(cb){
 	return $.del(['lib/*', 'fonts/*'], cb);
@@ -16,12 +16,15 @@ gulp.task('bower', ['clean'], function(cb){
 		.pipe($.rev())
     .pipe(gulp.dest('./lib'))
 
-  var libcss = gulp.src($.bowerFiles().ext('css').files)
+  var libcss = gulp.src($.bowerFiles().ext('less').files)
+    .pipe($.less({
+      paths: [ $.path.join(__dirname, 'less', 'includes') ]
+    }))
     .pipe($.concat('third-party.css'))
     .pipe($.minifyCss())
 		.pipe($.rev())
     .pipe(gulp.dest('./lib'))
-	
+
   var fonts = gulp.src($.bowerFiles().ext(['eot', 'woff', 'woff2', 'ttf', 'svg']).files)
     .pipe(gulp.dest('./fonts'))
 

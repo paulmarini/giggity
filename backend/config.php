@@ -18,6 +18,11 @@ $calendars = array(
 );
 
 $emails = array('foo@bar.com');
+$songs_dir = "";
+
+$enableCalendar = true;
+$enableEmail = true;
+
 
 $google_api = array(
 	'accessToken'=>"",

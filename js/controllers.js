@@ -27,7 +27,7 @@ angular.module('Giggity.controllers', [])
     $scope.page = 1;
     $scope.fetchAllGigs = false;
     $scope.fetchingGigs = false;
-    
+
 		$scope.$on('$routeUpdate', function() {
 			$scope.setView();
 		});
@@ -100,13 +100,13 @@ angular.module('Giggity.controllers', [])
 		}
 
     $scope.changeGig = function(gig_id, edit) {
-	  var type = $scope.Gigs.gigs[gig_id].type;
-	  var tab = edit && type == 'gig' ? 'band_details': 'gig_details';
+  	  var type = $scope.Gigs.gigs[gig_id] ? $scope.Gigs.gigs[gig_id].type : 'gig';
+  	  var tab = edit && type == 'gig' ? 'band_details': 'gig_details';
       $scope.setTab(tab);
       $routeParams.gig_id = gig_id;
       $location.path("/gigs/"+gig_id, false);
       $scope.setView();
-    }
+    };
 
 		$scope.setGig = function(gig) {
 			$scope.gig = gig;

@@ -32,5 +32,8 @@
     "main-bower-files": "^2.5.0",
     "stream-series": "^0.1.1"
   },
-  "dependencies": {}
+  "dependencies": {
+    "gulp-less": "^3.0.5",
+    "path": "^0.12.7"
+  }
 }
