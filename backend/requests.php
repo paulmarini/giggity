@@ -111,7 +111,10 @@ function gigs_saveGig($request) {
 	$gig_id = dbEscape(isset($request['gig_id']) ? $request['gig_id'] : '');
 	$fields = array();
 	$gig = $request['data'];
-  $gig['public_title'] = $gig['public_title'] ? $gig['public_title'] : $gig['title'];
+	foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url', 'setlist', "google_calendar_id", "google_public_calendar_id", "facebook_url", "tickets_url") as $key) {
+		$gig[$key] = isset($gig[$key]) ? $gig[$key] : "";
+	}
+  $gig['public_title'] = isset($gig['public_title']) && $gig['public_title'] ? $gig['public_title'] : $gig['title'];
   unset($gig['availability']);
   unset($gig['gig_data']);
 	if (isset($gig['type']) && $gig['type'] == 'rehearsal') {
@@ -165,6 +168,10 @@ function gigs_saveGig($request) {
 		sendEmails($gig);
 	}
 	return $gig;
+}
+
+function saveGigData($gig) {
+	dbwrite("update gigs set gig_data='".dbEscape(json_encode($gig))."' where gig_id = ".$gig['gig_id']);
 }
 
 function gigs_fetchGigsList($request) {
@@ -322,7 +329,7 @@ function saveToCalendar($gig, $calendartype='private') {
 	$cal = getCalClient();
 	$event = new Google_Service_Calendar_Event();
 	$gig_details = "";
-	$title = $gig['public_title'];
+	$title = $calendartype == 'public' ? $gig['public_title'] : $gig['title'];
 	if ($calendartype == 'private') {
 		if ($gig['type'] == 'gig') {
 			$prefix = 'Proposed';
@@ -340,11 +347,11 @@ function saveToCalendar($gig, $calendartype='private') {
 		if (! $gig[$start_field]) { $start_field = 'band_start'; }
 	} else {
 		$gig_details = $gig['public_description'];
-    if ($gig['facebook_url']) {
-      $gig_details .="\nFacebook: ".$gig['facebook_url'];
+    if (isset($gig['facebook_url']) && $gig['facebook_url']) {
+      $gig_details .="Facebook: ".$gig['facebook_url']."\n";
     }
-    if ($gig['tickets_url']) {
-      $gig_details .="\nGet tickets here: ".$gig['facebook_url'];
+    if (isset($gig['tickets_url']) && $gig['tickets_url']) {
+      $gig_details .="Get tickets here: ".$gig['tickets_url']."\n";
     }
  	}
   $start_date = $end_date = $gig['date'];
@@ -367,7 +374,9 @@ function saveToCalendar($gig, $calendartype='private') {
 		} else {
 			$createdEvent = $cal->events->insert($calendar_id, $event);
 			$google_gig_id = $createdEvent->getId();
-			dbwrite("update gigs set $id_field = '".dbEscape($google_gig_id)."' where gig_id = $gig[gig_id]");
+			$gig[$id_field] = $google_gig_id;
+			saveGigData($gig);
+			//dbwrite("update gigs set $id_field = '".dbEscape($google_gig_id)."' where gig_id = $gig[gig_id]");
 		}
 	} catch (Exception $e) {
 		//trigger_error('Error creating google calendar entry: '.$e->getMessage(), E_USER_ERROR);
@@ -381,11 +390,13 @@ function deleteFromCalendar($gig, $calendartype='private') {
 	global $calendars, $enableCalendar;
   if (! $enableCalendar) { return; }
 	extract($calendars[$calendartype]);
-	if(! $gig[$id_field]) { return; }
+	if(! isset($gig[$id_field]) || ! $gig[$id_field]) { return; }
 	$cal = getCalClient();
 	$event = new Google_Service_Calendar_Event();
 	$cal->events->delete($calendar_id, $gig[$id_field]);
-	dbwrite("update gigs set $id_field = '' where gig_id = $gig[gig_id]");
+	$gig[$id_field] = '';
+	saveGigData($gig);
+	//dbwrite("update gigs set $id_field = '' where gig_id = $gig[gig_id]");
 }
 
 function getGoogleClient() {

@@ -11,6 +11,7 @@ foreach(array('meet_time', 'band_start', 'band_end', 'start_time', 'end_time') a
 $gigs = dbLookupArray("select * $times from gigs");
 
 foreach($gigs as $gig) {
+	$gig['publish'] = false;
   if (isset($gig['setlist']) && is_string($gig['setlist'])) {
     $gig['setlist'] = array_filter(explode(",", $gig['setlist']));
   } else {
@@ -23,7 +24,7 @@ foreach($gigs as $gig) {
   gigs_saveGig($request);
 }
 foreach(['title','description','location','approved', 'who','contact', 'details', 'tactical', 'musical', 'public_description', 'notes', 'colors', 'url', 'setlist', 'start_time', 'end_time', 'band_end', 'meet_time', 'google_public_calendar_id', 'google_calendar_id'] as $field) {
-  dbWrite("alter table gigs drop column if exists $field");
+  dbWrite("alter table gigs drop column $field");
 }
 
 ?>
