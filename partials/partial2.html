@@ -379,14 +379,6 @@
 								</div>
 							</div>
 							<div class='form-group'>
-								<label class="col-md-4 control-label text-right">Event Time</label>
-								<div class='col-md-8'>
-									<time-picker model="gig.start_time"></time-picker>
-									<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
-									<time-picker model="gig.end_time"></time-picker>
-								</div>
-							</div>
-							<div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='location'>Location</label>
 								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.location'/></div>
 							</div>
@@ -394,14 +386,6 @@
                 <label class='col-md-4 control-label text-right' for='description'>Notes</label>
                 <div class='col-md-8'><textarea class='form-control' spellcheck="true" rows=5 ng-model='gig.description'></textarea></div>
               </div>
-              <div class='form-group'>
-                <label class='col-md-4 control-label text-right' for='url'>Publish to Website</label>
-                <div class='col-md-8'><input class='form-control' type='checkbox' ng-model='gig.publish'/></div>
-              </div>
-              <div class='form-group'>
-								<label class='col-md-4 control-label text-right' for='url'>URL</label>
-								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.url'/></div>
-							</div>
 
 							<!-- <div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='tactical'>Tactical</label>
@@ -421,24 +405,6 @@
 									<input class='form-control' type='text' autocomplete='off' typeahead="c for c in ['Red and Black', 'Pink and Black', 'Black and Black'] | filter:$viewValue" ng-model='gig.colors'/>
 								</div>
 							</div> -->
-              <div class='form-group'>
-                <label class='col-md-4 control-label text-right' for='url'>Public Title</label>
-                <div class='col-md-8'><input class='form-control' type='text' placeholder='Defaults to regular title if not set' ng-model='gig.public_title'/></div>
-              </div>
-							<div class='form-group'>
-								<label class='col-md-4 control-label text-right' for='public_description'>Public Description</label>
-								<div class='col-md-8'>
-									<textarea placeholder='Enter a short (2-3 lines) description for the public calendar and website' class='form-control' spellcheck="true" ng-model='gig.public_description'></textarea>
-								</div>
-							</div>
-              <div class='form-group'>
-                <label class='col-md-4 control-label text-right' for='url'>Facebook Link</label>
-                <div class='col-md-8'><input class='form-control' type='text' ng-model='gig.facebook_url'/></div>
-              </div>
-              <div class='form-group'>
-                <label class='col-md-4 control-label text-right' for='url'>Tickets Link</label>
-                <div class='col-md-8'><input class='form-control' type='text' ng-model='gig.tickets_url'/></div>
-              </div>
 							<!-- <div class='form-group'>
 								<label class='col-md-4 control-label text-right' for='notes'>Notes</label>
 								<div class='col-md-8'>
@@ -456,6 +422,50 @@
 							</div>
 						</div>
 					</tab>
+					<tab heading='Public Info' class='tab-pane' id='public_info' active="tab['public_info']">
+						<div class='form-horizontal container-fluid'>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right'>Publish to Website</label>
+								<div class='col-md-8'><input class='form-control' type='checkbox' ng-model='gig.publish'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right'>Private Gig</label>
+								<div class='col-md-8'><input class='form-control' type='checkbox' ng-model='gig.private'/></div>
+							</div>
+							<div class='form-group'>
+								<label class="col-md-4 control-label text-right">Event Time</label>
+								<div class='col-md-8'>
+									<time-picker model="gig.start_time"></time-picker>
+									<label for='band_end'  style='vertical-align: text-bottom;'>To</label>
+									<time-picker model="gig.end_time"></time-picker>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='url'>Public Title</label>
+								<div class='col-md-8'><input class='form-control' type='text' placeholder='Defaults to regular title if not set' ng-model='gig.public_title'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='public_description'>Public Description</label>
+								<div class='col-md-8'>
+									<textarea placeholder='Enter a short (2-3 lines) description for the public calendar and website' class='form-control' spellcheck="true" ng-model='gig.public_description'></textarea>
+								</div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='url'>URL</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.url'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='url'>Facebook Link</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.facebook_url'/></div>
+							</div>
+							<div class='form-group'>
+								<label class='col-md-4 control-label text-right' for='url'>Tickets Link</label>
+								<div class='col-md-8'><input class='form-control' type='text' ng-model='gig.tickets_url'/></div>
+							</div>
+							<pre>{{gig | json}}</pre>
+						</div>
+					</tab>
+
 					<!-- <tab heading='Event Info' class='tab-pane' id='event_details' active="tab['event_details']">
 						<div class='form-horizontal container-fluid'>
 							<div class='form-group'>

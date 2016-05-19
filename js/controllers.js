@@ -162,7 +162,9 @@ angular.module('Giggity.controllers', [])
         band_end: '22:00',
         start_time: '19:00',
         end_time: '02:00',
-        approved: 0
+        approved: 0,
+        publish: false,
+        private: false
       };
       $scope.changeGig('new', true);
 			// $scope.setTab('band_details');
