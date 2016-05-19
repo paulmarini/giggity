@@ -16,10 +16,10 @@ gulp.task('bower', ['clean'], function(cb){
 		.pipe($.rev())
     .pipe(gulp.dest('./lib'))
 
-  var libcss = gulp.src($.bowerFiles().ext('less').files)
-    .pipe($.less({
-      paths: [ $.path.join(__dirname, 'less', 'includes') ]
-    }))
+  var libcss = gulp.src($.bowerFiles().ext('css').files)
+    // .pipe($.less({
+    //   paths: [ $.path.join(__dirname, 'less', 'includes') ]
+    // }))
     .pipe($.concat('third-party.css'))
     .pipe($.minifyCss())
 		.pipe($.rev())
