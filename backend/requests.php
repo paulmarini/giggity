@@ -384,7 +384,7 @@ function saveToCalendar(&$gig, $calendartype='private') {
       //dbwrite("update gigs set $id_field = '".dbEscape($google_gig_id)."' where gig_id = $gig[gig_id]");
     }
   } catch (Exception $e) {
-    trigger_error("Error creating $calendartype google calendar entry: ".$e->getMessage().$gig[$start_field].$gig[$end_field], E_USER_ERROR);
+    trigger_error("Error creating $calendartype google calendar entry: ".$e->getMessage(), E_USER_ERROR);
   }
   if(! $createdEvent || ! $gig[$id_field]) {
     trigger_error("Error creating $calendartype google calendar entry", E_USER_ERROR);
