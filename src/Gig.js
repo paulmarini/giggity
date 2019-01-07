@@ -1,9 +1,12 @@
 import React, { Component } from 'react';
 import requests from './requests';
+import { connect } from 'react-redux';
+import { actions } from './store';
 import { Button } from '@material-ui/core';
 import {TextField} from 'formik-material-ui';
 
 import { Formik, Form, Field } from 'formik';
+import UserAvailability from './UserAvailability';
 
 const date = new Date().toJSON().slice(0,10);
 
@@ -11,21 +14,17 @@ const defaultState = {
   name: '',
   description: '',
   date,
-  id: null
+  id: null,
+  users: [],
+  availability: {}
 }
 
-class Home extends Component {
+class Gig extends Component {
   constructor(props) {
     super(props);
     this.state = defaultState;
   };
   componentDidMount () {
-    requests.register('gigUpdated', (data) => {
-      const {id} = this.props.match.params;
-      if (id) {
-        this.setState(data)
-      }
-    });
     this.updateGig();
   };
 
@@ -36,11 +35,21 @@ class Home extends Component {
     }
   };
   componentWillUnmount () {
-    requests.unregister('gigUpdated');
+    const {id} = this.props.match.params;
+    requests.unregister(`gig-${id}-updated`);
   };
   updateGig = () => {
     const {id} = this.props.match.params;
     if (id) {
+      requests.register(`gig-${id}-updated`, (data) => {
+        console.log('!!!!', data)
+        this.setState(data);
+        this.props.loadGig(data);
+      });
+      requests.register(`gig-${id}-availabilityUpdated`, (availability) => {
+        console.log('&&&', availability)
+        this.setState({availability});
+      });
       requests.send('fetchGig', id);
     } else {
       this.setState(defaultState);
@@ -50,7 +59,7 @@ class Home extends Component {
   saveGig = (values) => {
     console.log(values);
     this.setState(defaultState);
-    return requests.saveGig(values)
+    return requests.save('gig', values)
       .then(gig => {
         console.log(gig);
         if (gig.id !== this.props.match.params.id) {
@@ -61,7 +70,7 @@ class Home extends Component {
 
   deleteGig = () => {
     const {id} = this.props.match.params;
-    return requests.deleteGig(id)
+    return requests.delete('gig', id)
       .then(() => {
         this.props.history.push(`/`);
       })
@@ -69,11 +78,12 @@ class Home extends Component {
   }
 
   render() {
-    const {name, date, description, id} = this.state;
+    const {name, users, id, availability} = this.state;
+    console.log('***', users)
     return (
       <div>
         <h3>{name}</h3>
-        <Formik onSubmit={this.saveGig} initialValues={{name, date, description, id}} enableReinitialize={true}>
+        <Formik onSubmit={this.saveGig} initialValues={this.state} enableReinitialize={true}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <Form>
               <Field
@@ -106,9 +116,26 @@ class Home extends Component {
             </Form>
           )}
         </Formik>
+        <div style={{textAlign: 'left'}}>
+          <h3>Users</h3>
+          <ul>
+            {
+              users.map(user => {
+                return (
+                  <li key={user.id}>
+                    {user.name}
+                    <UserAvailability userId={user.id} gigId={id} status={availability[user.id]}/>
+                  </li>
+                )
+              })
+            }
+          </ul>
+        </div>
       </div>
     );
   }
 }
-
-export default Home;
+export default connect(
+  null,
+  {loadGig: actions.loadGig}
+)(Gig);
