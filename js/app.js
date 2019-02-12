@@ -1,7 +1,7 @@
 'use strict';
 
 // Declare app level module which depends on filters, and services
-angular.module('Giggity', ['Giggity.filters', 'Giggity.services', 'Giggity.directives', 'Giggity.controllers', 'ui.bootstrap', 'ngSanitize', 'ngRoute', 'mgcrea.ngStrap', 'angular-sortable-view']).
+angular.module('Giggity', ['Giggity.filters', 'Giggity.services', 'Giggity.directives', 'Giggity.controllers', 'ui.bootstrap', 'ngSanitize', 'ngRoute', 'mgcrea.ngStrap', 'angular-sortable-view', 'mgcrea.ngStrap.helpers.dimensions']).
   config(['$compileProvider', function ($compileProvider) {
 	  $compileProvider.aHrefSanitizationWhitelist(/^\s*(https?|ftp|mailto|sms|tel|smsto):/);
   }]).

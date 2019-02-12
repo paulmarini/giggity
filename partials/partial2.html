@@ -8,12 +8,12 @@
 				</div>
 				<ul class="nav navbar-nav navbar-right">
 					<li>
-						<a class='user-link' tooltip-placement='bottom' data-tooltip='Sign out or switch user' href='' ng-click='changeUser()'><i class='glyphicon glyphicon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
+						<a class='user-link' data-placement='bottom' bs-tooltip data-title='Sign out or switch user' href='' ng-click='changeUser()'><i class='glyphicon glyphicon-user'></i> {{currentUserName && currentUserName || 'Not Signed In' }} </a>
 					</li>
 					<li>
-						<a><small class='badge' data-tooltip='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' tooltip-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && ' ' || 'badge-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small></a>
+						<a><small class='badge' bs-tooltip data-title='{{ Gigs.gigsList | userUnknownCount:currentUser }} gigs with unknown availability' data-placement='bottom' ng-class="(Gigs.gigsList | userUnknownCount:currentUser) == 0 && ' ' || 'badge-danger'">{{ Gigs.gigsList | userUnknownCount:currentUser }}</small></a>
 					</li>
-					<li class="dropdown" ng-hide='mobile' tooltip-placement='bottom' data-tooltip='Options'>
+					<li class="dropdown" ng-hide='mobile' data-placement='bottom' bs-tooltip data-title='Options'>
 						<a class="dropdown-toggle" href='' data-toggle="dropdown"><i class='glyphicon glyphicon-cog'></i></a>
 						<ul class='dropdown-menu'>
 							<li>
@@ -24,7 +24,7 @@
 							<li><a href='/gig_request.php' target='_blank'>Add a new gig</a></li>
 						</ul>
 					</li>
-					<li tooltip-placement='bottom' data-tooltip='Refresh gigs'>
+					<li data-placement='bottom' bs-tooltip data-title='Refresh gigs'>
 						<a href='' ng-click='fetchGigs()' ><i class='glyphicon glyphicon-refresh' ng-class='{"glyphicon-spin": fetchingGigs}'></i></a>
 					</li>
 				</ul>
@@ -63,7 +63,7 @@
 					<td style='width: 100%' class='form-inline'>
 						<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='glyphicon glyphicon-chevron-right'></i></span>
 						<span ng-click='changeGig(current_gig.gig_id, 1);' eat-click=1 class='gig_list_edit pull-right'><i class='glyphicon glyphicon-pencil'></i> Edit</span>
-						<a href='' ng-class='{"text-muted": current_gig.approved == -1}' data-tooltip='{{(current_gig.is_tactical == 1 || current_gig.is_musical == 1) ? "You are "+(current_gig.is_tactical == 1 ? "tactical" : "musical")+" for this gig" : ""}}'>{{current_gig.title}} <span ng-if="(current_gig.is_tactical == 1 || current_gig.is_musical == 1)" class="glyphicon"  ng-class="{'glyphicon-bullhorn': current_gig.is_tactical == 1, 'glyphicon-music': current_gig.is_musical == 1}"></span></a>
+						<a href='' ng-class='{"text-muted": current_gig.approved == -1}' bs-tooltip data-title='{{(current_gig.is_tactical == 1 || current_gig.is_musical == 1) ? "You are "+(current_gig.is_tactical == 1 ? "tactical" : "musical")+" for this gig" : ""}}'>{{current_gig.title}} <span ng-if="(current_gig.is_tactical == 1 || current_gig.is_musical == 1)" class="glyphicon"  ng-class="{'glyphicon-bullhorn': current_gig.is_tactical == 1, 'glyphicon-music': current_gig.is_musical == 1}"></span></a>
 						<div class='form-inline' ng-show='currentUser && current_gig.approved != -1' ng-class="{'text-danger': getAvailability(current_gig.gig_id) == 'Unknown'}">
 							<small>Your Availability:</small>
 							<select style='display: none;' loading-feedback='setAvailability({{currentUser}}, {{current_gig.gig_id}})' ng-model='Gigs.gigs[current_gig.gig_id].availability[currentUser].available' class='gig_list_availability_edit form-control input-xs' eat-click=1>
