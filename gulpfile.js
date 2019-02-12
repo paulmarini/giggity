@@ -3,7 +3,7 @@
 var gulp = require('gulp');
 
 // load plugins
-var $ = require('gulp-load-plugins')({pattern: ['del', 'bower*', 'stream*', 'gulp-*']});
+var $ = require('gulp-load-plugins')({pattern: ['del', 'bower*', 'stream*', 'gulp-*', 'path']});
 
 gulp.task('clean', function(cb){
 	return $.del(['lib/*', 'fonts/*'], cb);
@@ -17,6 +17,9 @@ gulp.task('bower', ['clean'], function(cb){
     .pipe(gulp.dest('./lib'))
 
   var libcss = gulp.src($.bowerFiles().ext('css').files)
+    // .pipe($.less({
+    //   paths: [ $.path.join(__dirname, 'less', 'includes') ]
+    // }))
     .pipe($.concat('third-party.css'))
     .pipe($.minifyCss())
 		.pipe($.rev())
@@ -25,7 +28,7 @@ gulp.task('bower', ['clean'], function(cb){
   var fonts = gulp.src($.bowerFiles().ext(['eot', 'woff', 'woff2', 'ttf', 'svg']).files)
     .pipe(gulp.dest('./fonts'))
 
-	// console.log(bower.files);
+	console.log($.bowerFiles().files);
 	var partials = gulp.src('partials/*.html')
 		.pipe($.angularTemplates({module:'Giggity', basePath: 'partials/'}))
 
@@ -60,7 +63,8 @@ gulp.task('index', ['bower'], function (cb) {
 
 gulp.task('dev', function() {
 	var target = gulp.src('index.html');
-	var libSources = gulp.src(['./lib/third-party*'], {read: false});
+  var libSources = gulp.src($.bowerFiles().files)
+	// var libSources = gulp.src(['./lib/third-party*'], {read: false});
 	var sources = gulp.src(['./js/*', './css/*'], {read: false});
 	return target.pipe($.inject($.streamSeries(libSources, sources), {relative: true}))
 		.pipe(gulp.dest(''));
@@ -68,5 +72,5 @@ gulp.task('dev', function() {
 
 gulp.task('default', ['index'], function() {
 	return gulp.src('./lib/')
-		.pipe($.git.add());
+		// .pipe($.git.add());
 });
