@@ -118,14 +118,9 @@ function gigs_saveGig($request) {
   unset($gig['availability']);
   unset($gig['gig_data']);
   if (isset($gig['type']) && $gig['type'] == 'rehearsal') {
-<<<<<<< HEAD
     $gig['start_time'] = $gig['band_start'];
     $gig['meet_time'] = $gig['band_start'];
     $gig['end_time'] = $gig['band_end'];
-
-=======
-    $gig['meet_time'] = $gig['start_time'];
->>>>>>> 87079eaa26bc779caabab884aaeb9f77ed1cfdc3
   }
   // foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url', 'setlist') as $key) {
   foreach(array('band_start', 'date', 'type') as $key) {
