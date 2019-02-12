@@ -55,7 +55,10 @@ app.directive('gigDetails', [function() {
 				var output = '';
 				$(string.split('\n\n')).each( function(i, item) {
 					var values = item.split(':');
-					values[0] = values[0].replace(/_/g, ' ').toLowerCase();
+					values[0] = values[0].replace(/_/g, ' ');
+					if (values[0]) {
+						values[0].toLowerCase();
+					}
 					if (! values[1]) { values[1] = '&nbsp;'; }
 					output+='<dt style="text-transform:capitalize">'+values[0]+"</dt><dd class='clearfix'>"+values[1]+'</dd>';
 				});
@@ -338,12 +341,15 @@ app.directive('emailInfo', function($filter, Members, Requests) {
 		},
 		link:function(scope, element, attribs) {
 			scope.dateFormat = $filter('date');
+			//scope.timeFormat = $filter('date');
+			var time = '2000-01-01T'+scope.gig.band_start+':00-0800';
 			scope.timeFormat = function(time) {
-				return time.replace(/^0+/, '');
+				var date = '2000-01-01T'+time+':00';
+				return $filter('date')(date, 'h:mm a');
 			}
-			scope.subject = "Gig Details: "+scope.dateFormat(scope.gig.date, 'M/d')+"@"+scope.timeFormat(scope.gig.band_start, 'h:m a')+' - '+scope.gig.title;
+			scope.subject = "Gig Details: "+scope.dateFormat(scope.gig.date, 'M/d')+"@"+scope.timeFormat(scope.gig.band_start)+' - '+scope.gig.title;
 			scope.body =
-				"When: "+scope.dateFormat(scope.gig.date, 'EEEE, M/d')+", Meet at "+scope.timeFormat(scope.gig.meet_time || '???', 'h:m a') + ", play from "+scope.timeFormat(scope.gig.band_start, 'h:m a')+" - "+scope.timeFormat(scope.gig.band_end, 'h:m a')+
+				"When: "+scope.dateFormat(scope.gig.date, 'EEEE, M/d')+", Meet at "+scope.timeFormat(scope.gig.meet_time || '???') + ", play from "+scope.timeFormat(scope.gig.band_start)+" - "+scope.timeFormat(scope.gig.band_end)+
 				"\nWhere: "+scope.gig.location+
 				"\nTactical: "+(scope.gig.tactical ? Members.members[scope.gig.tactical.id].name : '???')+
 				"\nMusical: "+(scope.gig.musical ? Members.members[scope.gig.musical.id].name : '???') +
