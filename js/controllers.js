@@ -49,12 +49,13 @@ angular.module('Giggity.controllers', [])
           if (gig_id != 'new') {
             $scope.fetchGig(gig_id);
             // $rootScope.app_loaded = true;
-          } else if ($scope.gig.type == 'gig' && $rootScope.app_loaded) {
-            $scope.setTab('band_details');
+          } else if ($rootScope.app_loaded) {
+            $scope.setTab(($scope.gig.type == 'gig' ? 'band' : 'gig') + '_details');
           } else {
             $rootScope.app_loaded = true;
           }
         } else {
+          $scope.fetchGig();
           $rootScope.app_loaded = true;
         }
 			} else {
@@ -157,11 +158,11 @@ angular.module('Giggity.controllers', [])
         availability: {},
         gig_id: 'new',
         type: type,
-        meet_time: '17:00',
-        band_start: '19:00',
-        band_end: '22:00',
-        start_time: '19:00',
-        end_time: '02:00',
+        meet_time: '01:00',
+        band_start: type === 'gig' ? '02:00' : '19:00',
+        band_end: type === 'gig' ? '03:00' : '22:00',
+        start_time: '02:00',
+        end_time: '03:00',
         approved: 0,
         publish: false,
         private: false

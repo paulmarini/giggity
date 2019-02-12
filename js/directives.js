@@ -57,7 +57,6 @@ app.directive('gigDetails', [function() {
 					var values = item.split(':');
 					values[0] = values[0].replace(/_/g, ' ');
 					if (values[0]) {
-						console.log(values[0])
 						values[0].toLowerCase();
 					}
 					if (! values[1]) { values[1] = '&nbsp;'; }
@@ -347,7 +346,7 @@ app.directive('emailInfo', function($filter, Members, Requests) {
 			scope.timeFormat = function(time) {
 				var date = '2000-01-01T'+time+':00';
 				return $filter('date')(date, 'h:mm a');
-			}	
+			}
 			scope.subject = "Gig Details: "+scope.dateFormat(scope.gig.date, 'M/d')+"@"+scope.timeFormat(scope.gig.band_start)+' - '+scope.gig.title;
 			scope.body =
 				"When: "+scope.dateFormat(scope.gig.date, 'EEEE, M/d')+", Meet at "+scope.timeFormat(scope.gig.meet_time || '???') + ", play from "+scope.timeFormat(scope.gig.band_start)+" - "+scope.timeFormat(scope.gig.band_end)+
