@@ -114,6 +114,7 @@ angular.module('Giggity.controllers', [])
 			$scope.setCurrentGigIndex();
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.members[$scope.gig.tactical] : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.members[$scope.gig.musical] : '';
+      $scope.gig.setlist = $scope.gig.setlist || [];
 			$scope.membernamefilter = '';
 			$scope.memberavailablefilter = '';
 			$scope.gig_loading = 0;
