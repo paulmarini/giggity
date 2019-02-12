@@ -45,7 +45,19 @@ angular.module('Giggity.controllers', [])
       var gig_id = $routeParams.gig_id;
 			if (! $scope.mobile || gig_id) {
 				$scope.mobileView = 'mobile-view-gig';
-        $scope.fetchGig(gig_id);
+        if (gig_id) {
+          if (gig_id != 'new') {
+            $scope.fetchGig(gig_id);
+            // $rootScope.app_loaded = true;
+          } else if ($rootScope.app_loaded) {
+            $scope.setTab(($scope.gig.type == 'gig' ? 'band' : 'gig') + '_details');
+          } else {
+            $rootScope.app_loaded = true;
+          }
+        } else {
+          $scope.fetchGig();
+          $rootScope.app_loaded = true;
+        }
 			} else {
 				$scope.mobileView = 'mobile-view-nav';
         $rootScope.app_loaded = true;
@@ -64,6 +76,7 @@ angular.module('Giggity.controllers', [])
 		$scope.saveGig = function() {
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.gig.tactical.id : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.gig.musical.id : '';
+      if ($scope.gig.gig_id == 'new') { delete $scope.gig.gig_id; }
 			return Requests.write('saveGig', $scope.gig, $scope.gig.gig_id).then(function(gig) {
         gig.is_musical = gig.musical == $scope.currentUser;
         gig.is_tactical = gig.tactical == $scope.currentUser;
@@ -88,18 +101,20 @@ angular.module('Giggity.controllers', [])
 		}
 
     $scope.changeGig = function(gig_id, edit) {
-      var tab = edit? 'band_details': 'gig_details';
+  	  var type = $scope.Gigs.gigs[gig_id] ? $scope.Gigs.gigs[gig_id].type : 'gig';
+  	  var tab = edit && type == 'gig' ? 'band_details': 'gig_details';
       $scope.setTab(tab);
       $routeParams.gig_id = gig_id;
       $location.path("/gigs/"+gig_id, false);
       $scope.setView();
-    }
+    };
 
 		$scope.setGig = function(gig) {
 			$scope.gig = gig;
 			$scope.setCurrentGigIndex();
 			$scope.gig.tactical = $scope.gig.tactical ? $scope.members[$scope.gig.tactical] : '';
 			$scope.gig.musical = $scope.gig.musical ? $scope.members[$scope.gig.musical] : '';
+      $scope.gig.setlist = $scope.gig.setlist || [];
 			$scope.membernamefilter = '';
 			$scope.memberavailablefilter = '';
 			$scope.gig_loading = 0;
@@ -135,9 +150,26 @@ angular.module('Giggity.controllers', [])
       $scope.fetchGigs();
     }
 
-		$scope.newGig = function() {
-			$scope.gig = {title:'New Gig', availability: {}};
-			$scope.setTab('band_details');
+		$scope.newGig = function(type) {
+      var type = type ? type : 'gig';
+      var title = type == 'gig' ? 'New Gig' : 'Rehearsal';
+
+			$scope.gig = {
+        title:title,
+        availability: {},
+        gig_id: 'new',
+        type: type,
+        meet_time: '01:00',
+        band_start: type === 'gig' ? '02:00' : '19:00',
+        band_end: type === 'gig' ? '03:00' : '22:00',
+        start_time: '02:00',
+        end_time: '03:00',
+        approved: 0,
+        publish: false,
+        private: false
+      };
+      $scope.changeGig('new', true);
+			// $scope.setTab('band_details');
 		}
 
 		$scope.setCurrentGigIndex = function() {
@@ -214,19 +246,23 @@ angular.module('Giggity.controllers', [])
       }
     });
 
+    $scope.$watch('Gigs.hideRehearsals', function() {
+      $scope.Gigs.updateGigsList();
+    });
+
     $scope.fetchSongs();
 
     var initWatch = $scope.$watch(function() {
-        return $scope.members && $scope.Gigs.gigsList && $scope.Gigs.gigsList.length;
+        return $scope.members && $scope.Gigs.gigsList;
       }, function(v) {
         if (v) {
           if ($routeParams.action && $routeParams.gig_id && $scope.currentUser) {
             $scope.Gigs.gigs[$routeParams.gig_id].availability[$scope.currentUser].available = $routeParams.action;
             $scope.setAvailability($scope.currentUser, $routeParams.gig_id).then(function() {
-              $scope.setView();
+              $scope.setView($routeParams.gig_id == 'new');
             });
           } else {
-            $scope.setView();
+            $scope.setView($routeParams.gig_id == 'new');
           }
           initWatch();
         }
