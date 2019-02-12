@@ -383,8 +383,8 @@ function newDateTime($date, $time) {
 
 function addRehearsal($date) {
 		$default_location = 'Greenpeace Warehouse';
-		$default_time = '17:00';
-		$default_end = '20:00';
+		$default_time = '16:00';
+		$default_end = '19:00';
 
 		if (! $date) { 
 			$date = date('Y-m-d', strtotime('next sunday + 6 weeks'));
