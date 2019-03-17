@@ -113,7 +113,10 @@ function gigs_saveGig($request) {
   $gig['public_title'] = isset($gig['public_title']) && $gig['public_title'] ? $gig['public_title'] : $gig['title'];
   unset($gig['availability']);
   unset($gig['gig_data']);
-  if (isset($gig['type']) && $gig['type'] == 'rehearsal') {
+  $gig['type'] = isset($gig['type']) && $gig['type'] ? $gig['type'] : 'gig';
+  $gig['meet_time'] = isset($gig['meet_time']) && $gig['meet_time'] ? $gig['meet_time'] : $gig['band_start'];
+
+  if ($gig['type'] == 'rehearsal') {
     $gig['start_time'] = $gig['band_start'];
     $gig['meet_time'] = $gig['band_start'];
     $gig['end_time'] = $gig['band_end'];
