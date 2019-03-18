@@ -18,7 +18,7 @@
 						<ul class='dropdown-menu'>
 							<li>
 								<div style='padding: 0px 10px;' class='checkbox'>
-									<label> <input type='checkbox' ng-model='fetchAllGigs'> Show Past Gigs</label>
+									<label> <input type='checkbox' ng-model='Gigs.fetchAllGigs'> Show Past Gigs</label>
 								</div>
 							</li>
 							<li><a href='/gig_request.php' target='_blank'>Add a new gig</a></li>
@@ -57,8 +57,8 @@
 						<i class='approve_icon glyphicon' ng-class="{'glyphicon-thumbs-up': current_gig.approved==1, 'glyphicon-thumbs-down':current_gig.approved==-1, 'glyphicon-question-sign': current_gig.approved==0 && current_gig.type == 'gig', 'glyphicon-heart text-danger': current_gig.type == 'rehearsal'}"></i>
 					</td>
 					<td>
-						<span ng-if='fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd/yy'}}</span>
-						<span ng-if='!fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd'}}</span>
+						<span ng-if='Gigs.fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd/yy'}}</span>
+						<span ng-if='!Gigs.fetchAllGigs' class='date'>{{current_gig.date+'T08' | date:'MM/dd'}}</span>
 					</td>
 					<td style='width: 100%' class='form-inline'>
 						<span ng-show='mobile' class='pull-right mobile_nav_arrow'><i class='glyphicon glyphicon-chevron-right'></i></span>
