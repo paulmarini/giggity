@@ -9,12 +9,12 @@ app.service('Members', function(Requests, $filter) {
 	service.members = null;
 	service.membersList = null;
 
-	service.promise = Requests.fetch('fetchMembers').then(function(data)	{
+	service.promise = Requests.fetch('fetchMembers').then(function(data) {
 		service.members = data;
 		service.membersList = $filter("orderBy")($filter("toArray")(service.members), 'name');
 	});
 
-	service.getMembers = function () { return members; }
+	service.getMembers = function() { return members; }
 
 	return service;
 });
@@ -24,18 +24,19 @@ app.service('Gigs', function(Requests, $filter) {
 	service.gigs = null;
 	service.gigsList = null;
 	service.hideRehearsals = false;
+	service.fetchAllGigs = false;
 
 	service.updateGigsList = function() {
-		
+
 		var list = $filter("orderBy")($filter("toArray")(service.gigs), ['date', 'band_start'])
 		if (list) {
 			service.gigsList = list.filter(function(g) {
-					return g.type == 'gig' || ! service.hideRehearsals;
-				});
+				return g.type == 'gig' || !service.hideRehearsals;
+			});
 		}
 	}
 	service.fetchGigs = function(user_id, fetchAllGigs) {
-		return Requests.fetch('fetchGigsList', {fetchAllGigs: fetchAllGigs, user_id: user_id}).then(function(data) {
+		return Requests.fetch('fetchGigsList', { fetchAllGigs: fetchAllGigs, user_id: user_id }).then(function(data) {
 			service.gigs = data;
 			service.updateGigsList();
 		});
@@ -54,13 +55,13 @@ app.service('Requests', function($http, $rootScope) {
 		var message = 'An error occurred';
 		if (response.statusCode !== 1) {
 			var statusString;
-			if (typeof(response.statusCode) == 'undefined') {
-				statusString = "<pre>"+response+"</pre>";
+			if (typeof (response.statusCode) == 'undefined') {
+				statusString = "<pre>" + response + "</pre>";
 				message = 'An unknown error occurred';
 			} else {
 				statusString = response.statusString;
 			}
-			$('#status').html(message+": "+statusString).removeClass().addClass('alert alert-danger').show();
+			$('#status').html(message + ": " + statusString).removeClass().addClass('alert alert-danger').show();
 			$rootScope.app_loaded = true;
 			return;
 		} else {
@@ -73,13 +74,13 @@ app.service('Requests', function($http, $rootScope) {
 		$rootScope.remoteAction = action;
 		params = params || {};
 		params.action = action;
-		return $http.get('backend/requests.php', {params:params, timeout:600000}).then(checkResponse);
+		return $http.get('backend/requests.php', { params: params, timeout: 600000 }).then(checkResponse);
 	}
 	service.write = function(action, data, id) {
 		$rootScope.remoteAction = action;
 		//data = data || {};
 		//data.action = action;
-		return $http.post('backend/requests.php', {action: action, gig_id: id, data:data}, {timeout:600000}).then(checkResponse);
+		return $http.post('backend/requests.php', { action: action, gig_id: id, data: data }, { timeout: 600000 }).then(checkResponse);
 	}
 	// service.handleError = function(data, status, headers, config) {
 	// 	console.log('Error');
