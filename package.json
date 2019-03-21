@@ -1,0 +1,97 @@
+{
+  "name": "giggity",
+  "description": "Giggity Backend",
+  "version": "0.0.0",
+  "homepage": "",
+  "main": "./backend",
+  "keywords": [
+    "feathers"
+  ],
+  "author": {
+    "name": "Greg Michalec",
+    "email": "greg@primate.net"
+  },
+  "contributors": [],
+  "bugs": {},
+  "directories": {
+    "lib": "./backend",
+    "test": "test/",
+    "config": "config/"
+  },
+  "engines": {
+    "node": "^10.0.0",
+    "yarn": ">= 0.18.0"
+  },
+  "scripts": {
+    "start-client": "PORT=4000 BROWSER=none react-scripts start",
+    "start-server": "nodemon ./backend/",
+    "start": "concurrently -k \"yarn run start-server\" \"yarn run start-client\"",
+    "test-backend": "yarn run eslint && NODE_ENV= yarn run mocha",
+    "eslint": "eslint ./backend/. test/. --config .eslintrc.json",
+    "mocha": "mocha test/ --recursive --exit",
+    "build": "react-scripts build",
+    "start:prod": "PORT=8000 node backend/index.js",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "dependencies": {
+    "@feathersjs/authentication": "^2.1.13",
+    "@feathersjs/authentication-client": "^1.0.11",
+    "@feathersjs/authentication-jwt": "^2.0.7",
+    "@feathersjs/authentication-local": "^1.2.7",
+    "@feathersjs/authentication-oauth2": "^1.2.5",
+    "@feathersjs/client": "^3.7.7",
+    "@feathersjs/configuration": "^2.0.4",
+    "@feathersjs/errors": "^3.3.4",
+    "@feathersjs/express": "^1.2.7",
+    "@feathersjs/feathers": "^3.2.3",
+    "@feathersjs/socketio": "^3.2.7",
+    "@feathersjs/socketio-client": "^1.2.1",
+    "@material-ui/core": "^3.5.1",
+    "@material-ui/icons": "^3.0.2",
+    "@material-ui/lab": "^3.0.0-alpha.30",
+    "axios": "^0.18.0",
+    "compression": "^1.7.3",
+    "cors": "^2.8.5",
+    "feathers-mongoose": "^7.2.0",
+    "formik": "^1.3.2",
+    "formik-material-ui": "^0.0.16",
+    "helmet": "^3.15.0",
+    "jwt-decode": "^2.2.0",
+    "lodash": "^4.17.11",
+    "moment": "^2.24.0",
+    "mongodb-core": "^3.1.9",
+    "mongoose": "^5.4.3",
+    "passport-auth0": "^1.1.0",
+    "passport-facebook": "^2.1.1",
+    "passport-google-oauth20": "^1.0.0",
+    "react": "^16.7.0",
+    "react-dom": "^16.7.0",
+    "react-helmet": "^5.2.0",
+    "react-redux": "^6.0.0",
+    "react-router-dom": "^4.3.1",
+    "react-scripts": "^2.1.8",
+    "redux": "^4.0.1",
+    "serve-favicon": "^2.5.0",
+    "winston": "^3.0.0"
+  },
+  "devDependencies": {
+    "@feathersjs/cli": "^3.9.0",
+    "concurrently": "^4.1.0",
+    "create-react-app": "^2.1.3",
+    "mocha": "^5.2.0",
+    "nodemon": "^1.18.7",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2"
+  },
+  "eslintConfig": {
+    "extends": "react-app"
+  },
+  "proxy": "http://localhost:3030",
+  "browserslist": [
+    ">0.2%",
+    "not dead",
+    "not ie <= 11",
+    "not op_mini all"
+  ]
+}
