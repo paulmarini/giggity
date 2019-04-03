@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { emit } from './socket'
+import { emit } from '../socket'
 import Select from '@material-ui/core/Select';
 // import InputLabel from '@material-ui/core/InputLabel';
 import FormControl from '@material-ui/core/FormControl';

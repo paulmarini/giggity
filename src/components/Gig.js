@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { actions } from './store';
+import { actions } from '../store';
 import { Button } from '@material-ui/core';
 import { Typography, Grid } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
@@ -13,7 +13,7 @@ import Tab from '@material-ui/core/Tab';
 import { List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, ListSubheader, Paper, Link as MUILink } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { emit } from './socket'
+import { emit } from '../socket'
 
 const date = new Date().toJSON().slice(0, 10);
 

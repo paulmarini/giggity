@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
-import { login } from './socket'
+import { login } from '../socket'
 
 import { Formik, Form, Field } from 'formik';
 
@@ -14,7 +14,7 @@ const defaultState = {
   error: ''
 }
 
-class Home extends Component {
+class Login extends Component {
   constructor(props) {
     super(props);
     this.state = defaultState;
@@ -86,4 +86,4 @@ class Home extends Component {
   }
 }
 
-export default Home;
+export default Login;

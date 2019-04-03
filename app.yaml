@@ -1,0 +1,8 @@
+# [START app_yaml]
+runtime: nodejs
+env: flex
+manual_scaling:
+  instances: 1
+network:
+  session_affinity: true
+# [END app_yaml]

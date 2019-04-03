@@ -5,10 +5,12 @@ import User from './User';
 import Users from './Users';
 import GigList from './GigList';
 import Login from './Login';
+import Welcome from './Welcome';
 import Errors from './Errors';
+import SignUp from './SignUp';
 import { connect } from 'react-redux';
-import { actions } from './store';
-import { logout, authenticate } from './socket';
+import { actions } from '../store';
+import { logout, authenticate } from '../socket';
 import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
@@ -58,6 +60,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = defaultState;
+    this.public_routes = ['/', '/login', '/signup']
   }
 
   componentDidMount() {
@@ -72,8 +75,8 @@ class Home extends React.Component {
   }
 
   checkAuth() {
-    if (this.state.initialized && !this.props.authenticated && this.props.location.pathname !== '/login') {
-      this.props.history.push(`/login`);
+    if (this.state.initialized && !this.props.authenticated && !this.public_routes.includes(this.props.location.pathname)) {
+      this.props.history.push(`/`);
       logout();
     }
   }
@@ -101,15 +104,18 @@ class Home extends React.Component {
               Giggity
             </Link>
           </Typography>
-          <Link color="inherit" to='/' onClick={() => logout()}>
-            Logout
-            <IconButton
-              color="inherit"
-              onClick={this.handleDrawerToggle}
-            >
-              <LogoutIcon />
-            </IconButton>
-          </Link>
+          {
+            this.props.authenticated &&
+            <Link color="inherit" to='/' onClick={() => logout()}>
+              Logout
+              <IconButton
+                color="inherit"
+                onClick={this.handleDrawerToggle}
+              >
+                <LogoutIcon />
+              </IconButton>
+            </Link>
+          }
         </Toolbar>
       </AppBar >
     )
@@ -143,6 +149,7 @@ class Home extends React.Component {
           <Errors errors={errors} removeError={removeError} />
           <Switch>
             <Route exact path="/login" component={Login} />
+            <Route exact path="/signup" component={SignUp} />
             <Route exact path='/gigs/new' component={Gig} />
             <Route exact path='/users'>
               <Users users={users} />
@@ -151,132 +158,9 @@ class Home extends React.Component {
             <Route path='/gigs/:id' component={Gig} />
             <Route path='/users/:id' component={User} />
             <Route exact path=''>
-              <div>
-                <h2>Welcome!!!?</h2>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <Link to='/gigs/new'>New Gig</Link>
-                <Link to='/users/new'>New User</Link>
-                <Users users={users} />
-
-
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-                <p>
-                  <Link to='/gigs/new'>New Gig</Link>
-                </p>
-
-              </div>
+              {
+                !authenticated && <Welcome />
+              }
             </Route>
           </Switch>
         </main>
