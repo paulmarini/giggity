@@ -3,7 +3,7 @@ const createService = require('feathers-mongoose');
 const createModel = require('../../models/users.model');
 const hooks = require('./users.hooks');
 
-module.exports = function (app) {
+module.exports = function(app) {
   const Model = createModel(app);
   const paginate = app.get('paginate');
 
@@ -11,6 +11,15 @@ module.exports = function (app) {
     Model,
     paginate
   };
+  Model.find().limit(1)
+    .then(res => {
+      if (!res.length) {
+        Model.create({ email: 'admin@test.com', password: 'admin', name: 'Admin User', project: 'blo' })
+          .then(res => {
+            console.log('Admin user created');
+          }, console.error);
+      }
+    });
 
   // Initialize our service with any options it requires
   app.use('/users', createService(options));

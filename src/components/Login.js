@@ -8,8 +8,8 @@ import { Formik, Form, Field } from 'formik';
 const projects = ['BLO', 'InspectorGadje'];
 
 const defaultState = {
-  user: 'g',
-  password: 'a',
+  user: 'admin@test.com',
+  password: 'admin',
   project: 'blo',
   error: ''
 }
