@@ -25,12 +25,13 @@
   "scripts": {
     "start-client": "PORT=4000 BROWSER=none react-scripts start",
     "start-server": "nodemon ./backend/",
-    "start": "concurrently -k \"yarn run start-server\" \"yarn run start-client\"",
+    "start:dev": "concurrently -k \"yarn run start-server\" \"yarn run start-client\"",
     "test-backend": "yarn run eslint && NODE_ENV= yarn run mocha",
     "eslint": "eslint ./backend/. test/. --config .eslintrc.json",
     "mocha": "mocha test/ --recursive --exit",
     "build": "react-scripts build",
-    "start:prod": "PORT=8000 node backend/index.js",
+    "gcp-build": "react-scripts build",
+    "start": "node backend/index.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject"
   },

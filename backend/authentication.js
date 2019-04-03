@@ -1,6 +1,6 @@
 const authentication = require('@feathersjs/authentication');
 const jwt = require('@feathersjs/authentication-jwt');
-const {default: local, Verifier} = require('@feathersjs/authentication-local');
+const { default: local, Verifier } = require('@feathersjs/authentication-local');
 const oauth2 = require('@feathersjs/authentication-oauth2');
 const Auth0Strategy = require('passport-auth0');
 const GoogleStrategy = require('passport-google-oauth20');
@@ -27,7 +27,7 @@ class CustomVerifier extends Verifier {
   //   // the 'payload' is the payload for the JWT access token that is generated after successful authentication
   //   done(null, user, payload);
   // }
-  verify (req, username, password, done) {
+  verify(req, username, password, done) {
     debug('Checking credentials', username, password);
 
     const id = this.service.id;
@@ -63,14 +63,14 @@ class CustomVerifier extends Verifier {
   }
 }
 
-module.exports = function (app) {
+module.exports = function(app) {
   const config = app.get('authentication');
 
   // Set up authentication with the secret
   app.configure(authentication(config));
   app.configure(jwt());
   // app.configure(local());
-  app.configure(local({Verifier: CustomVerifier}));
+  app.configure(local({ Verifier: CustomVerifier }));
 
   // app.configure(oauth2(Object.assign({
   //   name: 'auth0',

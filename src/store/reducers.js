@@ -9,13 +9,19 @@ const defaultState = {
   users: [],
   errors: [],
   authenticated: false,
-  drawerOpen: false
+  drawerOpen: false,
+  projects: [],
+  currentProject: {}
 }
 
 const appReducer = (state = defaultState, action) => {
   switch (action.type) {
     case 'LOAD_USERS':
       return { ...state, users: action.payload };
+    case 'LOAD_PROJECTS':
+      return { ...state, projects: action.payload };
+    case 'SET_PROJECT':
+      return { ...state, currentProject: action.payload };
     case 'SET_USER':
       return { ...state, currentUser: action.payload };
     case 'LOAD_GIGS':

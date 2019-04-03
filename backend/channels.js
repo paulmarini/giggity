@@ -48,7 +48,9 @@ module.exports = function(app) {
 
     // e.g. to publish all service events to all authenticated users use
     // return app.channel('anonymous');
-    return app.channel(hook.params.user.project);
+    if (hook.params.user) {
+      return app.channel(hook.params.user.project);
+    }
   });
 
   // app.service('gigs').publish('created', 'patched', 'updated', data => app.channel(`gigs/${data._id}`));

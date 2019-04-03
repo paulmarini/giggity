@@ -15,8 +15,16 @@ const actions = {
     type: 'LOAD_USERS',
     payload
   }),
+  loadProjects: payload => ({
+    type: 'LOAD_PROJECTS',
+    payload
+  }),
   setUser: payload => ({
     type: 'SET_USER',
+    payload
+  }),
+  setProject: payload => ({
+    type: 'SET_PROJECT',
     payload
   }),
   loadGigAvailability: payload => ({

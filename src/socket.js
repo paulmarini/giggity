@@ -4,10 +4,9 @@ import socketio from '@feathersjs/socketio-client';
 import auth from '@feathersjs/authentication-client';
 import { store, actions } from './store';
 
-const { protocol, hostname } = window.location;
 const client = feathers();
 
-export const socket = io(`${protocol}//${hostname}:3030`, {
+export const socket = io(null, {
   transports: ['websocket'],
   forceNew: true
 });
@@ -68,6 +67,12 @@ client.on('logout', () => {
 export const userService = client.service('users');
 export const gigService = client.service('gigs');
 export const availabilityService = client.service('gig-availability');
+export const projectService = client.service('projects');
+
+const loadProjects = () => {
+  return emit('find', 'projects')
+    .then(projects => store.dispatch(actions.loadProjects(projects.data)));
+};
 
 const loadUsers = () => {
   return emit('find', 'users')
@@ -89,3 +94,5 @@ const availabilityUpdated = availability => {
 availabilityService.on('created', availabilityUpdated);
 availabilityService.on('patched', availabilityUpdated);
 availabilityService.on('updated', availabilityUpdated);
+
+loadProjects();
