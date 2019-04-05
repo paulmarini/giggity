@@ -39,6 +39,7 @@ class Gig extends Component {
   };
 
   componentDidUpdate(prevProps) {
+    console.log("hooray!")
     const { id } = this.props.match.params;
     const { currentGig } = this.props;
     if (id !== prevProps.match.params.id) {
