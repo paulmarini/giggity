@@ -120,7 +120,7 @@ class SignUp extends Component {
       </Stepper>
       <Formik onSubmit={this.submit} initialValues={this.state} enableReinitialize={true}>
         {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-          <Form autocomplete="off">
+          <Form autoComplete="off">
             {activeStep === 0 && this.renderCreateForm()}
             {activeStep === 1 && this.renderVerifyForm()}
             {activeStep === 2 && this.renderSetupForm()}
