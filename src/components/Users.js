@@ -21,10 +21,10 @@ const Users = props => (
     {
       props.users.map(user => (
         <div key={user._id}>
-          {/* <NiceLink to={`users/${user._id}`}>
+          {/* <NiceLink to={`members/${user._id}`}>
             {user.name}
           </NiceLink> */}
-          <RouterLink to={`/users/${user._id}`}>
+          <RouterLink to={`/members/${user._id}`}>
             {user.name}
           </RouterLink>
         </div>

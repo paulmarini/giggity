@@ -104,6 +104,11 @@ class Home extends React.Component {
               Giggity
             </Link>
           </Typography>
+          {this.props.authenticated &&
+            <Link color="inherit" to='/members'>
+              Members
+            </Link>
+          }
           {
             this.props.authenticated &&
             <Link color="inherit" to='/' onClick={() => logout()}>
@@ -152,12 +157,12 @@ class Home extends React.Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
             <Route exact path='/gigs/new' component={Gig} />
-            <Route exact path='/users'>
+            <Route exact path='/members'>
               <Users users={users} />
             </Route>
-            <Route exact path='/users/new' component={User} />
+            <Route exact path='/members/new' component={User} />
             <Route path='/gigs/:id' component={Gig} />
-            <Route path='/users/:id' component={User} />
+            <Route path='/members/:id' component={User} />
             <Route exact path=''>
               {
                 !showSidebar && <Welcome />
