@@ -7,8 +7,9 @@ import { store, actions } from './store';
 const client = feathers();
 
 const { protocol, hostname } = window.location;
+const host = process.env.NODE_ENV === 'production' ? null : `${protocol}//${hostname}:3030`;
 
-export const socket = io(`${protocol}//${hostname}:3030`, {
+export const socket = io(host, {
   transports: ['websocket'],
   forceNew: true
 });
