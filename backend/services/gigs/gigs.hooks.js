@@ -19,11 +19,7 @@ module.exports = {
         app.channel(`gigs/${id}`).join(connection);
       }
     ],
-    create: [
-      context => {
-        console.log('!!!!', context.params);
-      }
-    ],
+    create: [],
     update: [],
     patch: [],
     remove: []

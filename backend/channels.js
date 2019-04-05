@@ -24,7 +24,6 @@ module.exports = function(app) {
       app.channel('authenticated').join(connection);
       app.channel(user.project).join(connection);
       app.channel(user._id).join(connection);
-      console.log('!!!!!', user);
       // Channels can be named anything and joined on any condition
 
       // E.g. to send real-time events only to admins use

@@ -7,7 +7,7 @@ module.exports = function(app) {
   const { Schema } = mongooseClient;
   const projects = new Schema({
     _id: { type: String, required: true },
-    name: { type: String, required: true }
+    name: { type: String, required: true, unique: true }
   }, {
       timestamps: true
     });

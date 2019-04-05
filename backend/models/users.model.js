@@ -10,10 +10,10 @@ module.exports = function(app) {
     password: { type: String, required: true },
     email: { type: String, required: true },
     project: { type: String, required: true },
-    is_admin: { type: Boolean, default: false }
+    type: { type: String, required: true, default: 'Member', enum: ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'] },
   }, {
       timestamps: true
     });
-
+  users.index({ project: 1, email: 1 }, { unique: true });
   return mongooseClient.model('users', users);
 };

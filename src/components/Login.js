@@ -1,17 +1,16 @@
 import React, { Component } from 'react';
-import { Button } from '@material-ui/core';
-import { TextField } from 'formik-material-ui';
-import { login } from '../socket'
+import { Button, MenuItem } from '@material-ui/core';
+import { TextField, Select } from 'formik-material-ui';
+import { login, emit } from '../socket'
 
 import { Formik, Form, Field } from 'formik';
 
-const projects = ['BLO', 'InspectorGadje'];
-
 const defaultState = {
-  user: 'admin@test.com',
-  password: 'admin',
-  project: 'blo',
-  error: ''
+  user: localStorage.getItem('email') || 'admin@test.com',
+  password: '',
+  project: localStorage.getItem('project') || 'blo',
+  error: '',
+  projects: []
 }
 
 class Login extends Component {
@@ -20,12 +19,18 @@ class Login extends Component {
     this.state = defaultState;
   };
 
+  async componentDidMount() {
+    const projects = (await emit('find', 'projects')).data;
+    this.setState({ ...defaultState, projects });
+  }
+
   login = (values, formikBag) => {
     this.setState({ error: '' })
     this.setState({ password: '' });
     login({
       email: values.user,
       password: values.password,
+      project: values.project
     })
       .then(() => {
         this.props.history.push(`/`);
@@ -45,7 +50,7 @@ class Login extends Component {
   }
 
   render() {
-    const { user, project, password } = this.state;
+    const { user, project, password, projects } = this.state;
     return (
       <div style={{ maxWidth: 300, margin: 'auto' }}>
         <h3>Login</h3>
@@ -73,8 +78,12 @@ class Login extends Component {
                 label="Project"
                 data-validators="isRequired"
                 fullWidth
-                component={TextField}
-              />
+                component={Select}
+              >
+                {
+                  projects.map(p => <MenuItem key={p._id} value={p._id}>{p.name}</MenuItem>)
+                }
+              </Field>
               <Button variant="contained" type="submit" color="primary">
                 Login
               </Button>

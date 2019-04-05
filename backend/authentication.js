@@ -31,10 +31,10 @@ class CustomVerifier extends Verifier {
     debug('Checking credentials', username, password);
 
     const id = this.service.id;
-    const usernameField = this.options.entityUsernameField || this.options.usernameField;
     const params = Object.assign({
       'query': {
-        [usernameField]: username,
+        email: username,
+        project: req.query.project,
         '$limit': 1
       }
     }, omit(req.params, 'query', 'provider', 'headers', 'session', 'cookies'));
@@ -43,20 +43,28 @@ class CustomVerifier extends Verifier {
       debug('failed: the service.id was not set');
       return done(new Error('the `id` property must be set on the entity service for authentication'));
     }
-
+    if (!req.query.project) {
+      return done(new Error('Login request must define project'))
+    }
     // Look up the entity
     this.service.find(params)
       .then(response => {
         const results = response.data || response;
         if (!results.length) {
-          debug(`a record with ${usernameField} of '${username}' did not exist`);
+          debug(`a record with email of '${username}' did not exist`);
         }
         return this._normalizeResult(response);
       })
       .then(entity => this._comparePassword(entity, password))
       .then(entity => {
         const id = entity[this.service.id];
-        const payload = { [`${this.options.entity}Id`]: id, project: entity.project };
+        const payload = {
+          [`${this.options.entity}Id`]: id,
+          project: entity.project,
+          name: entity.name,
+          type: entity.type,
+          email: entity.email
+        };
         done(null, entity, payload);
       })
       .catch(error => error ? done(error) : done(null, error, { message: 'Invalid login' }));

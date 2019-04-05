@@ -6,7 +6,9 @@ import { store, actions } from './store';
 
 const client = feathers();
 
-export const socket = io(null, {
+const { protocol, hostname } = window.location;
+
+export const socket = io(`${protocol}//${hostname}:3030`, {
   transports: ['websocket'],
   forceNew: true
 });
@@ -39,12 +41,15 @@ export const authenticate = () => {
     })
 };
 
-export const login = ({ email, password }) => {
-  return client.authenticate({
+export const login = async ({ email, password, project }) => {
+  const login = await client.authenticate({
     strategy: 'local',
     email,
     password,
+    project
   });
+
+  return login;
 };
 
 export const logout = () => {
@@ -56,6 +61,8 @@ client.on('authenticated', ({ accessToken }) => {
     .then(user => {
       store.dispatch(actions.setUser(user));
       store.dispatch(actions.setAuth(true));
+      localStorage.setItem('email', user.email);
+      localStorage.setItem('project', user.project);
       loadUsers();
     })
 })
@@ -68,6 +75,7 @@ export const userService = client.service('users');
 export const gigService = client.service('gigs');
 export const availabilityService = client.service('gig-availability');
 export const projectService = client.service('projects');
+export const registrationService = client.service('registration');
 
 const loadProjects = () => {
   return emit('find', 'projects')
@@ -94,5 +102,3 @@ const availabilityUpdated = availability => {
 availabilityService.on('created', availabilityUpdated);
 availabilityService.on('patched', availabilityUpdated);
 availabilityService.on('updated', availabilityUpdated);
-
-loadProjects();

@@ -126,12 +126,13 @@ class Home extends React.Component {
     if (!this.state.initialized) {
       return "...";
     }
+    const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match("/gigs/"));
     return (
       <div style={{ display: 'flex' }}>
         {this.renderNav()}
         <nav>
           {
-            authenticated ?
+            showSidebar ?
               <GigList
                 width={width}
                 currentLocation={location.pathname}
@@ -143,7 +144,7 @@ class Home extends React.Component {
         <main
           className={classes.home}
           style={{
-            marginLeft: authenticated && width !== 'xs' ? drawerWidth : 0
+            marginLeft: showSidebar && width !== 'xs' ? drawerWidth : 0
           }}>
           <div className={classes.toolbar} />
           <Errors errors={errors} removeError={removeError} />
@@ -159,7 +160,7 @@ class Home extends React.Component {
             <Route path='/users/:id' component={User} />
             <Route exact path=''>
               {
-                !authenticated && <Welcome />
+                !showSidebar && <Welcome />
               }
             </Route>
           </Switch>
