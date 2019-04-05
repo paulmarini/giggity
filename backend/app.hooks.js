@@ -8,7 +8,7 @@ module.exports = {
     all: [
       log(),
       context => {
-        if (context.service !== 'authentication' && context.params.user) {
+        if (context.path !== 'projects' && context.path !== 'authentication' && context.params.user) {
           context.params.query.project = context.params.user.project;
           if (context.data) {
             context.data.project = context.params.user.project;
