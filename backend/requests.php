@@ -121,7 +121,7 @@ function gigs_saveGig($request) {
     $gig['meet_time'] = $gig['band_start'];
     $gig['end_time'] = $gig['band_end'];
   }
-  foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'details', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url') as $key) {
+  foreach(array('title','description','date','start_time','end_time','meet_time', 'band_start','band_end','location','who','contact', 'tactical', 'musical', 'approved', 'public_description', 'notes', 'colors', 'type', 'url') as $key) {
     if(isset($gig[$key])) {
       if (in_array($key, array('start_time','end_time','meet_time', 'band_start','band_end'))) {
         $gig[$key] = date('H:i', strtotime($gig[$key]));
@@ -134,15 +134,15 @@ function gigs_saveGig($request) {
       array_push($fields, "$key='".dbEscape($gig[$key])."'");
     }
   }
-  if (! isset($gig['details'])) {
+  if (! isset($gig['details']) || $gig['details'] == "") {
     $details = "";
     foreach(array('cause','event_history','arrestable','has_permit','cops', 'people_of_color','relevant_communities','blo_role','other_groups','sound','other') as $key) {
       $details .= strtoupper($key).": ".(isset($gig[$key]) ? $gig[$key] : '')."\n\n";
       // unset($gig[$key]);
     }
-
-    array_push($fields, "details='".dbEscape($details)."'");
+    $gig['details'] = $details;
   }
+  array_push($fields, "details='".dbEscape($gig['details'])."'");
   if (isset($gig['setlist'])) {
     array_push($fields, "setlist='".dbEscape(implode(",", $gig['setlist']))."'");
   }
