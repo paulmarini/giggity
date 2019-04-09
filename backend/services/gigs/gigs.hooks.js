@@ -9,14 +9,12 @@ module.exports = {
     find: [],
     get: [
       ({ app, params: { connection }, id }) => {
-        console.log('join', `gigs/${id}`);
-        console.log(app.channels);
         app.channels.forEach(channel => {
-          if (channel.match('gigs/')) {
+          if (channel.match('/gigs/')) {
             app.channel(channel).leave(connection);
           }
         });
-        app.channel(`gigs/${id}`).join(connection);
+        app.channel(`/gigs/${id}`).join(connection);
       }
     ],
     create: [],

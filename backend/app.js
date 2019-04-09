@@ -4,6 +4,7 @@ const compress = require('compression');
 const helmet = require('helmet');
 const cors = require('cors');
 const logger = require('./logger');
+const session = require('express-session');
 
 const feathers = require('@feathersjs/feathers');
 const configuration = require('@feathersjs/configuration');
@@ -28,6 +29,7 @@ app.configure(configuration());
 app.use(helmet());
 app.use(cors());
 app.use(compress());
+app.use(session({ cookie: { sameSite: false }, secret: app.get('authentication').secret }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(favicon(path.join(app.get('public'), 'favicon.ico')));

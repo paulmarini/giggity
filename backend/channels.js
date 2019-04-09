@@ -1,3 +1,5 @@
+const decode = require('jwt-decode');
+
 module.exports = function(app) {
   if (typeof app.channel !== 'function') {
     // If no real-time functionality has been configured just return
@@ -5,7 +7,6 @@ module.exports = function(app) {
   }
 
   app.on('connection', connection => {
-    console.log('here!');
     // On a new real-time connection, add it to the anonymous channel
     app.channel('anonymous').join(connection);
   });
@@ -16,14 +17,16 @@ module.exports = function(app) {
     if (connection) {
       // Obtain the logged in user from the connection
       const user = connection.user;
-
+      const claims = decode(authResult.accessToken);
+      user.access = claims.access;
+      user.projects = claims.projects;
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection);
 
       // Add it to the authenticated user channel
       app.channel('authenticated').join(connection);
-      app.channel(user.project).join(connection);
-      app.channel(user._id).join(connection);
+      app.channel(`/projects/${user.project}`).join(connection);
+      app.channel(`/users/${user._id}`).join(connection);
       // Channels can be named anything and joined on any condition
 
       // E.g. to send real-time events only to admins use
@@ -42,13 +45,12 @@ module.exports = function(app) {
   app.publish((data, hook) => {
     // Here you can add event publishers to channels set up in `channels.js`
     // To publish only for a specific event use `app.publish(eventname, () => {})`
-    // console.log('###', hook);
     console.log('Publishing all events to all authenticated users. See `channels.js` and https://docs.feathersjs.com/api/channels.html for more information.'); // eslint-disable-line
 
     // e.g. to publish all service events to all authenticated users use
     // return app.channel('anonymous');
     if (hook.params.user) {
-      return app.channel(hook.params.user.project);
+      return app.channel(`/projects/${hook.params.user.project}`);
     }
   });
 

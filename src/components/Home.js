@@ -18,9 +18,12 @@ import IconButton from '@material-ui/core/IconButton';
 import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
+import Select from '@material-ui/core/Select';
+import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
 import Link from './Link'
+import { emit } from '../socket';
 
 // import Drawer from '@material-ui/core/Drawer';
 // import CssBaseline from '@material-ui/core/CssBaseline';
@@ -85,6 +88,38 @@ class Home extends React.Component {
     this.props.updateDrawer(!this.props.drawerOpen);
   }
 
+  switchProject = async (event) => {
+    const project = event.target.value;
+    const user = await emit('patch', 'users', this.props.currentUser.userId, { project });
+    this.props.setUser({ ...this.props.currentUser, ...user });
+  }
+
+
+  renderSwitchProject() {
+    const { currentUser: { project, projects } } = this.props;
+    if (projects.length <= 1) {
+      return null;
+    }
+    return (
+      <Select
+        inputProps={{ color: "inherit" }}
+        name="project"
+        value={project}
+        onChange={e => this.switchProject(e)}
+      >
+        {
+          projects.map(project =>
+            <MenuItem
+              key={project}
+              value={project}
+            >
+              {project}
+            </MenuItem>)
+        }
+      </Select>
+    )
+  }
+
   renderNav() {
     const { classes } = this.props;
     return (
@@ -104,22 +139,23 @@ class Home extends React.Component {
               Giggity
             </Link>
           </Typography>
+
           {this.props.authenticated &&
-            <Link color="inherit" to='/members'>
-              Members
-            </Link>
-          }
-          {
-            this.props.authenticated &&
-            <Link color="inherit" to='/' onClick={() => logout()}>
-              Logout
-              <IconButton
-                color="inherit"
-                onClick={this.handleDrawerToggle}
-              >
-                <LogoutIcon />
-              </IconButton>
-            </Link>
+            <>
+              {this.renderSwitchProject()}
+              <Link color="inherit" to='/members'>
+                Members
+              </Link>
+              <Link color="inherit" to='/' onClick={() => logout()}>
+                Logout
+                <IconButton
+                  color="inherit"
+                  onClick={this.handleDrawerToggle}
+                >
+                  <LogoutIcon />
+                </IconButton>
+              </Link>
+            </>
           }
         </Toolbar>
       </AppBar >
@@ -180,11 +216,13 @@ export default connect(
     errors: state.errors,
     authenticated: state.authenticated,
     users: state.users,
+    currentUser: state.currentUser,
     drawerOpen: state.drawerOpen
   }),
   {
     loadUsers: actions.loadUsers,
     removeError: actions.removeError,
-    updateDrawer: actions.updateDrawer
+    updateDrawer: actions.updateDrawer,
+    setUser: actions.setUser
   }
 )(withStyles(styles)(withWidth()(Home)));

@@ -7,13 +7,14 @@ module.exports = function(app) {
   const { Schema } = mongooseClient;
   const users = new Schema({
     name: { type: String, required: true },
-    password: { type: String, required: true },
-    email: { type: String, required: true },
-    project: { type: String, required: true },
-    type: { type: String, required: true, default: 'Member', enum: ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'] },
+    password: { type: String },
+    email: { type: String, required: true, unique: true },
+    auth0Id: { type: String, unique: true },
+    project: { type: String, ref: 'projects' },
+    photo: { type: String },
+    accessCode: { type: String }
   }, {
       timestamps: true
     });
-  users.index({ project: 1, email: 1 }, { unique: true });
   return mongooseClient.model('users', users);
 };

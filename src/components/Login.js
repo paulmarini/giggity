@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Button, MenuItem } from '@material-ui/core';
+import { Link } from '@material-ui/core';
 import { TextField, Select } from 'formik-material-ui';
 import { login, emit } from '../socket'
 
@@ -90,7 +91,8 @@ class Login extends Component {
             </Form>
           )}
         </Formik>
-      </div>
+        <Link href={`/auth/auth0`}>Sign in With Auth0</Link>
+      </div >
     );
   }
 }
