@@ -86,23 +86,14 @@ class SignUp extends Component {
   }
 
   renderSetupForm() {
-    return <>
-      <Field
-        name="name"
-        label="Your Name"
-        data-validators="isRequired"
-        fullWidth
-        component={TextField}
-      />
-      <Field
-        name="password"
-        label="Password"
-        type="password"
-        data-validators="isRequired"
-        fullWidth
-        component={TextField}
-      />
-    </>
+    return <div style={{ maxWidth: 300, textAlign: 'center', margin: 'auto' }}>
+      <Typography variant="body1" gutterBottom>
+        We use a service called Auth0 to manage our logins. Click below to set up Auth0. You can either link your Giggity account to a google account, or set up a login and password.
+      </Typography>
+      <Button color="primary" variant="contained" href="/auth/auth0">
+        Set up Auth0
+      </Button>
+    </div>
   }
 
   render() {
@@ -118,18 +109,20 @@ class SignUp extends Component {
           ))
         }
       </Stepper>
-      <Formik onSubmit={this.submit} initialValues={this.state} enableReinitialize={true}>
-        {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-          <Form autocomplete="off">
-            {activeStep === 0 && this.renderCreateForm()}
-            {activeStep === 1 && this.renderVerifyForm()}
-            {activeStep === 2 && this.renderSetupForm()}
-            <Button variant="contained" type="submit" color="primary">
-              Next
-            </Button>
-          </Form>
-        )}
-      </Formik>
+      {activeStep === 2 ?
+        this.renderSetupForm() :
+        <Formik onSubmit={this.submit} initialValues={this.state} enableReinitialize={true}>
+          {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
+            <Form autocomplete="off">
+              {activeStep === 0 && this.renderCreateForm()}
+              {activeStep === 1 && this.renderVerifyForm()}
+              <Button variant="contained" type="submit" color="primary">
+                Next
+              </Button>
+            </Form>
+          )}
+        </Formik>
+      }
     </>
   }
 }

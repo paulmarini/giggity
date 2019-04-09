@@ -4,7 +4,7 @@ const errors = require('@feathersjs/errors');
 const { restrictToRole, generateCode } = require('../../hooks/customHooks');
 
 const switchProject = context => {
-  if (context.data && context.data.project && context.params.user) {
+  if (context.params.provider && context.data && context.data.project && context.params.user) {
     const { projects } = context.params.user;
     if (!projects.includes(context.data.project)) {
       throw new errors.BadRequest(`User is not a member of the project ${context.data.project}`)

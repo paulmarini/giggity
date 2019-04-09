@@ -94,10 +94,9 @@ class Home extends React.Component {
     this.props.setUser({ ...this.props.currentUser, ...user });
   }
 
-
   renderSwitchProject() {
     const { currentUser: { project, projects } } = this.props;
-    if (projects.length <= 1) {
+    if (!projects || projects.length <= 1) {
       return null;
     }
     return (

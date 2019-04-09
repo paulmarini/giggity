@@ -1,17 +1,17 @@
 import React, { Component } from 'react';
-import { Button, MenuItem } from '@material-ui/core';
+import { Button } from '@material-ui/core';
 import { Link } from '@material-ui/core';
-import { TextField, Select } from 'formik-material-ui';
+import { TextField } from 'formik-material-ui';
 import { login, emit } from '../socket'
 
 import { Formik, Form, Field } from 'formik';
 
 const defaultState = {
-  user: localStorage.getItem('email') || 'admin@test.com',
+  user: '',
   password: '',
-  project: localStorage.getItem('project') || 'blo',
+  // project: localStorage.getItem('project') || 'blo',
   error: '',
-  projects: []
+  showLogin: false
 }
 
 class Login extends Component {
@@ -20,10 +20,10 @@ class Login extends Component {
     this.state = defaultState;
   };
 
-  async componentDidMount() {
-    const projects = (await emit('find', 'projects')).data;
-    this.setState({ ...defaultState, projects });
-  }
+  // async componentDidMount() {
+  //   const projects = (await emit('find', 'projects')).data;
+  //   this.setState({ ...defaultState, projects });
+  // }
 
   login = (values, formikBag) => {
     this.setState({ error: '' })
@@ -34,7 +34,8 @@ class Login extends Component {
       project: values.project
     })
       .then(() => {
-        this.props.history.push(`/`);
+        this.setState({ authed: true })
+        // this.props.history.push(`/`);
       })
       .catch(error => {
         this.setState({ error: error.message })
@@ -51,12 +52,33 @@ class Login extends Component {
   }
 
   render() {
-    const { user, project, password, projects } = this.state;
+    const { user, password, showLogin } = this.state;
+    if (!showLogin) {
+      return (
+        <div style={{
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          maxWidth: '700px',
+          margin: 'auto',
+          height: '400px',
+          alignItems: 'center',
+        }}>
+          <Button size="large" variant="contained" color="primary" href='/auth/auth0'>
+            Login with Auth0
+          </Button>
+          <Button size="large" variant="contained" color="default" onClick={() => this.setState({ showLogin: true })}>
+            Login with Access Code
+          </Button>
+        </div>
+      )
+    }
     return (
       <div style={{ maxWidth: 300, margin: 'auto' }}>
         <h3>Login</h3>
         {this.renderError()}
-        <Formik onSubmit={this.login} initialValues={{ user, project, password }} enableReinitialize={true}>
+        <Formik onSubmit={this.login} initialValues={{ user, password }} enableReinitialize={true}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <Form>
               <Field
@@ -68,26 +90,30 @@ class Login extends Component {
               />
               <Field
                 name="password"
-                label="Password"
+                label="Access Code"
                 type="password"
                 data-validators="isRequired"
                 fullWidth
                 component={TextField}
               />
-              <Field
+              {/* <Field
                 name="project"
                 label="Project"
                 data-validators="isRequired"
                 fullWidth
                 component={Select}
-              >
+                >
                 {
                   projects.map(p => <MenuItem key={p._id} value={p._id}>{p.name}</MenuItem>)
                 }
-              </Field>
+              </Field> */}
               <Button variant="contained" type="submit" color="primary">
                 Login
               </Button>
+              <Button color="default" onClick={() => this.setState({ showLogin: false })}>
+                Cancel
+              </Button>
+
             </Form>
           )}
         </Formik>

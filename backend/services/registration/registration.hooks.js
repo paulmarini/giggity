@@ -50,7 +50,7 @@ module.exports = {
         const users = await app.service('users').find({ query: { email } });
         if (users.data.length) {
           user = users.data[0];
-          await app.service('users').patch({ project: project_id });
+          await app.service('users').patch(user._id, { project: project_id, password: verificationCode });
         } else {
           user = await app.service('users').create({ project: project_id, email, name: email, password: verificationCode });
         }

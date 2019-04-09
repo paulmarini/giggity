@@ -55,12 +55,11 @@ export const logout = () => {
 };
 
 const handleAuth = async ({ accessToken }) => {
-  console.log(accessToken)
   const user = await client.passport.verifyJWT(accessToken)
   const userData = await emit('get', 'users', user.userId);
   store.dispatch(actions.setAuth(true));
   store.dispatch(actions.setUser({ ...user, ...userData }));
-  console.log('authed')
+  console.log('authed', { ...user, ...userData })
   localStorage.setItem('email', user.email);
   loadUsers();
 }
