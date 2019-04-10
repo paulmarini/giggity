@@ -10,6 +10,7 @@ const defaultState = {
   name: '',
   password: '',
   email: '',
+  accessCode: '',
   id: null
 }
 
@@ -69,10 +70,11 @@ class User extends Component {
   }
 
   render() {
-    const { name } = this.state;
+    const { name, accessCode } = this.state;
     return (
       <div>
         <h3>{name}</h3>
+        <i>Access code is {accessCode} </i>
         <Formik onSubmit={this.saveUser} initialValues={this.state} enableReinitialize={true}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <Form>

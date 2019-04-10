@@ -6,10 +6,7 @@ import { store, actions } from './store';
 
 const client = feathers();
 
-const { protocol, hostname } = window.location;
-const host = process.env.NODE_ENV === 'production' ? null : `${protocol}//${hostname}:3030`;
-
-export const socket = io(host, {
+export const socket = io(null, {
   transports: ['websocket'],
   forceNew: true
 });
@@ -35,8 +32,8 @@ export const emit = (method, ...args) => {
 
 export const authenticate = () => {
   return client.authenticate()
+    .then(handleAuth)
     .catch((err) => {
-      console.log('EEORE', err)
       client.logout();
       return Promise.reject(err)
     })
@@ -57,16 +54,18 @@ export const logout = () => {
   client.logout();
 };
 
-client.on('authenticated', ({ accessToken }) => {
-  client.passport.verifyJWT(accessToken)
-    .then(user => {
-      store.dispatch(actions.setUser(user));
-      store.dispatch(actions.setAuth(true));
-      localStorage.setItem('email', user.email);
-      localStorage.setItem('project', user.project);
-      loadUsers();
-    })
-})
+const handleAuth = async ({ accessToken }) => {
+  console.log(accessToken)
+  const user = await client.passport.verifyJWT(accessToken)
+  const userData = await emit('get', 'users', user.userId);
+  store.dispatch(actions.setAuth(true));
+  store.dispatch(actions.setUser({ ...user, ...userData }));
+  console.log('authed')
+  localStorage.setItem('email', user.email);
+  loadUsers();
+}
+
+client.on('authenticated', handleAuth)
 
 client.on('logout', () => {
   store.dispatch(actions.resetApp());

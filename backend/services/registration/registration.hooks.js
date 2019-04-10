@@ -1,12 +1,7 @@
 const randomNumber = require("random-number-csprng");
 const { disallow, required } = require('feathers-hooks-common');
 
-const generateCode = async () => {
-  const int = await randomNumber(1, 999999);
-  return String(int)
-    .padStart(6, 0)
-    .slice(0, 6);
-}
+const { generateCode } = require('../../hooks/customHooks');
 
 module.exports = {
   before: {
@@ -49,10 +44,17 @@ module.exports = {
         if (!result.length) {
           throw new Error('Unable to locate registration');
         }
-
+        let user;
         const { project, project_id, email, verificationCode } = result[0];
         await app.service('projects').create({ name: project, _id: project_id });
-        await app.service('users').create({ project: project_id, email, name: email, type: 'Admin', password: verificationCode })
+        const users = await app.service('users').find({ query: { email } });
+        if (users.data.length) {
+          user = users.data[0];
+          await app.service('users').patch({ project: project_id });
+        } else {
+          user = await app.service('users').create({ project: project_id, email, name: email, password: verificationCode });
+        }
+        await app.service('user-access').create({ project: project_id, user: user._id, role: 'Admin' });
       }
     ],
     remove: []

@@ -8,16 +8,15 @@ module.exports = {
     all: [
       log(),
       context => {
-        if (context.path !== 'projects' && context.path !== 'authentication' && context.params.user) {
+        if (context.path !== 'projects' && !context.path.match('authentication') && context.params.user) {
+          if (context.path === 'users' && context.method === 'patch') {
+            return;
+          }
           context.params.query.project = context.params.user.project;
           if (context.data) {
             context.data.project = context.params.user.project;
           }
-          // console.log('hereiam!!!');
-          // authenticate('jwt');
         }
-        // console.log(context.app.services.authentication.hooks);
-        // context.app.services.authentication.hooks.authenticate('jwt');
       },
     ],
     find: [],
@@ -29,7 +28,7 @@ module.exports = {
   },
 
   after: {
-    all: [ log() ],
+    all: [log()],
     find: [],
     get: [],
     create: [],

@@ -25,7 +25,6 @@ class UserAvailability extends Component {
     if (!status) {
       return;
     }
-    console.log(status, event.target.value, value)
     const { gigId, userId, availability } = this.props;
     if (userId && gigId) {
       if (availability) {

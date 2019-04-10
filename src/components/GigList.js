@@ -4,7 +4,7 @@ import { actions } from '../store';
 import { Link } from 'react-router-dom'
 import { Drawer, List, ListItem, ListItemText, ListItemIcon, Link as MUILink } from '@material-ui/core';
 import UserAvailability from './UserAvailability';
-import { gigService, emit } from '../socket'
+import { gigService, userService, emit } from '../socket'
 import { withStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 
@@ -29,12 +29,14 @@ class GigList extends Component {
   }
 
   componentDidMount() {
+    userService.on('patched', this.updateData);
     gigService.on('created', this.updateData);
     gigService.on('removed', this.updateData);
     this.updateData();
   }
 
   componentWillUnmount() {
+    userService.removeListener('patched', this.updateData);
     gigService.removeListener('created', this.updateData);
     gigService.removeListener('removed', this.updateData);
   }
@@ -48,11 +50,12 @@ class GigList extends Component {
       .then(res => this.props.loadUserAvailability(res.data));
   }
 
-
   renderContents() {
     const { gigsList, currentGig, userAvailability, currentUser, classes } = this.props;
     return (
       <List style={{ width: this.props.width }}>
+        <MUILink href="/auth/auth0">Sign in With Auth0</MUILink>
+
         <ListItem
           button
           component={Link}

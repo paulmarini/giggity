@@ -1,22 +1,20 @@
-// Initializes the `projects` service on path `/projects`
+// Initializes the `user_access` service on path `/user-access`
 const createService = require('feathers-mongoose');
-const createModel = require('../../models/projects.model');
-const hooks = require('./projects.hooks');
+const createModel = require('../../models/user_access.model');
+const hooks = require('./user_access.hooks');
 
 module.exports = function(app) {
   const Model = createModel(app);
-  const paginate = app.get('paginate');
 
   const options = {
     Model,
-    paginate
   };
 
   // Initialize our service with any options it requires
-  app.use('/projects', createService(options));
+  app.use('/user-access', createService(options));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('projects');
+  const service = app.service('user-access');
 
   service.hooks(hooks);
 };

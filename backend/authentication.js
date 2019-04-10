@@ -1,75 +1,9 @@
 const authentication = require('@feathersjs/authentication');
 const jwt = require('@feathersjs/authentication-jwt');
-const { default: local, Verifier } = require('@feathersjs/authentication-local');
+const { default: local } = require('@feathersjs/authentication-local');
 const oauth2 = require('@feathersjs/authentication-oauth2');
 const Auth0Strategy = require('passport-auth0');
-const GoogleStrategy = require('passport-google-oauth20');
-const FacebookStrategy = require('passport-facebook');
-const { omit } = require('lodash');
-
-const Debug = require('debug');
-const debug = Debug('@feathersjs/authentication-local:verify');
-
-
-class CustomVerifier extends Verifier {
-  // The verify function has the exact same inputs and
-  // return values as a vanilla passport strategy
-  _comparePassword(entity, password) {
-    console.log(entity, password);
-    return Promise.resolve(entity);
-  }
-  // verify(req, username, password, done) {
-  //   console.log(req, username, password);
-  //   // do your custom stuff. You can call internal Verifier methods
-  //   // and reference this.app and this.options. This method must be implemented.
-  //
-  //   // the 'user' variable can be any truthy value
-  //   // the 'payload' is the payload for the JWT access token that is generated after successful authentication
-  //   done(null, user, payload);
-  // }
-  verify(req, username, password, done) {
-    debug('Checking credentials', username, password);
-
-    const id = this.service.id;
-    const params = Object.assign({
-      'query': {
-        email: username,
-        project: req.query.project,
-        '$limit': 1
-      }
-    }, omit(req.params, 'query', 'provider', 'headers', 'session', 'cookies'));
-
-    if (id === null || id === undefined) {
-      debug('failed: the service.id was not set');
-      return done(new Error('the `id` property must be set on the entity service for authentication'));
-    }
-    if (!req.query.project) {
-      return done(new Error('Login request must define project'))
-    }
-    // Look up the entity
-    this.service.find(params)
-      .then(response => {
-        const results = response.data || response;
-        if (!results.length) {
-          debug(`a record with email of '${username}' did not exist`);
-        }
-        return this._normalizeResult(response);
-      })
-      .then(entity => this._comparePassword(entity, password))
-      .then(entity => {
-        const id = entity[this.service.id];
-        const payload = {
-          [`${this.options.entity}Id`]: id,
-          project: entity.project,
-          name: entity.name,
-          type: entity.type,
-          email: entity.email
-        };
-        done(null, entity, payload);
-      })
-      .catch(error => error ? done(error) : done(null, error, { message: 'Invalid login' }));
-  }
-}
+const EmailFirstOAuth2Verifier = require('./verifiers/oAuthVerifier');
 
 module.exports = function(app) {
   const config = app.get('authentication');
@@ -77,23 +11,13 @@ module.exports = function(app) {
   // Set up authentication with the secret
   app.configure(authentication(config));
   app.configure(jwt());
-  // app.configure(local());
-  app.configure(local({ Verifier: CustomVerifier }));
+  app.configure(local());
 
-  // app.configure(oauth2(Object.assign({
-  //   name: 'auth0',
-  //   Strategy: Auth0Strategy
-  // }, config.auth0)));
-  //
-  // app.configure(oauth2(Object.assign({
-  //   name: 'google',
-  //   Strategy: GoogleStrategy
-  // }, config.google)));
-  //
-  // app.configure(oauth2(Object.assign({
-  //   name: 'facebook',
-  //   Strategy: FacebookStrategy
-  // }, config.facebook)));
+  app.configure(oauth2(Object.assign({
+    name: 'auth0',
+    Strategy: Auth0Strategy,
+    Verifier: EmailFirstOAuth2Verifier
+  }, config.auth0)));
 
   // The `authentication` service is used to create a JWT.
   // The before `create` hook registers strategies that can be used
@@ -102,6 +26,16 @@ module.exports = function(app) {
     before: {
       create: [
         authentication.hooks.authenticate(config.strategies),
+        async (context) => {
+          const access = await context.app.service('user-access')._find({ query: { user: context.params.payload.userId } });
+
+          context.params.payload.access = access.reduce((obj, item) => {
+            obj[item.project] = item.role;
+            return obj;
+          }, {});
+          context.params.payload.projects = access.map(p => p.project);
+          return context;
+        }
       ],
       remove: [
         authentication.hooks.authenticate('jwt')

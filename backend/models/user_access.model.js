@@ -1,4 +1,4 @@
-// GigAvailability-model.js - A mongoose model
+// user_access-model.js - A mongoose model
 //
 // See http://mongoosejs.com/docs/models.html
 // for more of what you can do here.
@@ -8,16 +8,14 @@ const ObjectId = Schema.Types.ObjectId;
 module.exports = function(app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
-  const gigAvailability = new Schema({
+  const userAccess = new Schema({
     user: { type: ObjectId, required: true, ref: 'users' },
-    gig: { type: ObjectId, required: true, ref: 'gigs' },
-    status: { type: String, required: true },
-    project: { type: String, required: true, ref: 'projects' }
+    project: { type: String, required: true, ref: 'projects' },
+    role: { type: String, required: true, default: 'Member', enum: ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'] }
   }, {
       timestamps: true
     });
+  userAccess.index({ user: 1, project: 1 }, { unique: true });
 
-  gigAvailability.index({ user: 1, gig: 1 }, { unique: true });
-
-  return mongooseClient.model('gigAvailability', gigAvailability);
+  return mongooseClient.model('userAccess', userAccess);
 };
