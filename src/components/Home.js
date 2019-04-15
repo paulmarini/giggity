@@ -148,8 +148,8 @@ class Home extends React.Component {
               <Link color="inherit" to='/members'>
                 Members
               </Link>
-              {/* <Link color="inherit" to='/' onClick={() => logout()}> */}
-              <MUILink color="inherit" href="https://giggity2.auth0.com/v2/logout?returnTo=http://localhost:4000/logout">
+              <Link color="inherit" to='/' onClick={() => logout()}>
+                {/* <MUILink color="inherit" href="https://giggity2.auth0.com/v2/logout?returnTo=http://localhost:4000/logout"> */}
                 Logout
                 <IconButton
                   color="inherit"
@@ -157,7 +157,7 @@ class Home extends React.Component {
                 >
                   <LogoutIcon />
                 </IconButton>
-              </MUILink>
+              </Link>
             </>
           }
         </Toolbar>
