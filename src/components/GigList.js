@@ -54,8 +54,6 @@ class GigList extends Component {
     const { gigsList, currentGig, userAvailability, currentUser, classes } = this.props;
     return (
       <List style={{ width: this.props.width }}>
-        <MUILink href="/auth/auth0">Sign in With Auth0</MUILink>
-
         <ListItem
           button
           component={Link}

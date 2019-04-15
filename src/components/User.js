@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
-import { TextField } from 'formik-material-ui';
+import { TextField, Select } from 'formik-material-ui';
 import { connect } from 'react-redux';
 
 import { Formik, Form, Field } from 'formik';
@@ -84,12 +84,12 @@ class User extends Component {
                 data-validators="isRequired"
                 component={TextField}
               />
-              <Field
+              {/* <Field
                 name="password"
                 label="Password"
                 type="password"
                 component={TextField}
-              />
+              /> */}
               <Field
                 name="email"
                 label="Email"
@@ -97,6 +97,17 @@ class User extends Component {
                 data-validators="isRequired"
                 component={TextField}
               />
+              {/* <Field
+                name="project"
+                label="Project"
+                data-validators="isRequired"
+                fullWidth
+                component={Select}
+                >
+                {
+                  projects.map(p => <MenuItem key={p._id} value={p._id}>{p.name}</MenuItem>)
+                }
+              </Field> */}
               <Button variant="contained" type="submit" color="primary">
                 Save User
               </Button>

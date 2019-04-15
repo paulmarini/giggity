@@ -51,10 +51,10 @@ module.exports = {
         if (users.data.length) {
           user = users.data[0];
           await app.service('users').patch(user._id, { project: project_id, password: verificationCode });
+          await app.service('user-access').create({ project: project_id, user: user._id, role: 'Admin' });
         } else {
-          user = await app.service('users').create({ project: project_id, email, name: email, password: verificationCode });
+          user = await app.service('users').create({ project: project_id, email, name: email, password: verificationCode, role: 'Admin' });
         }
-        await app.service('user-access').create({ project: project_id, user: user._id, role: 'Admin' });
       }
     ],
     remove: []

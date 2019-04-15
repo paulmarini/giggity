@@ -19,6 +19,7 @@ import Hidden from '@material-ui/core/Hidden';
 import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import Select from '@material-ui/core/Select';
+import { Link as MUILink } from '@material-ui/core';
 import MenuItem from '@material-ui/core/MenuItem';
 import MenuIcon from '@material-ui/icons/Menu';
 import LogoutIcon from '@material-ui/icons/ExitToApp';
@@ -91,7 +92,8 @@ class Home extends React.Component {
   switchProject = async (event) => {
     const project = event.target.value;
     const user = await emit('patch', 'users', this.props.currentUser.userId, { project });
-    this.props.setUser({ ...this.props.currentUser, ...user });
+    window.location.reload();
+    // this.props.setUser({ ...this.props.currentUser, ...user });
   }
 
   renderSwitchProject() {
@@ -101,6 +103,7 @@ class Home extends React.Component {
     }
     return (
       <Select
+        style={{ color: '#fff' }}
         inputProps={{ color: "inherit" }}
         name="project"
         value={project}
@@ -145,7 +148,8 @@ class Home extends React.Component {
               <Link color="inherit" to='/members'>
                 Members
               </Link>
-              <Link color="inherit" to='/' onClick={() => logout()}>
+              {/* <Link color="inherit" to='/' onClick={() => logout()}> */}
+              <MUILink color="inherit" href="https://giggity2.auth0.com/v2/logout?returnTo=http://localhost:4000/logout">
                 Logout
                 <IconButton
                   color="inherit"
@@ -153,7 +157,7 @@ class Home extends React.Component {
                 >
                   <LogoutIcon />
                 </IconButton>
-              </Link>
+              </MUILink>
             </>
           }
         </Toolbar>

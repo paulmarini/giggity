@@ -67,7 +67,7 @@ module.exports = {
     find: [],
     get: [],
     create: [async (context) => {
-      await context.app.service('user-access').create({ project: context.params.user.project, user: context.result._id });
+      await context.app.service('user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
     }],
     update: [],
     patch: [],
