@@ -14,12 +14,13 @@ export const socket = io(null, {
 client.configure(socketio(socket));
 client.configure(auth({ storage: window.localStorage }));
 
-export const emit = (method, ...args) => {
+export const emit = (method, service, ...args) => {
+
   return new Promise((resolve, reject) => {
     if (!['create', 'find', 'get', 'patch', 'update', 'remove', 'authenticate'].includes(method)) {
       return reject(`Invalid service method ${method}`);
     }
-    socket.emit(method, ...args, (error, message) => {
+    socket.emit(method, `api/${service}`, ...args, (error, message) => {
       if (error) {
         console.error('EMIT ERROR', method, error);
         store.dispatch({ type: 'ADD_ERROR', payload: error });
@@ -70,11 +71,11 @@ client.on('logout', () => {
   store.dispatch(actions.resetApp());
 })
 
-export const userService = client.service('users');
-export const gigService = client.service('gigs');
-export const availabilityService = client.service('gig-availability');
-export const projectService = client.service('projects');
-export const registrationService = client.service('registration');
+export const userService = client.service('api/users');
+export const gigService = client.service('api/gigs');
+export const availabilityService = client.service('api/gig-availability');
+export const projectService = client.service('api/projects');
+export const registrationService = client.service('api/registration');
 
 const loadProjects = () => {
   return emit('find', 'projects')

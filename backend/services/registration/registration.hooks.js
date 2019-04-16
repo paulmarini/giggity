@@ -46,14 +46,14 @@ module.exports = {
         }
         let user;
         const { project, project_id, email, verificationCode } = result[0];
-        await app.service('projects').create({ name: project, _id: project_id });
-        const users = await app.service('users').find({ query: { email } });
+        await app.service('api/projects').create({ name: project, _id: project_id });
+        const users = await app.service('api/users').find({ query: { email } });
         if (users.data.length) {
           user = users.data[0];
-          await app.service('users').patch(user._id, { project: project_id, password: verificationCode });
-          await app.service('user-access').create({ project: project_id, user: user._id, role: 'Admin' });
+          await app.service('api/users').patch(user._id, { project: project_id, password: verificationCode });
+          await app.service('api/user-access').create({ project: project_id, user: user._id, role: 'Admin' });
         } else {
-          user = await app.service('users').create({ project: project_id, email, name: email, password: verificationCode, role: 'Admin' });
+          user = await app.service('api/users').create({ project: project_id, email, name: email, password: verificationCode, role: 'Admin' });
         }
       }
     ],

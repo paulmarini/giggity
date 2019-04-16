@@ -5,11 +5,11 @@ const mailGigUpdate = async context => {
   const gig = context.result;
 
   // normally filter this for preferences
-  const project = await context.app.service('projects').get(gig.project);
-  const users = await context.app.service('users').find({ query: { project: gig.project } });
+  const project = await context.app.service('api/projects').get(gig.project);
+  const users = await context.app.service('api/users').find({ query: { project: gig.project } });
 
   await Promise.all(users.data.map(user => {
-    return context.app.service('mail').create({
+    return context.app.service('api/mail').create({
       template: 'gigUpdate',
       message: {
         to: 'greg@primate.net' // FIXME user.email

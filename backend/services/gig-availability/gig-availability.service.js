@@ -3,7 +3,7 @@ const createService = require('feathers-mongoose');
 const createModel = require('../../models/gig-availability.model');
 const hooks = require('./gig-availability.hooks');
 
-module.exports = function (app) {
+module.exports = function(app) {
   const Model = createModel(app);
   const paginate = app.get('paginate');
 
@@ -13,10 +13,10 @@ module.exports = function (app) {
   };
 
   // Initialize our service with any options it requires
-  app.use('/gig-availability', createService(options));
+  app.use('/api/gig-availability', createService(options));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('gig-availability');
+  const service = app.service('api/gig-availability');
 
   service.hooks(hooks);
 };

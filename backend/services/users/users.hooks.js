@@ -38,7 +38,7 @@ const customizeAuthResponse = async context => {
   //   context.data.googleId = context.data.google.profile.id;
   // }
   if (context.data.auth0) {
-    const user = await context.app.service('users').get(context.id);
+    const user = await context.app.service('api/users').get(context.id);
     const data = context.data.auth0.profile;
     if (!user.auth0Id) {
       context.data.email = data.emails[0].value;
@@ -67,7 +67,7 @@ module.exports = {
     find: [],
     get: [],
     create: [async (context) => {
-      await context.app.service('user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
+      await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
     }],
     update: [],
     patch: [],

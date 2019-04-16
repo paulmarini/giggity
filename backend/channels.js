@@ -54,17 +54,17 @@ module.exports = function(app) {
     }
   });
 
-  // app.service('gigs').publish('created', 'patched', 'updated', data => app.channel(`gigs/${data._id}`));
+  // app.service('api/gigs').publish('created', 'patched', 'updated', data => app.channel(`gigs/${data._id}`));
   //
-  // app.service('gig-availability').publish('created', 'patched', 'updated', data => app.channel(`gigs/${data.gig}`));
+  // app.service('api/gig-availability').publish('created', 'patched', 'updated', data => app.channel(`gigs/${data.gig}`));
 
 
   // Here you can also add service specific event publishers
   // e.g. the publish the `users` service `created` event to the `admins` channel
-  // app.service('users').publish('created', () => app.channel('admins'));
+  // app.service('api/users').publish('created', () => app.channel('admins'));
 
   // With the userid and email organization from above you can easily select involved users
-  // app.service('messages').publish(() => {
+  // app.service('api/messages').publish(() => {
   //   return [
   //     app.channel(`userIds/${data.createdBy}`),
   //     app.channel(`emails/${data.recipientEmail}`)

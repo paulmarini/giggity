@@ -36,10 +36,10 @@ module.exports = function(app) {
 
 
   // Initialize our service with any options it requires
-  app.use('/mail', createService(options));
+  app.use('/api/mail', createService(options));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('mail');
+  const service = app.service('api/mail');
 
   service.hooks(hooks);
 };

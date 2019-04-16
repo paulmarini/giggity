@@ -15,7 +15,7 @@
 	     "auth0"
     ],
     "path": "/authentication",
-    "service": "users",
+    "service": "api/users",
     "jwt": {
       "header": {
         "typ": "access"

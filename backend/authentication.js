@@ -27,7 +27,7 @@ module.exports = function(app) {
       create: [
         authentication.hooks.authenticate(config.strategies),
         async (context) => {
-          const access = await context.app.service('user-access')._find({ query: { user: context.params.payload.userId } });
+          const access = await context.app.service('api/user-access')._find({ query: { user: context.params.payload.userId } });
 
           context.params.payload.access = access.reduce((obj, item) => {
             obj[item.project] = item.role;
