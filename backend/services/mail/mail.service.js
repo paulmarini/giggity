@@ -12,7 +12,7 @@ module.exports = function(app) {
   let transport = app.get('mail');
   if (env !== 'development') {
     // configure AWS SDK
-    aws.config.loadFromPath('~/aws-creds');
+    aws.config.loadFromPath('/home/bitnami/aws-creds');
     aws.config.update({ region: 'us-west-2' });
     transport = nodemailer.createTransport({
       SES: new aws.SES({
