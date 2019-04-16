@@ -9,8 +9,8 @@ module.exports = {
       log(),
       disable('rest'), // FIXME
       context => {
-        if (context.path !== 'projects' && !context.path.match('authentication') && context.params.user) {
-          if (context.path === 'users' && context.method === 'patch') {
+        if (context.path !== 'api/projects' && !context.path.match('authentication') && context.params.user) {
+          if (context.path === 'api/users' && context.method === 'patch') {
             return;
           }
           context.params.query.project = context.params.user.project;
