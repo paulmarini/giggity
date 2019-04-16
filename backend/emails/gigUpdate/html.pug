@@ -1,0 +1,12 @@
+extends ../template.pug
+
+
+block title
+  a(href=`https://giggity.info/gigs/${gig._id}`) New #{project.name} Gig: #{date} - #{gig.name}
+
+block content
+  table
+    tr
+      td.label Description
+      td.value #{gig.description}
+      

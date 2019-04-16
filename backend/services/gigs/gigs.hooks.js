@@ -1,5 +1,29 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const moment = require('moment');
 
+const mailGigUpdate = async context => {
+  const gig = context.result;
+
+  // normally filter this for preferences
+  const project = await context.app.service('projects').get(gig.project);
+  const users = await context.app.service('users').find({ query: { project: gig.project } });
+
+  await Promise.all(users.data.map(user => {
+    return context.app.service('mail').create({
+      template: 'gigUpdate',
+      message: {
+        to: 'greg@primate.net' // FIXME user.email
+      },
+      locals: {
+        type: context.method === 'create' ? 'new' : 'updated',
+        user,
+        gig,
+        project,
+        date: moment(gig.date).format('M/D/YY')
+      }
+    });
+  }))
+}
 
 module.exports = {
   before: {
@@ -27,9 +51,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [],
-    update: [],
-    patch: [],
+    create: [mailGigUpdate],
+    update: [mailGigUpdate],
+    patch: [mailGigUpdate],
     remove: []
   },
 
