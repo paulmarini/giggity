@@ -23,7 +23,7 @@ const defaultState = {
   date,
   _id: null,
   users: [],
-  tab: 'availability'
+  tab: 'details'
 }
 
 class Gig extends Component {
