@@ -1,0 +1,21 @@
+doctype html
+html(lang='en')
+  head
+    title
+      block title
+        | Giggity!
+    link(rel="stylesheet", href="/styles.css", data-inline)
+  body
+    h1
+      block title
+
+    block content
+      | default content
+    footer#footer
+      hr
+      p This message was sent to 
+        b #{user.email}
+      p If you no longer wish to receive emails from Giggity, please 
+        a(href=`https://giggity.info/unsubscribe?email=${user.email}`)
+          b unsubscribe
+        | .
