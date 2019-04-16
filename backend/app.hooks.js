@@ -1,12 +1,13 @@
 // Application hooks that run for every service
 const log = require('./hooks/log');
 // const auth = require('./hooks/log');
-// const { authenticate } = require('@feathersjs/authentication').hooks;
+const { disable } = require('feathers-hooks-common');
 
 module.exports = {
   before: {
     all: [
       log(),
+      disable('rest'), // FIXME
       context => {
         if (context.path !== 'projects' && !context.path.match('authentication') && context.params.user) {
           if (context.path === 'users' && context.method === 'patch') {
