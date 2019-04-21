@@ -27,6 +27,9 @@ const createUser = async context => {
   }
   context.data.accessCode = await generateCode();
   context.data.password = context.data.accessCode;
+  if (!context.data.id) {
+    delete context.data.id;
+  }
   return context;
 }
 
@@ -51,6 +54,10 @@ const customizeAuthResponse = async context => {
   return context;
 }
 
+const createUserAccess = async (context) => {
+  await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
+}
+
 module.exports = {
   before: {
     all: [authenticate('jwt')],
@@ -66,9 +73,7 @@ module.exports = {
     all: [protect('password', 'auth0Id')],
     find: [],
     get: [],
-    create: [async (context) => {
-      await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
-    }],
+    create: [createUserAccess],
     update: [],
     patch: [],
     remove: []

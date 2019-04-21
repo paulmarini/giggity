@@ -9,12 +9,15 @@ module.exports = function(app) {
     name: { type: String, required: true },
     password: { type: String },
     email: { type: String, required: true, unique: true },
-    auth0Id: { type: String, unique: true },
+    auth0Id: { type: String, sparse: true },
     project: { type: String, ref: 'projects' },
     photo: { type: String },
     accessCode: { type: String }
   }, {
       timestamps: true
     });
+
+  users.index({ auth0Id: 1 }, { unique: true, partialFilterExpression: { auth0Id: { $type: "string" } } })
+
   return mongooseClient.model('users', users);
 };

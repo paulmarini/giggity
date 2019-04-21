@@ -31,6 +31,16 @@ module.exports = {
       throw new errors.BadRequest(`Only users with the role ${allowedRole} or above can perform this operation`);
     }
     return context;
+  },
+
+  removeRelated: (service, field) => async context => {
+    const related = await context.app.service(service)
+      .find({ query: { [field]: context.id, $select: '_id' } });
+    await Promise.all(
+      related.data.map(
+        ({ _id }) => context.app.service(service).remove(_id)
+      )
+    );
   }
 
 }

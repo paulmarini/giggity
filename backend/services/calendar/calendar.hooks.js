@@ -1,4 +1,3 @@
-const { removeRelated } = require('../../hooks/customHooks');
 
 
 module.exports = {
@@ -19,7 +18,7 @@ module.exports = {
     create: [],
     update: [],
     patch: [],
-    remove: [removeRelated('api/gigs', 'project'), removeRelated('api/user-access', 'project')]
+    remove: []
   },
 
   error: {

@@ -11,7 +11,11 @@ module.exports = function(app) {
   const userAccess = new Schema({
     user: { type: ObjectId, required: true, ref: 'users' },
     project: { type: String, required: true, ref: 'projects' },
-    role: { type: String, required: true, default: 'Member', enum: ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'] }
+    role: { type: String, required: true, default: 'Member', enum: ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'] },
+    calendar_acls: {
+      gig_calendar_acl_id: { type: String },
+      rehearsal_calendar_acl_id: { type: String }
+    }
   }, {
       timestamps: true
     });

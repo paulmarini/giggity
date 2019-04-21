@@ -14,13 +14,15 @@ import { List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, Li
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { emit } from '../socket'
+import moment from 'moment'
 
-const date = new Date().toJSON().slice(0, 10);
+const formatDate = date => moment(date || new Date()).format('YYYY-MM-DDTHH:mm')
 
 const defaultState = {
   name: '',
   description: '',
-  date,
+  start: formatDate(),
+  end: formatDate(),
   _id: null,
   users: [],
   tab: 'details'
@@ -44,6 +46,8 @@ class Gig extends Component {
     if (id !== prevProps.match.params.id) {
       this.updateGig();
     } else if (currentGig._id && currentGig._id !== this.state._id && id) {
+      currentGig.start = formatDate(currentGig.start)
+      currentGig.end = formatDate(currentGig.end)
       this.setState(currentGig);
       if (this.props.drawerOpen) {
         this.props.updateDrawer(false);
@@ -75,10 +79,21 @@ class Gig extends Component {
 
   saveGig(values, formikBag) {
     const { id } = this.props.match.params;
+    const gig = {
+      ...values,
+      start: moment(values.start, 'YYYY-MM-DDTHH:mm').toISOString(),
+      end: moment(values.end, 'YYYY-MM-DDTHH:mm').toISOString()
+    }
+    delete gig._id;
     return (id ?
-      emit('patch', 'gigs', id, values) :
-      emit('create', 'gigs', values)
+      emit('patch', 'gigs', id, gig) :
+      emit('create', 'gigs', gig)
     )
+      .then(gig => {
+        if (!id) {
+          this.props.history.push(`/gigs/${gig._id}`);
+        }
+      })
       .finally(() => {
         formikBag.setSubmitting(false);
       })
@@ -113,19 +128,29 @@ class Gig extends Component {
             <Grid item xs={12} lg={6}>
               <Field
                 fullWidth
-                name="date"
-                label="Date"
-                type="date"
+                name="start"
+                label="Start Time"
+                type="datetime-local"
                 component={TextField}
               />
             </Grid>
             <Grid item xs={12} lg={6}>
               <Field
                 fullWidth
+                name="end"
+                label="End Time"
+                type="datetime-local"
+                component={TextField}
+              />
+            </Grid>
+
+            <Grid item xs={12} lg={6}>
+              <Field
+                fullWidth
                 name="description"
                 label="Description"
                 multiline
-                helperText="yeay"
+                // helperText="yeay"
                 placeholder="tekk ne"
                 data-validators="isRequired"
                 component={TextField}

@@ -5,6 +5,7 @@ const projects = require('./projects/projects.service.js');
 const registration = require('./registration/registration.service.js');
 const userAccess = require('./user_access/user_access.service.js');
 const mail = require('./mail/mail.service.js');
+const calendar = require('./calendar/calendar.service.js');
 // eslint-disable-next-line no-unused-vars
 module.exports = function(app) {
   app.configure(users);
@@ -14,4 +15,5 @@ module.exports = function(app) {
   app.configure(registration);
   app.configure(userAccess);
   app.configure(mail);
+  app.configure(calendar);
 };

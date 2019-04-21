@@ -1,7 +1,7 @@
 const actions = {
   loadGigs: payload => ({
     type: 'LOAD_GIGS',
-    payload: payload.map(gig => ({ ...gig, date: new Date(gig.date) }))
+    payload: payload.map(gig => ({ ...gig }))
   }),
   gigUpdated: payload => ({
     type: 'GIG_UPDATED',
@@ -9,7 +9,7 @@ const actions = {
   }),
   loadGig: payload => ({
     type: 'LOAD_GIG',
-    payload: { ...payload, date: (payload.date || '').split('T')[0] }
+    payload: { ...payload }
   }),
   loadUsers: payload => ({
     type: 'LOAD_USERS',

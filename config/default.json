@@ -46,5 +46,9 @@
     }
   },
   "mail": {
+    "enabled": false
+  },
+  "calendar": {
+    "enabled": false
   }
 }

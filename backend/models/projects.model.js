@@ -7,7 +7,12 @@ module.exports = function(app) {
   const { Schema } = mongooseClient;
   const projects = new Schema({
     _id: { type: String, required: true },
-    name: { type: String, required: true, unique: true }
+    name: { type: String, required: true, unique: true },
+    calendar: {
+      gig_calendar_id: { type: String },
+      rehearsal_calendar_id: { type: String },
+      public_calendar_id: { type: String },
+    }
   }, {
       timestamps: true
     });

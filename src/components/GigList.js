@@ -79,7 +79,7 @@ class GigList extends Component {
               >
                 <ListItemIcon>
                   <b>
-                    {moment(gig.date).format('MM/DD')}
+                    {moment(gig.start).format('MM/DD')}
                   </b>
                 </ListItemIcon>
                 <ListItemText

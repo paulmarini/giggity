@@ -47,6 +47,7 @@ class User extends Component {
   saveUser = (values) => {
     const { id } = this.props.match.params;
     this.setState(defaultState);
+    delete values.id;
     return (id ?
       emit('patch', 'users', id, values) :
       emit('create', 'users', values)
