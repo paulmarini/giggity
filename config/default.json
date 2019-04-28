@@ -36,7 +36,8 @@
       "domain": "giggity2.auth0.com",
       "scope": [
         "profile email openid"
-      ]
+      ],
+      "session": true
     },
     "cookie": {
       "enabled": true,
@@ -47,7 +48,7 @@
   },
   "mail": {
     "enabled": false,
-    "preview":false
+    "preview": true
   },
   "calendar": {
     "enabled": false
