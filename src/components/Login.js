@@ -39,8 +39,10 @@ class Login extends Component {
       password: values.accessCode,
       project: values.project
     })
-      .then(() => {
-        this.setState({ authed: true })
+      .then(({ accessToken }) => {
+        console.log(`feathers-jwt=${accessToken}; path=/`)
+        document.cookie = `feathers-jwt=${accessToken}; path=/`;
+        // this.setState({ authed: true })
         window.location = `/auth/auth0`;
       })
       .catch(error => {

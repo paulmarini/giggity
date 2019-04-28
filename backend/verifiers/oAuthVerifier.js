@@ -14,6 +14,7 @@ class EmailFirstOAuth2Verifier extends Verifier {
   verify(req, accessToken, refreshToken, profile, done) {
     debug('Checking credentials');
     const options = this.options;
+    console.log(profile, options)
     let query = {
       $or: [
         { '_id': profile.userId },
@@ -29,6 +30,8 @@ class EmailFirstOAuth2Verifier extends Verifier {
       return done(new Error('the `id` property must be set on the entity service for authentication'));
     }
 
+    console.log(req.cookies);
+
     if (req.cookies && req.cookies['feathers-jwt']) {
       const jwt = decode(req.cookies['feathers-jwt']);
       profile.userId = jwt.userId;
@@ -37,8 +40,10 @@ class EmailFirstOAuth2Verifier extends Verifier {
         _id: jwt.userId,
         $limit: 1
       };
+      console.log('JWT', jwt);
     }
-
+    console.log('Session', req.session);
+    console.log('QUERY', query);
     // Check request object for an existing entity
     if (req && req[options.entity]) {
       existing = req[options.entity];
