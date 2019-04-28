@@ -9,4 +9,5 @@ block content
   p You've been invited to #{project.name}'s gig manager tool, Giggity!
   p Your invite code is #{user.accessCode}
   p Follow this link to get started!
-  
+  p
+    a(href=`https://giggity.info/login?email=${user.email}&accessCode=${user.accessCode}`) #{`https://giggity.info/login?email=${user.email}&accessCode=${user.accessCode}`}

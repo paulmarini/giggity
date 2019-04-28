@@ -3,12 +3,13 @@ import { Button } from '@material-ui/core';
 import { Link } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 import { login, emit } from '../socket'
+import queryString from 'query-string'
 
 import { Formik, Form, Field } from 'formik';
 
 const defaultState = {
-  user: '',
-  password: '',
+  email: '',
+  accessCode: '',
   // project: localStorage.getItem('project') || 'blo',
   error: '',
   showLogin: false
@@ -17,7 +18,12 @@ const defaultState = {
 class Login extends Component {
   constructor(props) {
     super(props);
-    this.state = defaultState;
+    const query = queryString.parse(this.props.location.search)
+    this.state = { ...defaultState, ...query };
+    if (query.accessCode) {
+      this.state.showLogin = true;
+    }
+    console.log(query)
   };
 
   // async componentDidMount() {
@@ -27,15 +33,15 @@ class Login extends Component {
 
   login = (values, formikBag) => {
     this.setState({ error: '' })
-    this.setState({ password: '' });
+    this.setState({ accessCode: '' });
     login({
-      email: values.user,
-      password: values.password,
+      email: values.email,
+      password: values.accessCode,
       project: values.project
     })
       .then(() => {
         this.setState({ authed: true })
-        // this.props.history.push(`/`);
+        window.location = `/auth/auth0`;
       })
       .catch(error => {
         this.setState({ error: error.message })
@@ -52,7 +58,7 @@ class Login extends Component {
   }
 
   render() {
-    const { user, password, showLogin } = this.state;
+    const { email, accessCode, showLogin } = this.state;
     if (!showLogin) {
       return (
         <div style={{
@@ -78,20 +84,20 @@ class Login extends Component {
       <div style={{ maxWidth: 300, margin: 'auto' }}>
         <h3>Login</h3>
         {this.renderError()}
-        <Formik onSubmit={this.login} initialValues={{ user, password }} enableReinitialize={true}>
+        <Formik onSubmit={this.login} initialValues={{ email, accessCode }} enableReinitialize={true}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
             <Form>
               <Field
-                name="user"
-                label="User"
+                name="email"
+                label="Email"
                 data-validators="isRequired"
                 fullWidth
                 component={TextField}
               />
               <Field
-                name="password"
+                name="accessCode"
                 label="Access Code"
-                type="password"
+                type="accessCode"
                 data-validators="isRequired"
                 fullWidth
                 component={TextField}
