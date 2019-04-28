@@ -30,11 +30,13 @@ class Service {
     const promises = [gig_calendar_id, rehearsal_calendar_id]
       .map(async (calendarId, index) => {
         const ruleId = index === 0 ? calendar_acls.gig_calendar_acl_id : calendar_acls.rehearsal_calendar_id_calendar_acl_id
-        const result = await this.calendars.acl.delete({
-          calendarId,
-          ruleId,
-        });
-        return result.data.id
+        if (calendarId && ruleId) {
+          const result = await this.calendars.acl.delete({
+            calendarId,
+            ruleId,
+          });
+          return result.data.id
+        }
       });
     await Promise.all(promises);
   }

@@ -11,11 +11,20 @@ module.exports = function(app) {
     description: { type: String, required: true },
     start: { type: Date, required: true },
     end: { type: Date },
+    load_in: { type: Date },
+    event_start: { type: Date },
+    event_end: { type: Date },
     time_tbd: { type: Boolean, default: true },
+    location: { type: String },
+    notes: { type: String },
+    status: { type: String, enum: ['Proposed', 'Confirmed', 'Canceled'] },
+    private: { type: Boolean },
+    link: { type: String },
+    custom_fields: { type: Map, of: String },
     calendar: {
       id: { type: String },
       public_id: { type: String }
-    }
+    },
   }, {
       timestamps: true
     });

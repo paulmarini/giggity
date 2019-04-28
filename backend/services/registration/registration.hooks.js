@@ -11,7 +11,7 @@ const initializeProject = async ({ app, result }) => {
   const { project, project_id, email, verificationCode } = result[0];
   await app.service('api/projects').create({ name: project, _id: project_id });
 
-  if (app.get('calendar.enabled')) {
+  if (app.get('calendar').enabled) {
     const calendar = await app.service('api/calendar').create({ project });
     await app.service('api/projects')._patch(project_id, { calendar })
   }

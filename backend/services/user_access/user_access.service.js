@@ -8,6 +8,7 @@ module.exports = function(app) {
 
   const options = {
     Model,
+    whitelist: ['$populate']
   };
 
   // Initialize our service with any options it requires

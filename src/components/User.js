@@ -54,7 +54,7 @@ class User extends Component {
     )
       .then(user => {
         if (user._id !== this.props.match.params.id) {
-          this.props.history.push(`/members/${user._id}`)
+          this.props.history.push(`members/${user._id}`)
         } else {
           this.setState(user)
         }

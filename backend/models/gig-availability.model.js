@@ -12,6 +12,7 @@ module.exports = function(app) {
     user: { type: ObjectId, required: true, ref: 'users' },
     gig: { type: ObjectId, required: true, ref: 'gigs' },
     status: { type: String, required: true },
+    comments: { type: String },
     project: { type: String, required: true, ref: 'projects' }
   }, {
       timestamps: true

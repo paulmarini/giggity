@@ -63,6 +63,7 @@ const handleAuth = async ({ accessToken }) => {
   console.log('authed', { ...user, ...userData })
   localStorage.setItem('email', user.email);
   loadUsers();
+  await loadProject(userData.project);
 }
 
 client.on('authenticated', handleAuth)
@@ -71,11 +72,16 @@ client.on('logout', () => {
   store.dispatch(actions.resetApp());
 })
 
-export const userService = client.service('api/users');
+export const userService = client.service('api/user-access');
 export const gigService = client.service('api/gigs');
 export const availabilityService = client.service('api/gig-availability');
 export const projectService = client.service('api/projects');
 export const registrationService = client.service('api/registration');
+
+export const loadProject = project => {
+  return emit('get', 'projects', project)
+    .then(project => store.dispatch(actions.setProject(project)))
+};
 
 const loadProjects = () => {
   return emit('find', 'projects')
@@ -83,13 +89,21 @@ const loadProjects = () => {
 };
 
 const loadUsers = () => {
-  return emit('find', 'users')
-    .then(users => store.dispatch(actions.loadUsers(users.data)));
+  return emit('find', 'user-access', { '$populate': 'user' })
+    .then(users => store.dispatch(actions.loadUsers(users)));
 };
 
 const gigUpdated = gig => {
   store.dispatch(actions.gigUpdated(gig))
 }
+
+projectService.on('patched', loadProject);
+
+userService.on('created', loadUsers);
+userService.on('patched', loadUsers);
+userService.on('updated', loadUsers);
+userService.on('removed', loadUsers);
+
 
 gigService.on('created', gigUpdated);
 gigService.on('patched', gigUpdated);

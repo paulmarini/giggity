@@ -1,0 +1,12 @@
+extends ../template.pug
+
+block title
+  |Welcome to Giggity!
+  
+block content
+  p Hi 
+    b #{user.name}!
+  p You've been invited to #{project.name}'s gig manager tool, Giggity!
+  p Your invite code is #{user.accessCode}
+  p Follow this link to get started!
+  

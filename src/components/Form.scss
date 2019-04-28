@@ -1,0 +1,12 @@
+.giggity-form {
+  .buttons {
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+
+    &>span,
+    &>button {
+      margin-right: 10px;
+    }
+  }
+}

@@ -2,38 +2,20 @@ import React from 'react';
 import { Switch, Route } from 'react-router-dom';
 import Gig from './Gig';
 import User from './User';
-import Users from './Users';
-import GigList from './GigList';
+import SideBar from '../views/SideBar';
 import Login from './Login';
 import Welcome from './Welcome';
 import Errors from './Errors';
 import SignUp from './SignUp';
+import ProjectSettings from './ProjectSettings';
+import ProjectProfile from '../views/project/ProjectProfile';
+import Members from '../views/project/Members';
 import { connect } from 'react-redux';
 import { actions } from '../store';
 import { logout, authenticate } from '../socket';
-import { Grid } from '@material-ui/core';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
-import IconButton from '@material-ui/core/IconButton';
-import Hidden from '@material-ui/core/Hidden';
-import TextField from '@material-ui/core/TextField';
-import Paper from '@material-ui/core/Paper';
-import Select from '@material-ui/core/Select';
-import { Link as MUILink } from '@material-ui/core';
-import MenuItem from '@material-ui/core/MenuItem';
-import MenuIcon from '@material-ui/icons/Menu';
-import LogoutIcon from '@material-ui/icons/ExitToApp';
-import Link from './Link'
-import { emit } from '../socket';
-
-// import Drawer from '@material-ui/core/Drawer';
-// import CssBaseline from '@material-ui/core/CssBaseline';
-// import AppBar from '@material-ui/core/AppBar';
-// import Toolbar from '@material-ui/core/Toolbar';
-// import List from '@material-ui/core/List';
-// import Typography from '@material-ui/core/Typography';
-import { AppBar, Toolbar, Typography } from '@material-ui/core'
-
+import NavBar from '../views/NavBar';
 import './Home.css';
 let drawerWidth = 300;
 
@@ -85,106 +67,16 @@ class Home extends React.Component {
     }
   }
 
-  handleDrawerToggle = () => {
-    this.props.updateDrawer(!this.props.drawerOpen);
-  }
-
-  switchProject = async (event) => {
-    const project = event.target.value;
-    const user = await emit('patch', 'users', this.props.currentUser.userId, { project });
-    window.location.reload();
-    // this.props.setUser({ ...this.props.currentUser, ...user });
-  }
-
-  renderSwitchProject() {
-    const { currentUser: { project, projects } } = this.props;
-    if (!projects || projects.length <= 1) {
-      return null;
-    }
-    return (
-      <Select
-        style={{ color: '#fff' }}
-        inputProps={{ color: "inherit" }}
-        name="project"
-        value={project}
-        onChange={e => this.switchProject(e)}
-      >
-        {
-          projects.map(project =>
-            <MenuItem
-              key={project}
-              value={project}
-            >
-              {project}
-            </MenuItem>)
-        }
-      </Select>
-    )
-  }
-
-  renderNav() {
-    const { classes } = this.props;
-    return (
-      <AppBar position="fixed" className={classes.appBar}>
-        <Toolbar>
-          <Hidden smUp>
-            <IconButton
-              color="inherit"
-              aria-label="Open drawer"
-              onClick={this.handleDrawerToggle}
-            >
-              <MenuIcon />
-            </IconButton>
-          </Hidden>
-          <Typography variant="h4" color="inherit" noWrap style={{ flexGrow: 1 }}>
-            <Link color="inherit" to='/'>
-              Giggity
-            </Link>
-          </Typography>
-
-          {this.props.authenticated &&
-            <>
-              {this.renderSwitchProject()}
-              <Link color="inherit" to='/members'>
-                Members
-              </Link>
-              <Link color="inherit" to='/' onClick={() => logout()}>
-                {/* <MUILink color="inherit" href="https://giggity2.auth0.com/v2/logout?returnTo=http://localhost:4000/logout"> */}
-                Logout
-                <IconButton
-                  color="inherit"
-                  onClick={this.handleDrawerToggle}
-                >
-                  <LogoutIcon />
-                </IconButton>
-              </Link>
-            </>
-          }
-        </Toolbar>
-      </AppBar >
-    )
-  }
-
   render() {
     const { classes, authenticated, location, width, users, errors, removeError } = this.props;
     if (!this.state.initialized) {
       return "...";
     }
-    const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match("/gigs/"));
+    const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match(/^\/(gigs|project)/));
     return (
       <div style={{ display: 'flex' }}>
-        {this.renderNav()}
-        <nav>
-          {
-            showSidebar ?
-              <GigList
-                width={width}
-                currentLocation={location.pathname}
-                drawerWidth={drawerWidth}
-              /> :
-              ''
-          }
-        </nav>
+        <NavBar />
+        <SideBar {...{ authenticated, location, width, drawerWidth, showSidebar }} />
         <main
           className={classes.home}
           style={{
@@ -196,12 +88,14 @@ class Home extends React.Component {
             <Route exact path="/login" component={Login} />
             <Route exact path="/signup" component={SignUp} />
             <Route exact path='/gigs/new' component={Gig} />
-            <Route exact path='/members'>
-              <Users users={users} />
-            </Route>
             <Route exact path='/members/new' component={User} />
             <Route path='/gigs/:id' component={Gig} />
-            <Route path='/members/:id' component={User} />
+            <Route path="/project/profile" component={ProjectProfile} />
+            <Route path="/project/custom_fields" component={ProjectSettings} />
+            <Route exact path='/project/members'>
+              <Members users={users} />
+            </Route>
+            <Route path="/project/members/:id" component={User} />
             <Route exact path=''>
               {
                 !showSidebar && <Welcome />
@@ -214,18 +108,14 @@ class Home extends React.Component {
   }
 }
 
-export default connect(
-  state => ({
-    errors: state.errors,
-    authenticated: state.authenticated,
-    users: state.users,
-    currentUser: state.currentUser,
-    drawerOpen: state.drawerOpen
-  }),
-  {
-    loadUsers: actions.loadUsers,
-    removeError: actions.removeError,
-    updateDrawer: actions.updateDrawer,
-    setUser: actions.setUser
-  }
-)(withStyles(styles)(withWidth()(Home)));
+const mapStateToProps = state => ({
+  errors: state.errors,
+  authenticated: state.authenticated,
+  users: state.users,
+});
+
+const mapDispatchToProps = {
+  removeError: actions.removeError
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(withStyles(styles)(withWidth()(Home)));

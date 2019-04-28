@@ -15,16 +15,13 @@ import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
 import { emit } from '../socket'
 import moment from 'moment'
+import { get, set, merge } from 'lodash';
+import GiggityForm from './Form';
 
 const formatDate = date => moment(date || new Date()).format('YYYY-MM-DDTHH:mm')
 
 const defaultState = {
-  name: '',
-  description: '',
-  start: formatDate(),
-  end: formatDate(),
   _id: null,
-  users: [],
   tab: 'details'
 }
 
@@ -35,23 +32,38 @@ class Gig extends Component {
     this.saveGig = this.saveGig.bind(this);
     this.deleteGig = this.deleteGig.bind(this);
     this.state.gigFilter = '';
+    this.dateFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
+    this.defaultGig = {
+      name: '',
+      description: '',
+      start: formatDate(),
+      end: formatDate()
+    };
+    (this.props.currentProject.custom_fields || []).map((field) => {
+      set(this.defaultGig, `custom_fields.${field.label}`, get(this.defaultGig, `custom_fields.${field.label}`) || field.default || "");
+    });
+
   };
   componentDidMount() {
     this.updateGig();
   };
+
 
   componentDidUpdate(prevProps) {
     const { id } = this.props.match.params;
     const { currentGig } = this.props;
     if (id !== prevProps.match.params.id) {
       this.updateGig();
-    } else if (currentGig._id && currentGig._id !== this.state._id && id) {
-      currentGig.start = formatDate(currentGig.start)
-      currentGig.end = formatDate(currentGig.end)
-      this.setState(currentGig);
       if (this.props.drawerOpen) {
         this.props.updateDrawer(false);
       }
+      // } else if (currentGig._id && currentGig._id !== id && id) {
+      //   // currentGig.start = formatDate(currentGig.start)
+      //   // currentGig.end = formatDate(currentGig.end)
+      //   // this.setState(currentGig);
+      //   if (this.props.drawerOpen) {
+      //     this.props.updateDrawer(false);
+      //   }
     }
   };
 
@@ -61,6 +73,7 @@ class Gig extends Component {
   }
 
   updateGig() {
+
     const { id } = this.props.match.params;
     if (id) {
       emit('get', 'gigs', id)
@@ -77,25 +90,20 @@ class Gig extends Component {
     }
   };
 
-  saveGig(values, formikBag) {
+  saveGig(values) {
     const { id } = this.props.match.params;
-    const gig = {
-      ...values,
-      start: moment(values.start, 'YYYY-MM-DDTHH:mm').toISOString(),
-      end: moment(values.end, 'YYYY-MM-DDTHH:mm').toISOString()
-    }
-    delete gig._id;
+    this.dateFields.forEach(field => {
+      values[field] = moment(values[field], 'YYYY-MM-DDTHH:mm').toISOString()
+    })
+    delete values._id;
     return (id ?
-      emit('patch', 'gigs', id, gig) :
-      emit('create', 'gigs', gig)
+      emit('patch', 'gigs', id, values) :
+      emit('create', 'gigs', values)
     )
       .then(gig => {
         if (!id) {
           this.props.history.push(`/gigs/${gig._id}`);
         }
-      })
-      .finally(() => {
-        formikBag.setSubmitting(false);
       })
   };
 
@@ -112,61 +120,40 @@ class Gig extends Component {
   }
 
   renderDetails() {
-    return (
-      <Formik onSubmit={this.saveGig} initialValues={this.state} enableReinitialize={true} >
-        {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-          <Form>
-            <Grid item xs={12} lg={6}>
-              <Field
-                fullWidth
-                name="name"
-                label="Name"
-                data-validators="isRequired"
-                component={TextField}
-              />
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Field
-                fullWidth
-                name="start"
-                label="Start Time"
-                type="datetime-local"
-                component={TextField}
-              />
-            </Grid>
-            <Grid item xs={12} lg={6}>
-              <Field
-                fullWidth
-                name="end"
-                label="End Time"
-                type="datetime-local"
-                component={TextField}
-              />
-            </Grid>
+    const { currentGig, currentProject } = this.props;
+    const { id } = this.props.match.params;
 
-            <Grid item xs={12} lg={6}>
-              <Field
-                fullWidth
-                name="description"
-                label="Description"
-                multiline
-                // helperText="yeay"
-                placeholder="tekk ne"
-                data-validators="isRequired"
-                component={TextField}
-              />
-            </Grid>
-            <Grid item xs={12} lg={6} align="center">
-              <Button variant="contained" type="submit" color="primary">
-                Save Gig
-              </Button>
-              <Button variant="contained" onClick={this.deleteGig} color="secondary">
-                Delete Gig
-              </Button>
-            </Grid>
-          </Form>
-        )}
-      </Formik>
+    const gig = merge({}, this.defaultGig, currentGig);
+
+    this.dateFields.forEach(field => {
+      gig[field] = formatDate(currentGig[field])
+    })
+
+    const custom_fields = (currentProject.custom_fields || []).map((field) => {
+      set(gig, `custom_fields.${field.label}`, get(gig, `custom_fields.${field.label}`) || field.default || "");
+      return { ...field, name: `custom_fields.${field.label}` }
+    });
+
+    const fields = [
+      { type: 'Text', label: 'Name', name: 'name' },
+      { type: 'DateTime', label: 'Start Time', name: 'start' },
+      { type: 'DateTime', label: 'End Time', name: 'end' },
+      { type: 'Paragraph', label: 'Description', name: 'description' },
+      ...custom_fields
+    ]
+
+    const deleteButton = <Button variant="outlined" onClick={this.deleteGig}>
+      Delete Gig
+    </Button>
+
+    return (
+      <GiggityForm
+        onSubmit={this.saveGig}
+        initialValues={id ? gig : this.defaultGig}
+        fields={fields}
+        buttons={[deleteButton]}
+        submitLabel="Save Gig"
+      />
     );
   }
 
@@ -219,8 +206,9 @@ class Gig extends Component {
 
   render() {
     const { id } = this.props.match.params;
-    const { currentGig } = this.props;
+    const { currentGig, currentProject } = this.props;
     const { tab } = this.state;
+
     return (
       <div>
         <Helmet>
@@ -253,7 +241,7 @@ class Gig extends Component {
 
 
 export default connect(
-  state => ((({ users, currentGig, currentGigAvailability, drawerOpen }) => ({ users, currentGig, currentGigAvailability, drawerOpen }))(state)),
+  state => ((({ users, currentGig, currentGigAvailability, drawerOpen, currentProject }) => ({ users, currentGig, currentGigAvailability, drawerOpen, currentProject }))(state)),
   {
     loadGig: actions.loadGig,
     loadGigAvailability: actions.loadGigAvailability,

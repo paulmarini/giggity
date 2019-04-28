@@ -30,6 +30,18 @@ const createUser = async context => {
   if (!context.data.id) {
     delete context.data.id;
   }
+
+  const user = (await context.service.find({ query: { email: context.data.email } })).data[0];
+  if (user) {
+    await context.service.patch(user._id, { password: context.data.accessCode });
+    context.result = {
+      _id: user._id,
+      email: user.email,
+      name: user.name,
+      accessCode: context.data.accessCode
+    }
+  }
+
   return context;
 }
 
@@ -55,7 +67,28 @@ const customizeAuthResponse = async context => {
 }
 
 const createUserAccess = async (context) => {
-  await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
+  const access = (await context.app.service('api/user-access').find({ query: { user: context.result._id, project: context.data.project } }))[0];
+  if (!access) {
+    await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
+  }
+}
+
+const sendInviteEmail = async (context) => {
+  if (!context.app.get('mail').enabled) {
+    return context;
+  }
+  const user = context.result;
+  const project = await context.app.service('api/projects').get(context.data.project);
+  await context.app.service('api/mail').create({
+    template: 'invite',
+    message: {
+      to: user.email
+    },
+    locals: {
+      user,
+      project,
+    }
+  });
 }
 
 module.exports = {
@@ -73,7 +106,7 @@ module.exports = {
     all: [protect('password', 'auth0Id')],
     find: [],
     get: [],
-    create: [createUserAccess],
+    create: [createUserAccess, sendInviteEmail],
     update: [],
     patch: [],
     remove: []
