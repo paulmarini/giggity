@@ -25,12 +25,12 @@ class UserAvailability extends Component {
     if (!status) {
       return;
     }
-    const { gigId, userId, availability } = this.props;
-    if (userId && gigId) {
+    const { gigId, memberId, availability } = this.props;
+    if (memberId && gigId) {
       if (availability) {
-        emit('patch', 'gig-availability', availability._id, { user: userId, gig: gigId, status });
+        emit('patch', 'gig-availability', availability._id, { member: memberId, gig: gigId, status });
       } else {
-        emit('create', 'gig-availability', { user: userId, gig: gigId, status });
+        emit('create', 'gig-availability', { member: memberId, gig: gigId, status });
       }
     }
   }

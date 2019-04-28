@@ -35,11 +35,11 @@ class Users extends Component {
 
   updateMember = async (values) => {
     console.log('update', values);
-    await emit('patch', 'user-access', values._id, values);
+    await emit('patch', 'members', values._id, values);
   }
 
   deleteMember = id => async () => {
-    const member = await emit('remove', 'user-access', id);
+    const member = await emit('remove', 'members', id);
     console.log(member);
   }
 

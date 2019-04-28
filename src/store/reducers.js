@@ -42,7 +42,7 @@ const appReducer = (state = defaultState, action) => {
         ...state,
         currentGigAvailability: action.payload
           .reduce((obj, payload) => {
-            obj[payload.user] = payload
+            obj[payload.member] = payload
             return obj;
           }, {})
       };
@@ -59,10 +59,10 @@ const appReducer = (state = defaultState, action) => {
       if (availability.gig === currentGig._id) {
         newState.currentGigAvailability = {
           ...state.currentGigAvailability,
-          [availability.user]: availability
+          [availability.member]: availability
         };
       }
-      if (availability.user === currentUser.userId) {
+      if (availability.member === currentUser.memberId) {
         newState.userAvailability = {
           ...state.userAvailability,
           [availability.gig]: availability

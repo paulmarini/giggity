@@ -6,7 +6,7 @@ const { restrictToRole, generateCode } = require('../../hooks/customHooks');
 const switchProject = context => {
   if (context.params.provider && context.data && context.data.project && context.params.user) {
     const { projects } = context.params.user;
-    if (!projects.includes(context.data.project)) {
+    if (!Object.keys(projects).includes(context.data.project)) {
       throw new errors.BadRequest(`User is not a member of the project ${context.data.project}`)
     } else {
       context.params.user.project = context.data.project;
@@ -66,10 +66,10 @@ const customizeAuthResponse = async context => {
   return context;
 }
 
-const createUserAccess = async (context) => {
-  const access = (await context.app.service('api/user-access').find({ query: { user: context.result._id, project: context.data.project } }))[0];
-  if (!access) {
-    await context.app.service('api/user-access').create({ project: context.data.project, user: context.result._id, role: context.data.role });
+const createMember = async (context) => {
+  const member = (await context.app.service('api/members').find({ query: { user: context.result._id, project: context.data.project } }))[0];
+  if (!member) {
+    await context.app.service('api/members').create({ project: context.data.project, user: context.result._id, role: context.data.role });
   }
 }
 
@@ -106,7 +106,7 @@ module.exports = {
     all: [protect('password', 'auth0Id')],
     find: [],
     get: [],
-    create: [createUserAccess, sendInviteEmail],
+    create: [createMember, sendInviteEmail],
     update: [],
     patch: [],
     remove: []

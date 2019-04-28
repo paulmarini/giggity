@@ -35,7 +35,7 @@ module.exports = {
     patch: [],
     remove: [
       removeRelated('api/gigs', 'project'),
-      removeRelated('api/user-access', 'project')
+      removeRelated('api/members', 'project')
     ]
   },
 

@@ -9,7 +9,7 @@ module.exports = function(app) {
   const mongooseClient = app.get('mongooseClient');
   const { Schema } = mongooseClient;
   const gigAvailability = new Schema({
-    user: { type: ObjectId, required: true, ref: 'users' },
+    member: { type: ObjectId, required: true, ref: 'members' },
     gig: { type: ObjectId, required: true, ref: 'gigs' },
     status: { type: String, required: true },
     comments: { type: String },
@@ -18,7 +18,7 @@ module.exports = function(app) {
       timestamps: true
     });
 
-  gigAvailability.index({ user: 1, gig: 1 }, { unique: true });
+  gigAvailability.index({ member: 1, gig: 1 }, { unique: true });
 
   return mongooseClient.model('gigAvailability', gigAvailability);
 };

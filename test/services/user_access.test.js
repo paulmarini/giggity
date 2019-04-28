@@ -1,9 +1,9 @@
 const assert = require('assert');
 const app = require('../.././backend/app');
 
-describe('\'user_access\' service', () => {
+describe('\'members\' service', () => {
   it('registered the service', () => {
-    const service = app.service('api/userAccess');
+    const service = app.service('api/members');
 
     assert.ok(service, 'Registered the service');
   });

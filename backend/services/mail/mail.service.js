@@ -7,9 +7,10 @@ const createService = require('./mail.class.js');
 const env = process.env.NODE_ENV || 'development';
 
 module.exports = function(app) {
-
+  const config = app.get('mail') || {}
   const options = {
-    transport: app.get('mail') || {},
+    transport: config,
+    preview: config.preview,
     views: { root: './backend/emails/' },
     subjectPrefix: env === 'production' ? false : `[${env.toUpperCase()}] `,
     juiceResources: {

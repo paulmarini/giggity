@@ -1,21 +1,22 @@
-// Initializes the `user_access` service on path `/user-access`
+// Initializes the `members` service on path `/members`
 const createService = require('feathers-mongoose');
-const createModel = require('../../models/user_access.model');
-const hooks = require('./user_access.hooks');
+const createModel = require('../../models/members.model');
+const hooks = require('./members.hooks');
 
 module.exports = function(app) {
   const Model = createModel(app);
 
   const options = {
     Model,
-    whitelist: ['$populate']
+    whitelist: ['$populate'],
+    lean: false
   };
 
   // Initialize our service with any options it requires
-  app.use('/api/user-access', createService(options));
+  app.use('/api/members', createService(options));
 
   // Get our initialized service so that we can register hooks
-  const service = app.service('api/user-access');
+  const service = app.service('api/members');
 
   service.hooks(hooks);
 };

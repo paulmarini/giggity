@@ -56,14 +56,18 @@ export const logout = () => {
 };
 
 const handleAuth = async ({ accessToken }) => {
-  const user = await client.passport.verifyJWT(accessToken)
-  const userData = await emit('get', 'users', user.userId);
+  const { userId, projects, project, memberId } = await client.passport.verifyJWT(accessToken)
+  const { user } = (await emit('find', 'members', { user: userId, project }))[0];
+  const { email, name, photo } = user;
+  const userData = { userId, projects: Object.keys(projects), name, email, photo, memberId, project }
+
+  await Promise.all([
+    loadUsers(),
+    loadProjects(projects),
+    loadProject(project)
+  ])
   store.dispatch(actions.setAuth(true));
-  store.dispatch(actions.setUser({ ...user, ...userData }));
-  console.log('authed', { ...user, ...userData })
-  localStorage.setItem('email', user.email);
-  loadUsers();
-  await loadProject(userData.project);
+  store.dispatch(actions.setUser(userData));
 }
 
 client.on('authenticated', handleAuth)
@@ -72,7 +76,7 @@ client.on('logout', () => {
   store.dispatch(actions.resetApp());
 })
 
-export const userService = client.service('api/user-access');
+export const userService = client.service('api/members');
 export const gigService = client.service('api/gigs');
 export const availabilityService = client.service('api/gig-availability');
 export const projectService = client.service('api/projects');
@@ -83,13 +87,14 @@ export const loadProject = project => {
     .then(project => store.dispatch(actions.setProject(project)))
 };
 
-const loadProjects = () => {
-  return emit('find', 'projects')
-    .then(projects => store.dispatch(actions.loadProjects(projects.data)));
+const loadProjects = async projects => {
+  const projectData = (await emit('find', 'projects', { _id: { $in: Object.keys(projects) }, $select: ['name'] }))
+    .map(project => ({ ...project, role: projects[project._id] }));
+  return store.dispatch(actions.loadProjects(projectData));
 };
 
 const loadUsers = () => {
-  return emit('find', 'user-access', { '$populate': 'user' })
+  return emit('find', 'members', { '$populate': 'user' })
     .then(users => store.dispatch(actions.loadUsers(users)));
 };
 

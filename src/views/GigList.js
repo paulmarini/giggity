@@ -39,7 +39,7 @@ class GigList extends Component {
     emit('find', 'gigs')
       .then(gigs => this.props.loadGigs(gigs.data));
 
-    emit('find', 'gig-availability', { user: currentUser.userId })
+    emit('find', 'gig-availability', { user: currentUser.memberId })
       .then(res => this.props.loadUserAvailability(res.data));
   }
 
@@ -71,7 +71,7 @@ class GigList extends Component {
           }
           secondary={
             <UserAvailability
-              userId={currentUser.userId}
+              memberId={currentUser.memberId}
               gigId={gig._id} availability={userAvailability[gig._id]}
             />
           } />

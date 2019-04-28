@@ -20,7 +20,7 @@ const initializeProject = async ({ app, result }) => {
   if (users.data.length) {
     user = users.data[0];
     await app.service('api/users').patch(user._id, { project: project_id, password: verificationCode });
-    await app.service('api/user-access').create({ project: project_id, user: user._id, role: 'Admin' });
+    await app.service('api/members').create({ project: project_id, user: user._id, role: 'Admin' });
   } else {
     user = await app.service('api/users').create({ project: project_id, email, name: email, password: verificationCode, role: 'Admin' });
   }

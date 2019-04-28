@@ -1,6 +1,7 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const moment = require('moment');
 const { removeRelated } = require('../../hooks/customHooks');
+
 const mailGigUpdate = async context => {
   if (!context.app.get('mail').enabled) {
     return context;
@@ -10,13 +11,12 @@ const mailGigUpdate = async context => {
   await context.app.service('api/calendar').create({ foo: 'bar' });
   // normally filter this for preferences
   const project = await context.app.service('api/projects').get(gig.project);
-  const users = await context.app.service('api/users').find({ query: { project: gig.project } });
-
-  await Promise.all(users.data.map(user => {
+  const users = await context.app.service('api/members').find({ query: { project: gig.project, $populate: 'user' } });
+  await Promise.all(users.map(({ user }) => {
     return context.app.service('api/mail').create({
       template: 'gigUpdate',
       message: {
-        to: 'greg@primate.net' // FIXME user.email
+        to: user.email // FIXME user.email
       },
       locals: {
         type: context.method === 'create' ? 'new' : 'updated',

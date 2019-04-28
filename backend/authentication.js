@@ -27,13 +27,21 @@ module.exports = function(app) {
       create: [
         authentication.hooks.authenticate(config.strategies),
         async (context) => {
-          const access = await context.app.service('api/user-access')._find({ query: { user: context.params.payload.userId } });
+          const { payload } = context.params;
+          const { userId } = payload;
+          const { project } = await context.app.service('api/users').get(userId, { query: { $select: ['project'] } })
+          payload.project = project
+          const members = await context.app.service('api/members')._find({ query: { user: userId } });
 
-          context.params.payload.access = access.reduce((obj, item) => {
+          payload.projects = members.reduce((obj, item) => {
+            if (item.project === project) {
+              payload.memberId = item._id;
+            }
             obj[item.project] = item.role;
             return obj;
           }, {});
-          context.params.payload.projects = access.map(p => p.project);
+
+          // context.params.payload.projects = member.map(p => p.project);
           return context;
         }
       ],

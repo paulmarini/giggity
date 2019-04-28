@@ -31,7 +31,7 @@ class NavBar extends Component {
   }
 
   renderSwitchProject() {
-    const { currentUser: { project, projects } } = this.props;
+    const { currentUser: { project }, projects } = this.props;
     if (!projects || projects.length <= 1) {
       return null;
     }
@@ -44,12 +44,12 @@ class NavBar extends Component {
         onChange={e => this.switchProject(e)}
       >
         {
-          projects.map(project =>
+          projects.map(({ name, _id }) =>
             <MenuItem
-              key={project}
-              value={project}
+              key={_id}
+              value={_id}
             >
-              {project}
+              {name}
             </MenuItem>)
         }
       </Select>
@@ -107,6 +107,7 @@ class NavBar extends Component {
 const mapStateToProps = state => ({
   authenticated: state.authenticated,
   currentUser: state.currentUser,
+  projects: state.projects,
   drawerOpen: state.drawerOpen
 });
 

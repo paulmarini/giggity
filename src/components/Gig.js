@@ -174,7 +174,7 @@ class Gig extends Component {
   renderAvailbility() {
     const { id } = this.props.match.params;
     const { users, currentGigAvailability } = this.props;
-
+    console.log(currentGigAvailability);
     if (id) {
       return (
         <List subheader={this.renderFilter()}>
@@ -191,7 +191,7 @@ class Gig extends Component {
                   <ListItemSecondaryAction>
                     <UserAvailability
                       buttons
-                      userId={user._id}
+                      memberId={user._id}
                       gigId={id} availability={currentGigAvailability[user._id]}
                     />
                   </ListItemSecondaryAction>

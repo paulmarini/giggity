@@ -46,7 +46,8 @@
     }
   },
   "mail": {
-    "enabled": false
+    "enabled": false,
+    "preview":false
   },
   "calendar": {
     "enabled": false
