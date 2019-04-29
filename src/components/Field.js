@@ -83,20 +83,26 @@ const Field = fieldData => {
     props.fullWidth = true;
     props.InputLabelProps = { shrink: true }
   }
+  const inputProps = {}
+  if (handleChange) {
+    inputProps.onChange = e => {
+      handleChange && handleChange(e); onChange && onChange(e);
+    }
+  }
+
+  if (handleBlur) {
+    inputProps.onBlur = e => {
+      handleBlur && handleBlur(e); onBlur && onBlur(e);
+    }
+  }
+
 
   const field = <FormikField
     name={fieldData.name}
     label={fieldData.label || fieldData.name}
     component={component}
     {...props}
-    inputProps={{
-      onChange: e => {
-        handleChange(e); onChange && onChange(e);
-      },
-      onBlur: e => {
-        handleBlur(e); onBlur && onBlur(e);
-      }
-    }}
+    inputProps={inputProps}
   >
     {children}
   </FormikField>
