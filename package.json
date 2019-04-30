@@ -34,7 +34,7 @@
     "start": "NODE_ENV=production node backend/index.js",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "deploy": "ssh giggity -C \"cd giggity-dev; git pull && npm ci && sudo systemctl restart giggity.service\""
+    "deploy": "ssh giggity -C \"cd giggity-dev; git pull && npm ci && npm run build && sudo systemctl restart giggity.service\""
   },
   "dependencies": {
     "@feathersjs/authentication": "^2.1.13",
