@@ -13,7 +13,7 @@ import { logout, authenticate } from '../socket';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
 import NavBar from './NavBar';
-import './Home.css';
+import './Home.scss';
 let drawerWidth = 300;
 
 const styles = theme => (console.log(theme) || {
@@ -71,7 +71,7 @@ class Home extends React.Component {
     }
     const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match(/^\/(gigs|settings)/));
     return (
-      <div style={{ display: 'flex' }}>
+      <div className='Home' style={{ display: 'flex' }}>
         <NavBar />
         <SideBar {...{ authenticated, location, width, drawerWidth, showSidebar }} />
         <main
@@ -81,18 +81,20 @@ class Home extends React.Component {
           }}>
           <div className={classes.toolbar} />
           <Errors errors={errors} removeError={removeError} />
-          <Switch>
-            <Route exact path="/login" component={Login} />
-            <Route exact path="/signup" component={SignUp} />
-            <Route exact path='/gigs/new' component={Gig} />
-            <Route path='/gigs/:id' component={Gig} />
-            <Route path='/settings' component={Settings} />
-            <Route exact path=''>
-              {
-                !showSidebar && <Welcome />
-              }
-            </Route>
-          </Switch>
+          <div className='content'>
+            <Switch>
+              <Route exact path="/login" component={Login} />
+              <Route exact path="/signup" component={SignUp} />
+              <Route exact path='/gigs/new' component={Gig} />
+              <Route path='/gigs/:id' component={Gig} />
+              <Route path='/settings' component={Settings} />
+              <Route exact path=''>
+                {
+                  !showSidebar && <Welcome />
+                }
+              </Route>
+            </Switch>
+          </div>
         </main>
       </div>
     );
