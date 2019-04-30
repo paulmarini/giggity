@@ -1,10 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { actions } from '../store';
+import { actions } from '../../store';
 import { Link } from 'react-router-dom'
 import { ListItem, ListItemText, ListItemIcon, Link as MUILink } from '@material-ui/core';
-import UserAvailability from '../components/UserAvailability';
-import { gigService, userService, emit } from '../socket'
+import UserAvailability from '../../components/UserAvailability';
+import { gigService, userService, emit } from '../../socket'
 import { withStyles } from '@material-ui/core/styles';
 import moment from 'moment';
 

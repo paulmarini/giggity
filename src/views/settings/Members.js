@@ -1,5 +1,7 @@
 import React, { Component } from 'react';
 import Link from '../../components/Link';
+import { connect } from 'react-redux';
+
 import {
   IconButton,
   Typography,
@@ -29,18 +31,15 @@ class Users extends Component {
   }
 
   inviteMember = async values => {
-    const member = await emit('create', 'users', { email: values.email, name: values.email, role: values.role });
-    console.log(member);
+    await emit('create', 'users', { email: values.email, name: values.email, role: values.role });
   }
 
   updateMember = async (values) => {
-    console.log('update', values);
     await emit('patch', 'members', values._id, values);
   }
 
   deleteMember = id => async () => {
-    const member = await emit('remove', 'members', id);
-    console.log(member);
+    await emit('remove', 'members', id);
   }
 
   render() {
@@ -76,4 +75,8 @@ class Users extends Component {
   }
 }
 
-export default Users;
+const mapStateToProps = state => ({
+  users: state.users
+})
+
+export default connect(mapStateToProps)(Users);

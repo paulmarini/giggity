@@ -1,7 +1,7 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { Field as FormikField } from 'formik';
-import { Grid, MenuItem, FormControlLabel, Radio, InputLabel, FormControl, FormLabel } from '@material-ui/core';
+import { Grid, MenuItem, FormControlLabel, Radio, InputLabel, FormControl, FormLabel, FormHelperText } from '@material-ui/core';
 import { TextField, Select, Checkbox, RadioGroup, Switch, CheckboxWithLabel } from 'formik-material-ui';
 import './Field.scss';
 
@@ -58,6 +58,7 @@ const Field = fieldData => {
         return <FormControlLabel key={index} value={option.value || option} control={<Radio />} label={option.label || option} />
       })
       break;
+    case 'Checkbox':
     case 'Checkboxes':
       component = CheckboxWithLabel;
       props.Label = { label: fieldData.label };
@@ -96,7 +97,6 @@ const Field = fieldData => {
     }
   }
 
-
   const field = <FormikField
     name={fieldData.name}
     label={fieldData.label || fieldData.name}
@@ -115,6 +115,7 @@ const Field = fieldData => {
           {field}
         </FormControl>) : field
       }
+      {fieldData.helperText && <FormHelperText>{fieldData.helperText}</FormHelperText>}
     </Grid>
   )
 }

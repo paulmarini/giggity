@@ -12,10 +12,10 @@ import {
   Chip,
   Grid
 } from '@material-ui/core';
-import { emit } from '../socket'
+import { emit } from '../../socket'
 import { KeyboardArrowUp, KeyboardArrowDown, RemoveCircleOutline } from '@material-ui/icons';
 import { Formik, Form, FieldArray } from 'formik';
-import Field from './Field';
+import Field from '../../components/Field';
 const defaultField = {
   label: '',
   type: 'Text',

@@ -125,7 +125,6 @@ class Login extends Component {
             </Form>
           )}
         </Formik>
-        <Link href={`/auth/auth0`}>Sign in With Auth0</Link>
       </div >
     );
   }

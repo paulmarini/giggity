@@ -1,6 +1,6 @@
 import React from 'react';
 import GigList from './GigList';
-import ProjectNav from './ProjectNav';
+import SettingsNav from './SettingsNav';
 import { connect } from 'react-redux';
 import { Drawer, List } from '@material-ui/core';
 import './SideBar.scss';
@@ -11,7 +11,6 @@ const SideBar = (props) => {
     return null;
   }
   const type = location.pathname.split('/')[1];
-  // const nav =
   return (
     <nav className='sidebar'>
       <Drawer
@@ -19,7 +18,6 @@ const SideBar = (props) => {
         className='gig-list'
         variant={width === 'xs' ? 'temporary' : 'permanent'}
         open={width !== 'xs' || drawerOpen}
-        // classes={{ modal: classes.modal }}
         PaperProps={{
           style: {
             width: drawerWidth
@@ -35,7 +33,7 @@ const SideBar = (props) => {
                 currentLocation={location.pathname}
               />
               :
-              <ProjectNav currentLocation={location.pathname} />
+              <SettingsNav currentLocation={location.pathname} />
           }
         </List>
       </Drawer>

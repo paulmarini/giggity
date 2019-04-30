@@ -113,7 +113,7 @@ class SignUp extends Component {
         this.renderSetupForm() :
         <Formik onSubmit={this.submit} initialValues={this.state} enableReinitialize={true}>
           {({ handleSubmit, handleChange, handleBlur, values, errors }) => (
-            <Form autocomplete="off">
+            <Form autoComplete="off">
               {activeStep === 0 && this.renderCreateForm()}
               {activeStep === 1 && this.renderVerifyForm()}
               <Button variant="contained" type="submit" color="primary">

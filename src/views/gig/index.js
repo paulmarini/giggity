@@ -1,22 +1,22 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import { actions } from '../store';
+import { actions } from '../../store';
 import { Button } from '@material-ui/core';
 import { Typography, Grid } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
 import { Helmet } from 'react-helmet';
 import { Formik, Form, Field } from 'formik';
-import UserAvailability from './UserAvailability';
+import UserAvailability from '../../components/UserAvailability';
 import UITextField from '@material-ui/core/TextField';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, ListSubheader, Paper, Link as MUILink } from '@material-ui/core';
 import ToggleButton from '@material-ui/lab/ToggleButton';
 import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
-import { emit } from '../socket'
+import { emit } from '../../socket'
 import moment from 'moment'
 import { get, set, merge } from 'lodash';
-import GiggityForm from './Form';
+import GiggityForm from '../../components/Form';
 
 const formatDate = date => moment(date || new Date()).format('YYYY-MM-DDTHH:mm')
 
@@ -35,6 +35,7 @@ class Gig extends Component {
     this.dateFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
     this.defaultGig = {
       name: '',
+      status: 'Proposed',
       description: '',
       start: formatDate(),
       end: formatDate()
@@ -135,10 +136,14 @@ class Gig extends Component {
     });
 
     const fields = [
+      { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
       { type: 'Text', label: 'Name', name: 'name' },
       { type: 'DateTime', label: 'Start Time', name: 'start' },
       { type: 'DateTime', label: 'End Time', name: 'end' },
+      { type: 'Text', label: 'Location', name: 'location' },
       { type: 'Paragraph', label: 'Description', name: 'description' },
+      { type: 'DateTime', label: 'Load In', name: 'load_in' },
+
       ...custom_fields
     ]
 
@@ -171,10 +176,44 @@ class Gig extends Component {
     </ListSubheader>
   }
 
-  renderAvailbility() {
+  renderPublic() {
+    const { currentGig, currentProject } = this.props;
+    const { id } = this.props.match.params;
+
+    const gig = merge({}, this.defaultGig, currentGig);
+
+    this.dateFields.forEach(field => {
+      gig[field] = formatDate(currentGig[field])
+    })
+
+    const custom_fields = (currentProject.custom_fields || []).map((field) => {
+      set(gig, `custom_fields.${field.label}`, get(gig, `custom_fields.${field.label}`) || field.default || "");
+      return { ...field, name: `custom_fields.${field.label}` }
+    });
+
+    const fields = [
+      { type: 'Checkbox', label: 'Private Gig', name: 'private', helperText: 'Private gigs will not be published to the public calendar' },
+      { type: 'Text', label: 'Public Title', name: 'public_title' },
+      { type: 'Paragraph', label: 'Public Description', name: 'public_description' },
+      { type: 'DateTime', label: 'Event Start Time', name: 'event_start' },
+      { type: 'DateTime', label: 'Event End Time', name: 'event_end' },
+      { type: 'Link', label: 'Public Link', name: 'link' },
+      ...custom_fields
+    ]
+
+    return (
+      <GiggityForm
+        onSubmit={this.saveGig}
+        initialValues={id ? gig : this.defaultGig}
+        fields={fields}
+        submitLabel="Save Public Details"
+      />
+    );
+  }
+
+  renderAvailability() {
     const { id } = this.props.match.params;
     const { users, currentGigAvailability } = this.props;
-    console.log(currentGigAvailability);
     if (id) {
       return (
         <List subheader={this.renderFilter()}>
@@ -225,13 +264,15 @@ class Gig extends Component {
           : null}
         <Tabs value={tab} onChange={this.changeTab} variant="fullWidth">
           <Tab value='details' label="Details" />
-          <Tab value='availability' label="availability" />
+          <Tab value='public' label="Public Details" />
+          <Tab value='availability' label="Availability" />
         </Tabs>
 
         <Grid container justify="center" alignItems="center">
           <Grid item xs={12} lg={6}>
             {tab === 'details' && this.renderDetails()}
-            {tab === 'availability' && this.renderAvailbility()}
+            {tab === 'availability' && this.renderAvailability()}
+            {tab === 'public' && this.renderPublic()}
           </Grid>
         </Grid>
       </div>

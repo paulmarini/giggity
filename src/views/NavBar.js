@@ -74,7 +74,7 @@ class NavBar extends Component {
             <Link color="inherit" to='/'>
               Giggity
             </Link>
-            <Link color="inherit" to='/project'>
+            <Link color="inherit" to='/settings'>
               <IconButton
                 color="inherit"
               >
@@ -95,7 +95,6 @@ class NavBar extends Component {
                   <LogoutIcon />
                 </IconButton>
               </Link>
-
             </>
           }
         </Toolbar>

@@ -4,7 +4,7 @@ import { TextField, Select } from 'formik-material-ui';
 import { connect } from 'react-redux';
 
 import { Formik, Form, Field } from 'formik';
-import { emit } from '../socket';
+import { emit } from '../../socket';
 
 const defaultState = {
   name: '',

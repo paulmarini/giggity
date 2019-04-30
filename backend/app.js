@@ -25,12 +25,12 @@ const authentication = require('./authentication');
 const app = express(feathers());
 
 // Load app configuration
+app.use(cors());
 app.configure(configuration());
 // Enable security, CORS, compression, favicon and body parsing
 app.use(helmet());
-app.use(cors());
 app.use(compress());
-app.use(cookie())
+// app.use(cookie())
 app.use(session({ cookie: { sameSite: false }, secret: app.get('authentication').secret }));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
