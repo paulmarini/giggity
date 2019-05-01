@@ -71,10 +71,14 @@ class NavBar extends Component {
             </IconButton>
           </Hidden>
           <Typography variant="h4" color="inherit" noWrap style={{ flexGrow: 1 }}>
-            <Link color="inherit" to='/'>
+            <Link color="inherit" to='/'
+              onClick={this.handleDrawerToggle}
+            >
               Giggity
             </Link>
-            <Link color="inherit" to='/settings'>
+            <Link color="inherit" to='/settings'
+              onClick={this.handleDrawerToggle}
+            >
               <IconButton
                 color="inherit"
               >

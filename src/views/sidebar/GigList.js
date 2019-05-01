@@ -44,7 +44,7 @@ class GigList extends Component {
   }
 
   renderGigItem = (gig) => {
-    const { currentGig, userAvailability, currentUser, classes } = this.props;
+    const { currentGig, userAvailability, currentUser, classes, handleDrawerToggle } = this.props;
     const date = moment(gig.start).format('MM/DD');
     return (
       <ListItem
@@ -55,6 +55,7 @@ class GigList extends Component {
         selected={currentGig._id === gig._id}
         to={`/gigs/${gig._id}`}
         alignItems="flex-start"
+        onClick={handleDrawerToggle}
       >
         <ListItemIcon>
           <b>{date}</b>

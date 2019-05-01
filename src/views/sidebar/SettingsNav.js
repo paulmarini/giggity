@@ -13,7 +13,7 @@ const links = [
 
 class SettingsNav extends React.Component {
   renderListItem = ([text, link]) => {
-    const { currentLocation } = this.props;
+    const { currentLocation, handleDrawerToggle } = this.props;
     return (
       <ListItem
         button
@@ -21,6 +21,7 @@ class SettingsNav extends React.Component {
         component={Link}
         to={`/settings/project/${link}`}
         selected={Boolean(currentLocation.match(link))}
+        onClick={handleDrawerToggle}
       >
         {/* <ListItemIcon></ListItemIcon> */}
         <ListItemText primary={

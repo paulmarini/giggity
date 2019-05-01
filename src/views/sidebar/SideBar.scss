@@ -1,8 +1,7 @@
-.sidebar {
-  &>div {
-    z-index: 1298;
-    &>div  {
-      padding-top: 64px;
-    }
+.sidebar{
+  z-index: 1298 !important;
+  &>div  {
+    background: #fafafa;
+    padding-top: 64px;
   }
 }
