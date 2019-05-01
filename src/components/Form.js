@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Formik, Form as FormikForm } from 'formik';
-import { Button } from '@material-ui/core';
+import { Button, Grid } from '@material-ui/core';
 import Field from './Field';
 import './Form.scss';
 
@@ -28,15 +28,17 @@ class Form extends Component {
       <Formik onSubmit={this.submit} initialValues={initialValues} enableReinitialize={true} >
         {({ handleSubmit, handleChange, handleBlur, submitForm, values, errors }) => (
           <FormikForm className='giggity-form' >
-            {
-              fields.map((field, index) => {
-                return <Field key={index} handleChange={e => { this.handleChange(e, handleChange, submitForm); }} handleBlur={handleBlur} {...field} />
-              })
-            }
-            {submitLabel && <div className='buttons'>
-              <Button variant='contained' color='primary' type='submit'>{submitLabel}</Button>
-              {buttons.map((button, index) => (<span key={index}>{button}</span>))}
-            </div>}
+            <Grid container spacing={16}>
+              {
+                fields.map((field, index) => {
+                  return <Field key={index} handleChange={e => { this.handleChange(e, handleChange, submitForm); }} handleBlur={handleBlur} {...field} />
+                })
+              }
+              {submitLabel && <div className='buttons'>
+                <Button variant='contained' color='primary' type='submit'>{submitLabel}</Button>
+                {buttons.map((button, index) => (<span key={index}>{button}</span>))}
+              </div>}
+            </Grid>
           </FormikForm>
         )}
       </Formik>

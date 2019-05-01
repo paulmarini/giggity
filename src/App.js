@@ -15,6 +15,9 @@ const theme = createMuiTheme({
     secondary: { main: pink[700] }, // This is just green.A700 as hex.
     action: {
       // selected: blue[300]
+    },
+    background: {
+      default: '#fff'
     }
   },
   typography: { useNextVariants: true },

@@ -109,13 +109,15 @@ const Field = fieldData => {
 
   return (
     <Grid item xs={12} lg={6} className='form-field'>
-      {label ?
-        (<FormControl fullWidth className={`field-${fieldData.type}`}>
-          {label}
-          {field}
-        </FormControl>) : field
-      }
-      {fieldData.helperText && <FormHelperText>{fieldData.helperText}</FormHelperText>}
+      <div className={`form-control field-${fieldData.type}`}>
+        {label ?
+          (<FormControl fullWidth>
+            {label}
+            {field}
+          </FormControl>) : field
+        }
+        {fieldData.helperText && <FormHelperText>{fieldData.helperText}</FormHelperText>}
+      </div>
     </Grid>
   )
 }
