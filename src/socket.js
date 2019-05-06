@@ -64,7 +64,8 @@ const handleAuth = async ({ accessToken }) => {
   await Promise.all([
     loadUsers(),
     loadProjects(projects),
-    loadProject(project)
+    loadProject(project),
+    loadNextGigId(),
   ])
   store.dispatch(actions.setAuth(true));
   store.dispatch(actions.setUser(userData));
@@ -102,6 +103,20 @@ const gigUpdated = gig => {
   store.dispatch(actions.gigUpdated(gig))
 }
 
+const availabilityUpdated = availability => {
+  store.dispatch(actions.availabilityUpdated(availability))
+}
+
+const loadNextGigId = async () => {
+  const nextGig = (await emit('find', 'gigs', {
+    start: { $gt: new Date().getTime() },
+    $limit: 1,
+    $select: ['_id'],
+    $sort: { start: 1 }
+  }))[0];
+  store.dispatch(actions.loadNextGigId(nextGig._id));
+}
+
 projectService.on('patched', loadProject);
 
 userService.on('created', loadUsers);
@@ -109,14 +124,10 @@ userService.on('patched', loadUsers);
 userService.on('updated', loadUsers);
 userService.on('removed', loadUsers);
 
-
 gigService.on('created', gigUpdated);
 gigService.on('patched', gigUpdated);
 gigService.on('updated', gigUpdated);
-
-const availabilityUpdated = availability => {
-  store.dispatch(actions.availabilityUpdated(availability))
-}
+gigService.on('removed', gigUpdated);
 
 availabilityService.on('created', availabilityUpdated);
 availabilityService.on('patched', availabilityUpdated);

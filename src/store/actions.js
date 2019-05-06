@@ -11,6 +11,10 @@ const actions = {
     type: 'LOAD_GIG',
     payload: { ...payload }
   }),
+  loadNextGigId: payload => ({
+    type: 'LOAD_NEXT_GIG_ID',
+    payload: payload
+  }),
   loadUsers: payload => ({
     type: 'LOAD_USERS',
     payload: payload.map(user => {

@@ -3,6 +3,7 @@ import { connect } from 'react-redux';
 import { actions } from '../../store';
 import { Button } from '@material-ui/core';
 import { Typography, Grid } from '@material-ui/core';
+import { Redirect } from 'react-router-dom';
 import { TextField } from 'formik-material-ui';
 import { Helmet } from 'react-helmet';
 import { Formik, Form, Field } from 'formik';
@@ -123,7 +124,6 @@ class Gig extends Component {
   renderDetails() {
     const { currentGig, currentProject } = this.props;
     const { id } = this.props.match.params;
-
     const gig = merge({}, this.defaultGig, currentGig);
 
     this.dateFields.forEach(field => {
@@ -245,8 +245,16 @@ class Gig extends Component {
 
   render() {
     const { id } = this.props.match.params;
-    const { currentGig, currentProject } = this.props;
+    const { currentGig, nextGigId } = this.props;
     const { tab } = this.state;
+
+    if (!id) {
+      if (nextGigId) {
+        return <Redirect to={`/gigs/${nextGigId}`} />
+      } else {
+        return "No Upcoming Gigs";
+      }
+    }
 
     return (
       <div>
@@ -280,13 +288,19 @@ class Gig extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  users: state.users,
+  currentGig: state.currentGig,
+  currentGigAvailability: state.currentGigAvailability,
+  drawerOpen: state.drawerOpen,
+  currentProject: state.currentProject,
+  nextGigId: state.nextGigId
+});
 
-export default connect(
-  state => ((({ users, currentGig, currentGigAvailability, drawerOpen, currentProject }) => ({ users, currentGig, currentGigAvailability, drawerOpen, currentProject }))(state)),
-  {
-    loadGig: actions.loadGig,
-    loadGigAvailability: actions.loadGigAvailability,
-    updateAvailability: actions.updateAvailability,
-    updateDrawer: actions.updateDrawer
-  }
-)(Gig);
+const mapDispatchToProps = {
+  loadGig: actions.loadGig,
+  loadGigAvailability: actions.loadGigAvailability,
+  updateDrawer: actions.updateDrawer
+};
+
+export default connect(mapStateToProps, mapDispatchToProps)(Gig);

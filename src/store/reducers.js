@@ -11,7 +11,8 @@ const defaultState = {
   authenticated: false,
   drawerOpen: false,
   projects: [],
-  currentProject: {}
+  currentProject: {},
+  nextGigId: ''
 }
 
 const appReducer = (state = defaultState, action) => {
@@ -28,6 +29,8 @@ const appReducer = (state = defaultState, action) => {
       return { ...state, gigsList: action.payload };
     case 'LOAD_GIG':
       return { ...state, currentGig: action.payload };
+    case 'LOAD_NEXT_GIG_ID':
+      return { ...state, nextGigId: action.payload };
     case 'LOAD_USER_AVAILABILITY':
       return {
         ...state,

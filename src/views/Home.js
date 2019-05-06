@@ -1,5 +1,5 @@
 import React from 'react';
-import { Switch, Route } from 'react-router-dom';
+import { Switch, Route, Redirect } from 'react-router-dom';
 import SideBar from '../views/sidebar/SideBar';
 import Login from './Login';
 import Welcome from './Welcome';
@@ -59,7 +59,7 @@ class Home extends React.Component {
 
   checkAuth() {
     if (this.state.initialized && !this.props.authenticated && !this.public_routes.includes(this.props.location.pathname)) {
-      this.props.history.push(`/`);
+      this.props.history.push(`/login`);
       logout();
     }
   }
@@ -86,11 +86,11 @@ class Home extends React.Component {
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={SignUp} />
               <Route exact path='/gigs/new' component={Gig} />
-              <Route path='/gigs/:id' component={Gig} />
+              <Route path='/gigs/:id?' component={Gig} />
               <Route path='/settings' component={Settings} />
-              <Route exact path=''>
+              <Route exact path='/'>
                 {
-                  !showSidebar && <Welcome />
+                  authenticated ? <Redirect to="/gigs" /> : <Welcome />
                 }
               </Route>
             </Switch>
