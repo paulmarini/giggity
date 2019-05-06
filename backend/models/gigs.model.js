@@ -8,7 +8,7 @@ module.exports = function(app) {
   const gigs = new Schema({
     name: { type: String, required: true },
     project: { type: String, required: true, ref: 'projects' },
-    description: { type: String, required: true },
+    description: { type: String },
     start: { type: Date, required: true },
     end: { type: Date },
     load_in: { type: Date },
