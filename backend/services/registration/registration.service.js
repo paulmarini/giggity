@@ -5,11 +5,9 @@ const hooks = require('./registration.hooks');
 
 module.exports = function(app) {
   const Model = createModel(app);
-  const paginate = app.get('paginate');
 
   const options = {
     Model,
-    paginate,
     multi: ['patch']
   };
 

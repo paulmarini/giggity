@@ -83,7 +83,7 @@ class Gig extends Component {
         })
       emit('find', 'gig-availability', { gig: id })
         .then(availability => {
-          this.props.loadGigAvailability(availability.data)
+          this.props.loadGigAvailability(availability)
         })
     } else {
       this.setState(defaultState);

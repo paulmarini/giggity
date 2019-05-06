@@ -36,11 +36,11 @@ class GigList extends Component {
 
   updateData() {
     const { currentUser } = this.props;
-    emit('find', 'gigs')
-      .then(gigs => this.props.loadGigs(gigs.data));
+    emit('find', 'gigs', { $limit: 10, $sort: { start: 1 } })
+      .then(gigs => this.props.loadGigs(gigs));
 
     emit('find', 'gig-availability', { user: currentUser.memberId })
-      .then(res => this.props.loadUserAvailability(res.data));
+      .then(res => this.props.loadUserAvailability(res));
   }
 
   renderGigItem = (gig) => {

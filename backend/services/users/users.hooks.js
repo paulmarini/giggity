@@ -31,7 +31,7 @@ const createUser = async context => {
     delete context.data.id;
   }
 
-  const user = (await context.service.find({ query: { email: context.data.email } })).data[0];
+  const user = (await context.service.find({ query: { email: context.data.email } }))[0];
   if (user) {
     await context.service.patch(user._id, { password: context.data.accessCode });
     context.result = {

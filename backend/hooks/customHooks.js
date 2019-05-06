@@ -37,7 +37,7 @@ module.exports = {
     const related = await context.app.service(service)
       .find({ query: { [field]: context.id, $select: '_id' } });
     await Promise.all(
-      related.data.map(
+      related.map(
         ({ _id }) => context.app.service(service).remove(_id)
       )
     );
