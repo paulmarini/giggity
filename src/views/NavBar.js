@@ -23,7 +23,7 @@ class NavBar extends Component {
   switchProject = async (event) => {
     const project = event.target.value;
     await emit('patch', 'users', this.props.currentUser.userId, { project });
-    window.location.reload();
+    window.location.href = '/';
   }
 
   handleDrawerToggle = () => {

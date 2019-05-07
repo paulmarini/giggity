@@ -5,9 +5,10 @@ const hooks = require('./gigs.hooks');
 
 module.exports = function(app) {
   const Model = createModel(app);
-
+  const paginate = app.get('paginate')
   const options = {
-    Model
+    Model,
+    paginate
   };
 
   // Initialize our service with any options it requires

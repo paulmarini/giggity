@@ -85,7 +85,7 @@ class Home extends React.Component {
             <Switch>
               <Route exact path="/login" component={Login} />
               <Route exact path="/signup" component={SignUp} />
-              <Route exact path='/gigs/new' component={Gig} />
+              {/* <Route exact path='/gigs/new' component={Gig} /> */}
               <Route path='/gigs/:id?' component={Gig} />
               <Route path='/settings' component={Settings} />
               <Route exact path='/'>

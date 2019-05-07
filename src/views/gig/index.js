@@ -79,10 +79,12 @@ class Gig extends Component {
     this.props.loadGigAvailability([]);
   }
 
-  updateGig() {
+  checkNewGig = () => this.props.match.params.id === 'new'
 
+  updateGig() {
     const { id } = this.props.match.params;
-    if (id) {
+    if (!id) { return; }
+    if (!this.checkNewGig()) {
       emit('get', 'gigs', id)
         .then(message => {
           this.props.loadGig(message);
@@ -103,12 +105,12 @@ class Gig extends Component {
       values[field] = moment(values[field], 'YYYY-MM-DDTHH:mm').toISOString()
     })
     delete values._id;
-    return (id ?
+    return (!this.checkNewGig() ?
       emit('patch', 'gigs', id, values) :
       emit('create', 'gigs', values)
     )
       .then(gig => {
-        if (!id) {
+        if (this.checkNewGig()) {
           this.props.history.push(`/gigs/${gig._id}`);
         }
       })
@@ -159,7 +161,7 @@ class Gig extends Component {
     return (
       <GiggityForm
         onSubmit={this.saveGig}
-        initialValues={id ? gig : this.defaultGig}
+        initialValues={!this.checkNewGig() ? gig : this.defaultGig}
         fields={fields}
         buttons={[deleteButton]}
         submitLabel="Save Gig"
@@ -209,7 +211,7 @@ class Gig extends Component {
     return (
       <GiggityForm
         onSubmit={this.saveGig}
-        initialValues={id ? gig : this.defaultGig}
+        initialValues={!this.checkNewGig() ? gig : this.defaultGig}
         fields={fields}
         submitLabel="Save Public Details"
       />
@@ -219,7 +221,7 @@ class Gig extends Component {
   renderAvailability() {
     const { id } = this.props.match.params;
     const { users, currentGigAvailability } = this.props;
-    if (id) {
+    if (!this.checkNewGig()) {
       return (
         <List subheader={this.renderFilter()}>
           {
@@ -266,7 +268,7 @@ class Gig extends Component {
         <Helmet>
           <title>{`Giggity - ${currentGig.name}`}</title>
         </Helmet>
-        {id ?
+        {!this.checkNewGig() ?
           <Typography
             variant='h4'
             gutterBottom

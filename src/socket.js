@@ -129,7 +129,7 @@ const loadNextGigId = async () => {
     $limit: 1,
     $select: ['_id'],
     $sort: { start: 1 }
-  }))[0];
+  })).data[0];
   if (nextGig) {
     store.dispatch(actions.loadNextGigId(nextGig._id));
   }
