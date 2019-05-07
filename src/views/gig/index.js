@@ -4,16 +4,21 @@ import { actions } from '../../store';
 import { Button } from '@material-ui/core';
 import { Typography, Grid } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
-import { TextField } from 'formik-material-ui';
 import { Helmet } from 'react-helmet';
-import { Formik, Form, Field } from 'formik';
 import UserAvailability from '../../components/UserAvailability';
 import UITextField from '@material-ui/core/TextField';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { List, ListItem, ListItemText, ListItemIcon, ListItemSecondaryAction, ListSubheader, Paper, Link as MUILink } from '@material-ui/core';
-import ToggleButton from '@material-ui/lab/ToggleButton';
-import ToggleButtonGroup from '@material-ui/lab/ToggleButtonGroup';
+import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListSubheader,
+  Paper,
+  Link as MUILink
+} from '@material-ui/core';
 import { emit } from '../../socket'
 import moment from 'moment'
 import { get, set, merge } from 'lodash';

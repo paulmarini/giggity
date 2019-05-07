@@ -15,6 +15,13 @@ module.exports = function(app) {
     calendar_acls: {
       gig_calendar_acl_id: { type: String },
       rehearsal_calendar_acl_id: { type: String }
+    },
+    preferences: {
+      email: {
+        gig_added: { type: Boolean, default: false },
+        gig_updated: { type: Boolean, default: false },
+        gig_availability_updated: { type: Boolean, default: false }
+      }
     }
   }, {
       timestamps: true
