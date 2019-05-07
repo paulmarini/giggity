@@ -130,7 +130,9 @@ const loadNextGigId = async () => {
     $select: ['_id'],
     $sort: { start: 1 }
   }))[0];
-  store.dispatch(actions.loadNextGigId(nextGig._id));
+  if (nextGig) {
+    store.dispatch(actions.loadNextGigId(nextGig._id));
+  }
 }
 
 projectService.on('patched', loadProject);
