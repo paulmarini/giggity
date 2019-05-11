@@ -18,6 +18,14 @@ module.exports = function(app) {
     email_list: { type: String },
     default_role: { type: String, default: 'Member' },
     custom_fields: { type: [fields] },
+    custom_rehearsal_fields: { type: [fields] },
+    rehearsal_schedule: { type: String },
+    rehearsal_defaults: {
+      name: { type: String, default: 'Rehearsal' },
+      start: { type: Date },
+      end: { type: Date },
+      location: { type: String }
+    },
     calendar: {
       gig_calendar_id: { type: String },
       rehearsal_calendar_id: { type: String },

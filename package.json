@@ -67,6 +67,7 @@
     "googleapis": "^39.2.0",
     "helmet": "^3.15.0",
     "jwt-decode": "^2.2.0",
+    "later": "github:RickCarlino/later",
     "lodash": "^4.17.11",
     "moment": "^2.24.0",
     "mongodb-core": "^3.1.9",
