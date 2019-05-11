@@ -165,6 +165,8 @@ class Gig extends Component {
         fields={fields}
         buttons={[deleteButton]}
         submitLabel="Save Gig"
+        validate={this.validate}
+
       />
     );
   }
@@ -181,6 +183,14 @@ class Gig extends Component {
         <UserAvailability />
       </ListItemSecondaryAction>
     </ListSubheader>
+  }
+
+  validate = values => {
+    const errors = {}
+    if (values.end <= values.start) {
+      errors.end = 'End time must be after start time'
+    }
+    return errors;
   }
 
   renderPublic() {
