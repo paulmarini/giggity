@@ -62,21 +62,25 @@ class GigList extends Component {
   updateData = async () => {
     const { currentUser } = this.props;
     const upcoming = this.state.offset >= 0;
-    const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit)
+    const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
+    const now = new Date().getTime();
     const params = {
       $limit: this.state.limit,
-      start: { [upcoming ? '$gt' : '$lt']: new Date().getTime() },
+      start: { [upcoming ? '$gt' : '$lt']: now },
       $sort: { start: upcoming ? 1 : -1 },
       $select: ['_id', 'name', 'start', 'status'],
       $skip
     }
-    const [gigs, availability, count] = await Promise.all([
+    const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
       emit('find', 'gig-availability', { user: currentUser.memberId }),
-      emit('find', 'gigs', { ...params, $limit: 0, $skip: 0 }),
+      emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
     ]);
-    this.state[`${upcoming ? 'new' : 'old'}Limit`] = (count.total < Math.abs(this.state.offset) + this.state.limit)
-    this.props.loadGigs(upcoming ? gigs.data : gigs.data.reverse());
+    this.setState({
+      [`${upcoming ? 'new' : 'old'}Limit`]: (count < $skip + this.state.limit),
+      [`${upcoming ? 'old' : 'new'}Limit`]: (total - count) === 0
+    })
+    this.props.loadGigs(upcoming ? gigs : gigs.reverse());
     this.props.loadUserAvailability(availability);
   }
 
