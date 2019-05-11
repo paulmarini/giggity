@@ -22,25 +22,48 @@ class Form extends Component {
     }
   }
 
-  render() {
-    const { initialValues, fields, submitLabel, buttons = [] } = this.props;
+  renderForm = (formikProps) => {
+    const { fields, submitLabel, buttons = [] } = this.props;
+
     return (
-      <Formik onSubmit={this.submit} initialValues={initialValues} enableReinitialize={true} >
-        {({ handleSubmit, handleChange, handleBlur, submitForm, values, errors }) => (
-          <FormikForm className='giggity-form' >
-            <Grid container spacing={16}>
-              {
-                fields.map((field, index) => {
-                  return <Field key={index} handleChange={e => { this.handleChange(e, handleChange, submitForm); }} handleBlur={handleBlur} {...field} />
-                })
-              }
-              {submitLabel && <div className='buttons'>
-                <Button variant='contained' color='primary' type='submit'>{submitLabel}</Button>
-                {buttons.map((button, index) => (<span key={index}>{button}</span>))}
-              </div>}
-            </Grid>
-          </FormikForm>
-        )}
+      <FormikForm className='giggity-form' >
+        <Grid container spacing={16}>
+          {
+            fields.map((field, index) => this.renderField(field, index, formikProps))
+          }
+          {submitLabel && <div className='buttons'>
+            <Button variant='contained' color='primary' type='submit'>{submitLabel}</Button>
+            {buttons.map((button, index) => (<span key={index}>{button}</span>))}
+          </div>}
+        </Grid>
+      </FormikForm>
+    )
+  }
+
+  renderField = (field, index, { handleSubmit, handleChange, handleBlur, submitForm, values, errors }) => {
+    if (React.isValidElement(field)) {
+      return <Grid item key={index} xs={12}>
+        {field}
+      </Grid>
+    }
+    return <Field
+      key={index}
+      handleChange={e => { this.handleChange(e, handleChange, submitForm); }}
+      handleBlur={handleBlur}
+      {...field}
+    />
+  }
+
+  render() {
+    const { initialValues, validate } = this.props;
+    return (
+      <Formik
+        onSubmit={this.submit}
+        initialValues={initialValues}
+        enableReinitialize={true}
+        validate={validate}
+      >
+        {this.renderForm}
       </Formik>
     );
   }
