@@ -45,7 +45,7 @@ class ProjectRehearsalSettings extends React.Component {
   }
 
   render() {
-    const { currentProject: { _id, rehearsal_defaults: { start, end, name, location }, rehearsal_schedule = '' } } = this.props;
+    const { currentProject: { _id, rehearsal_defaults: { start, end, name, location } = {}, rehearsal_schedule = '' } } = this.props;
 
     const startTime = start ? moment(start).format('HH:mm') : null;
     const endTime = end ? moment(end).format('HH:mm') : null;

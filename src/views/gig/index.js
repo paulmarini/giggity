@@ -48,14 +48,14 @@ class Gig extends Component {
       start: formatDate(),
       end: formatDate()
     };
-
-    (this.props.currentProject.custom_fields || []).map((field) => {
+    const { currentProject: { custom_fields = [], rehearsal_defaults = {} } } = this.props;
+    custom_fields.map((field) => {
       set(this.defaultGig, `custom_fields.${field.label}`, get(this.defaultGig, `custom_fields.${field.label}`) || field.default || "");
     });
     this.defaultRehearsal = {
-      ...this.props.currentProject.rehearsal_defaults,
-      start: formatDate(this.props.currentProject.rehearsal_defaults.start),
-      end: formatDate(this.props.currentProject.rehearsal_defaults.end),
+      ...rehearsal_defaults,
+      start: formatDate(rehearsal_defaults.start),
+      end: formatDate(rehearsal_defaults.end),
       description: ''
     };
     this.state.isLoading = !this.checkNewGig();
