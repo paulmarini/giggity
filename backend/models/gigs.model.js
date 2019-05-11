@@ -7,9 +7,10 @@ module.exports = function(app) {
   const { Schema } = mongooseClient;
   const gigs = new Schema({
     name: { type: String, required: true },
-    project: { type: String, required: true, ref: 'projects' },
+    project: { type: String, required: true, ref: 'projects', index: true },
+    type: { type: String, enum: ['Rehearsal', 'Gig'], default: 'Rehearsal', index: true },
     description: { type: String },
-    start: { type: Date, required: true },
+    start: { type: Date, required: true, index: true },
     end: { type: Date },
     load_in: { type: Date },
     event_start: { type: Date },

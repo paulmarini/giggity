@@ -40,13 +40,12 @@ const SideBar = (props) => {
           style={{ width }}
         >
           {
-            (type === 'gigs' || type === '') ?
+            (type === 'settings') ?
+              <SettingsNav handleDrawerToggle={handleDrawerToggle} currentLocation={location.pathname} /> :
               <GigList
                 handleDrawerToggle={handleDrawerToggle}
                 currentLocation={location.pathname}
               />
-              :
-              <SettingsNav handleDrawerToggle={handleDrawerToggle} currentLocation={location.pathname} />
           }
         </List>
       </SwipeableDrawer>

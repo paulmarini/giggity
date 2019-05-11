@@ -69,7 +69,10 @@ class Home extends React.Component {
     if (!this.state.initialized) {
       return "...";
     }
-    const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match(/^\/(gigs|settings)/));
+    if (!authenticated && !this.public_routes.includes(this.props.location.pathname)) {
+      return <Redirect to="/" />
+    }
+    const showSidebar = authenticated && (location.pathname === '/' || location.pathname.match(/^\/(gigs|settings|rehearsals)/));
     return (
       <div className='Home' style={{ display: 'flex' }}>
         <NavBar />
@@ -87,6 +90,7 @@ class Home extends React.Component {
               <Route exact path="/signup" component={SignUp} />
               {/* <Route exact path='/gigs/new' component={Gig} /> */}
               <Route path='/gigs/:id?' component={Gig} />
+              <Route path='/rehearsals/:id?' component={Gig} />
               <Route path='/settings' component={Settings} />
               <Route exact path='/'>
                 {

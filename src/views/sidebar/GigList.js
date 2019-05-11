@@ -4,15 +4,20 @@ import { actions } from '../../store';
 import { Link } from 'react-router-dom'
 import {
   IconButton,
+  Button,
   ListItem,
   ListItemText,
   ListItemIcon,
   Icon,
+  Grid,
+  Typography,
   Link as MUILink
 } from '@material-ui/core';
 import {
   ChevronRight,
-  ChevronLeft
+  ChevronLeft,
+  RadioButtonChecked,
+  RadioButtonUnchecked,
 } from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import { gigService, userService, emit } from '../../socket'
@@ -31,6 +36,7 @@ const defaultState = {
   limit: 4,
   newLimit: false,
   oldLimit: false,
+  hideRehearsals: true
 }
 
 class GigList extends Component {
@@ -54,7 +60,10 @@ class GigList extends Component {
   }
 
   componentDidUpdate(oldProps, oldState) {
-    if (oldState.offset !== this.state.offset) {
+    if (
+      oldState.offset !== this.state.offset ||
+      oldState.hideRehearsals !== this.state.hideRehearsals
+    ) {
       this.updateData();
     }
   }
@@ -68,8 +77,11 @@ class GigList extends Component {
       $limit: this.state.limit,
       start: { [upcoming ? '$gt' : '$lt']: now },
       $sort: { start: upcoming ? 1 : -1 },
-      $select: ['_id', 'name', 'start', 'status'],
+      $select: ['_id', 'name', 'start', 'status', 'type'],
       $skip
+    }
+    if (this.state.hideRehearsals) {
+      params.type = 'Gig';
     }
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
@@ -77,46 +89,56 @@ class GigList extends Component {
       emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
     ]);
     this.setState({
-      [`${upcoming ? 'new' : 'old'}Limit`]: (count < $skip + this.state.limit),
+      [`${upcoming ? 'new' : 'old'}Limit`]: (count <= $skip + this.state.limit),
       [`${upcoming ? 'old' : 'new'}Limit`]: (total - count) === 0
     })
     this.props.loadGigs(upcoming ? gigs : gigs.reverse());
     this.props.loadUserAvailability(availability);
   }
 
-  renderGigItem = (gig) => {
+  renderGigItem = ({ type = 'Gig', _id, start, name }) => {
     const { currentGig, userAvailability, currentUser, classes, handleDrawerToggle } = this.props;
-    const date = moment(gig.start).format('MM/DD');
+    const date = moment(start).format('MM/DD');
     return (
       <ListItem
         button
         divider
-        key={gig._id}
+        key={_id}
         component={Link}
-        selected={currentGig._id === gig._id}
-        to={`/gigs/${gig._id}`}
+        selected={currentGig._id === _id}
+        to={`/${type.toLowerCase()}s/${_id}`}
         alignItems="flex-start"
         onClick={handleDrawerToggle}
       >
-        <ListItemIcon>
-          <b>{date}</b>
-        </ListItemIcon>
-        <ListItemText
-          primaryTypographyProps={{ className: classes.title }}
-          secondaryTypographyProps={{ component: 'div' }}
-          primary={
+        <Grid container>
+          <Grid item xs>
+            <div style={{ textAlign: 'center', display: 'inline-block' }}>
+              <b>{date}</b>
+              <br />
+              <Typography variant="caption" style={{ fontSize: '60%' }}>
+                {type}
+              </Typography>
+            </div>
+          </Grid>
+          <Grid item xs={9}>
             <MUILink
               component='span'
             >
-              {gig.name}
-            </MUILink>
-          }
-          secondary={
+              {name}
+            </MUILink><br />
             <UserAvailability
               memberId={currentUser.memberId}
-              gigId={gig._id} availability={userAvailability[gig._id]}
+              gigId={_id} availability={userAvailability[_id]}
             />
-          } />
+          </Grid>
+        </Grid>
+        {/* <ListItemText
+          primaryTypographyProps={{ className: classes.title }}
+          secondaryTypographyProps={{ component: 'div' }}
+          primary={
+          }
+          secondary={
+        } /> */}
       </ListItem>
     );
   }
@@ -133,6 +155,12 @@ class GigList extends Component {
             <ChevronLeft />
           </IconButton>
           <IconButton
+            onClick={() => { this.setState({ hideRehearsals: !this.state.hideRehearsals, offset: 0 }) }}
+          >
+            {this.state.hideRehearsals ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
+          </IconButton> Hide Rehearsals
+
+          <IconButton
             onClick={() => this.setState({ offset: this.state.offset + this.state.limit })}
             disabled={this.state.newLimit}
           >
@@ -140,12 +168,17 @@ class GigList extends Component {
           </IconButton>
         </ListItem>
         <ListItem
-          button
-          component={Link}
-          to={`/gigs/new`}
           selected={currentGig._id === null}
         >
-          <ListItemText primary="New Gig!" />
+          <Button
+            component={Link}
+            to={`/gigs/new`}
+          >New Gig</Button>
+          <Button
+            component={Link}
+            to={`/rehearsals/new`}
+          >New Rehearsal</Button>
+
         </ListItem>
         {
           gigsList.map(this.renderGigItem)

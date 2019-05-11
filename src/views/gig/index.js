@@ -28,7 +28,8 @@ const formatDate = date => moment(date || new Date()).format('YYYY-MM-DDTHH:mm')
 
 const defaultState = {
   _id: null,
-  tab: 'details'
+  tab: 'details',
+  isLoading: true
 }
 
 class Gig extends Component {
@@ -39,6 +40,7 @@ class Gig extends Component {
     this.deleteGig = this.deleteGig.bind(this);
     this.state.gigFilter = '';
     this.dateFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
+
     this.defaultGig = {
       name: '',
       status: 'Proposed',
@@ -46,31 +48,31 @@ class Gig extends Component {
       start: formatDate(),
       end: formatDate()
     };
+
     (this.props.currentProject.custom_fields || []).map((field) => {
       set(this.defaultGig, `custom_fields.${field.label}`, get(this.defaultGig, `custom_fields.${field.label}`) || field.default || "");
     });
-
+    this.defaultRehearsal = {
+      ...this.props.currentProject.rehearsal_defaults,
+      start: formatDate(this.props.currentProject.rehearsal_defaults.start),
+      end: formatDate(this.props.currentProject.rehearsal_defaults.end),
+      description: ''
+    };
+    this.state.isLoading = !this.checkNewGig();
   };
+
   componentDidMount() {
     this.updateGig();
   };
 
-
   componentDidUpdate(prevProps) {
-    const { id } = this.props.match.params;
-    const { currentGig } = this.props;
+    const { params: { id } } = this.props.match;
+
     if (id !== prevProps.match.params.id) {
       this.updateGig();
       if (this.props.drawerOpen) {
         this.props.updateDrawer(false);
       }
-      // } else if (currentGig._id && currentGig._id !== id && id) {
-      //   // currentGig.start = formatDate(currentGig.start)
-      //   // currentGig.end = formatDate(currentGig.end)
-      //   // this.setState(currentGig);
-      //   if (this.props.drawerOpen) {
-      //     this.props.updateDrawer(false);
-      //   }
     }
   };
 
@@ -79,39 +81,49 @@ class Gig extends Component {
     this.props.loadGigAvailability([]);
   }
 
+  checkType = () => this.props.match.path === "/rehearsals/:id?" ? 'Rehearsal' : 'Gig';
+
   checkNewGig = () => this.props.match.params.id === 'new'
 
-  updateGig() {
+  updateGig = async () => {
     const { id } = this.props.match.params;
     if (!id) { return; }
+
     if (!this.checkNewGig()) {
-      emit('get', 'gigs', id)
-        .then(message => {
-          this.props.loadGig(message);
-        })
-      emit('find', 'gig-availability', { gig: id })
-        .then(availability => {
-          this.props.loadGigAvailability(availability)
-        })
+      this.setState({ isLoading: true })
+      try {
+        const [message, availability] = await Promise.all([
+          emit('get', 'gigs', id),
+          emit('find', 'gig-availability', { gig: id })
+        ])
+        this.props.loadGig(message);
+        this.props.loadGigAvailability(availability)
+      } finally {
+        this.setState({ isLoading: false })
+      }
     } else {
-      this.setState(defaultState);
-      this.props.loadGig(defaultState);
+      // this.setState(defaultState);
+      this.props.loadGig(this[`default${this.checkType()}`]);
     }
   };
 
   saveGig(values) {
     const { id } = this.props.match.params;
+    const gig = { ...values };
     this.dateFields.forEach(field => {
-      values[field] = moment(values[field], 'YYYY-MM-DDTHH:mm').toISOString()
+      if (gig[field]) {
+        gig[field] = moment(gig[field], 'YYYY-MM-DDTHH:mm').toISOString()
+      }
     })
-    delete values._id;
+    delete gig._id;
+    gig.type = this.checkType();
     return (!this.checkNewGig() ?
-      emit('patch', 'gigs', id, values) :
-      emit('create', 'gigs', values)
+      emit('patch', 'gigs', id, gig) :
+      emit('create', 'gigs', gig)
     )
       .then(gig => {
         if (this.checkNewGig()) {
-          this.props.history.push(`/gigs/${gig._id}`);
+          this.props.history.push(`/${this.checkType().toLowerCase()}s/${gig._id}`);
         }
       })
   };
@@ -131,7 +143,7 @@ class Gig extends Component {
   renderDetails() {
     const { currentGig, currentProject } = this.props;
     const { id } = this.props.match.params;
-    const gig = merge({}, this.defaultGig, currentGig);
+    const gig = merge({}, this[`default${this.checkType()}`], currentGig);
 
     this.dateFields.forEach(field => {
       gig[field] = formatDate(currentGig[field])
@@ -142,18 +154,28 @@ class Gig extends Component {
       return { ...field, name: `custom_fields.${field.label}` }
     });
 
-    const fields = [
-      { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
-      { type: 'Text', label: 'Name', name: 'name' },
-      { type: 'DateTime', label: 'Start Time', name: 'start' },
-      { type: 'DateTime', label: 'End Time', name: 'end' },
-      { type: 'Text', label: 'Location', name: 'location' },
-      { type: 'Paragraph', label: 'Description', name: 'description' },
-      { type: 'DateTime', label: 'Load In', name: 'load_in' },
+    const fields = {
+      Gig: [
+        { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
+        { type: 'Text', label: 'Name', name: 'name' },
+        { type: 'DateTime', label: 'Start Time', name: 'start' },
+        { type: 'DateTime', label: 'End Time', name: 'end' },
+        { type: 'Text', label: 'Location', name: 'location' },
+        { type: 'Paragraph', label: 'Description', name: 'description' },
+        { type: 'DateTime', label: 'Load In', name: 'load_in' },
 
-      ...custom_fields
-    ]
-
+        ...custom_fields
+      ],
+      Rehearsal: [
+        { type: 'Text', label: 'Name', name: 'name' },
+        { type: 'DateTime', label: 'Start Time', name: 'start' },
+        { type: 'DateTime', label: 'End Time', name: 'end' },
+        { type: 'Text', label: 'Location', name: 'location' },
+        { type: 'Paragraph', label: 'Description', name: 'description' },
+      ]
+    };
+    // const fields = this.checkType() === 'Gig' ? gigFields : rehearsalFields;
+    // console.log(this.checkType(), fields[this.checkType()]);
     const deleteButton = <Button variant="outlined" onClick={this.deleteGig}>
       Delete Gig
     </Button>
@@ -161,8 +183,8 @@ class Gig extends Component {
     return (
       <GiggityForm
         onSubmit={this.saveGig}
-        initialValues={!this.checkNewGig() ? gig : this.defaultGig}
-        fields={fields}
+        initialValues={!this.checkNewGig() ? gig : this[`default${this.checkType()}`]}
+        fields={fields[this.checkType()]}
         buttons={[deleteButton]}
         submitLabel="Save Gig"
         validate={this.validate}
@@ -197,7 +219,7 @@ class Gig extends Component {
     const { currentGig, currentProject } = this.props;
     const { id } = this.props.match.params;
 
-    const gig = merge({}, this.defaultGig, currentGig);
+    const gig = merge({}, this[`default${this.checkType()}`], currentGig);
 
     this.dateFields.forEach(field => {
       gig[field] = formatDate(currentGig[field])
@@ -221,7 +243,7 @@ class Gig extends Component {
     return (
       <GiggityForm
         onSubmit={this.saveGig}
-        initialValues={!this.checkNewGig() ? gig : this.defaultGig}
+        initialValues={!this.checkNewGig() ? gig : this[`default${this.checkType()}`]}
         fields={fields}
         submitLabel="Save Public Details"
       />
@@ -272,24 +294,28 @@ class Gig extends Component {
         return "No Upcoming Gigs";
       }
     }
-
+    if (this.state.isLoading) {
+      return "..."
+    }
     return (
       <div>
         <Helmet>
           <title>{`Giggity - ${currentGig.name}`}</title>
         </Helmet>
-        {!this.checkNewGig() ?
-          <Typography
-            variant='h4'
-            gutterBottom
-            align="center"
-          >
-            {currentGig.name}
-          </Typography>
-          : null}
+        <Typography
+          variant='h4'
+          gutterBottom
+          align="center"
+        >
+          {!this.checkNewGig() ?
+            currentGig.name
+            : `New ${this.checkType()}`}
+        </Typography>
         <Tabs value={tab} onChange={this.changeTab} variant="fullWidth">
           <Tab value='details' label="Details" />
-          <Tab value='public' label="Public Details" />
+          {
+            this.checkType() === 'Gig' && <Tab value='public' label="Public Details" />
+          }
           <Tab value='availability' label="Availability" />
         </Tabs>
 
