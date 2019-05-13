@@ -14,14 +14,30 @@ export const socket = io(null, {
 client.configure(socketio(socket));
 client.configure(auth({ storage: window.localStorage }));
 
-export const emit = (method, service, ...args) => {
+export const handleExpiredAuth = async (method, service, args) => {
+  console.error('AUTH EXPIRED');
+  localStorage.setItem('authExpiredPath', window.location.href)
+  if (['create', 'patch', 'remove'].includes(method)) {
+    localStorage.setItem('authExpiredMethod', JSON.stringify([method, service, args]))
+  }
+  localStorage.removeItem('feathers-jwt');
+  // store.dispatch(actions.setAuth(false));
+  
+  // await client.logout();
+  // window.location.href = '/login'
+  window.location.href = '/auth/auth0'
+}
 
+export const emit = (method, service, ...args) => {
   return new Promise((resolve, reject) => {
     if (!['create', 'find', 'get', 'patch', 'update', 'remove', 'authenticate'].includes(method)) {
       return reject(`Invalid service method ${method}`);
     }
     socket.emit(method, `api/${service}`, ...args, (error, message) => {
       if (error) {
+        if (error.message === 'No auth token') {
+          return handleExpiredAuth(method, service, args);
+        }
         console.error('EMIT ERROR', method, error);
         store.dispatch({ type: 'ADD_ERROR', payload: error });
         return reject(error);

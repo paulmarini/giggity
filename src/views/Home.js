@@ -9,7 +9,7 @@ import Settings from './/settings';
 import Gig from './gig';
 import { connect } from 'react-redux';
 import { actions } from '../store';
-import { logout, authenticate } from '../socket';
+import { logout, authenticate, socket, emit } from '../socket';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
 import NavBar from './NavBar';
@@ -43,7 +43,7 @@ class Home extends React.Component {
   constructor(props) {
     super(props);
     this.state = defaultState;
-    this.public_routes = ['/', '/login', '/signup']
+    this.public_routes = ['/', '/login', '/signup'];
   }
 
   componentDidMount() {
@@ -61,6 +61,18 @@ class Home extends React.Component {
     if (this.state.initialized && !this.props.authenticated && !this.public_routes.includes(this.props.location.pathname)) {
       this.props.history.push(`/login`);
       logout();
+    } else {
+      const path = localStorage.getItem('authExpiredPath');
+      if (path) {
+        const [method, service, args] = JSON.parse(localStorage.getItem('authExpiredMethod') || []);
+        localStorage.removeItem('authExpiredPath');
+        localStorage.removeItem('authExpiredMethod');
+        window.location.location = path;
+        if (method) {
+          console.log('re-sending after re-auth', method, service, args);
+          emit(method, service, ...args);
+        }
+      }
     }
   }
 
