@@ -60,9 +60,9 @@ class Gig extends Component {
 
     if (id !== prevProps.match.params.id) {
       this.updateGig();
-      if (this.props.drawerOpen) {
-        this.props.updateDrawer(false);
-      }
+      // if (this.props.drawerOpen) {
+      //   this.props.updateDrawer(false);
+      // }
     }
   };
 

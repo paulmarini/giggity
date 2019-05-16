@@ -50,7 +50,10 @@ const SideBar = (props) => {
     },
     settings: {
       icon: <SettingsIcon/>,
-      details: <SettingsNav handleDrawerToggle={handleDrawerToggle} currentLocation={location.pathname} />
+      details: <SettingsNav
+        handleDrawerToggle={handleDrawerToggle}
+        currentLocation={location.pathname}
+      />
     }
   }
 
