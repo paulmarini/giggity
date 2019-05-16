@@ -1,30 +1,20 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from '../../store';
-import { Button } from '@material-ui/core';
 import { Typography, Grid } from '@material-ui/core';
 import { Redirect } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
-import UserAvailability from '../../components/UserAvailability';
-import UITextField from '@material-ui/core/TextField';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import {
-  List,
-  ListItem,
-  ListItemText,
-  ListItemIcon,
-  ListItemSecondaryAction,
-  ListSubheader,
-  Paper,
-  Link as MUILink
-} from '@material-ui/core';
 import { emit } from '../../socket'
 import moment from 'moment'
 import { get, set, merge } from 'lodash';
-import GiggityForm from '../../components/Form';
+import GigDetails from './GigDetails';
+import PublicDetails from './PublicDetails';
+import GigAvailability from './GigAvailability';
 
-const formatDate = date => moment(date || new Date()).format('YYYY-MM-DDTHH:mm')
+const formatDate = date => moment(date || new Date()).format('YYYY-MM-DD')
+const formatTime = date => moment(date || new Date()).format('HH:mm')
 
 const defaultState = {
   _id: null,
@@ -39,14 +29,13 @@ class Gig extends Component {
     this.saveGig = this.saveGig.bind(this);
     this.deleteGig = this.deleteGig.bind(this);
     this.state.gigFilter = '';
-    this.dateFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
+    this.timeFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
 
     this.defaultGig = {
       name: '',
       status: 'Proposed',
       description: '',
-      start: formatDate(),
-      end: formatDate()
+      date: formatDate()
     };
     const { currentProject: { custom_fields = [], rehearsal_defaults = {} } } = this.props;
     custom_fields.map((field) => {
@@ -54,8 +43,9 @@ class Gig extends Component {
     });
     this.defaultRehearsal = {
       ...rehearsal_defaults,
-      start: formatDate(rehearsal_defaults.start),
-      end: formatDate(rehearsal_defaults.end),
+      date: formatDate(),
+      startTime: formatTime(rehearsal_defaults.start),
+      endTime: formatTime(rehearsal_defaults.end),
       description: ''
     };
     this.state.isLoading = !this.checkNewGig();
@@ -102,7 +92,6 @@ class Gig extends Component {
         this.setState({ isLoading: false })
       }
     } else {
-      // this.setState(defaultState);
       this.props.loadGig(this[`default${this.checkType()}`]);
     }
   };
@@ -110,12 +99,24 @@ class Gig extends Component {
   saveGig(values) {
     const { id } = this.props.match.params;
     const gig = { ...values };
-    this.dateFields.forEach(field => {
-      if (gig[field]) {
-        gig[field] = moment(gig[field], 'YYYY-MM-DDTHH:mm').toISOString()
+    const start = moment(gig.startTime, 'HH:mm');
+    const gigdate = moment(gig.date, 'YYYY-MM-DD');
+    this.timeFields.forEach(field => {
+      if (!gig[`${field}Time`] && field !== 'start') {
+        gig[field] = '';
+      } else if (gig[`${field}Time`] !== undefined || field === 'start') {
+        const time =  moment(gig[`${field}Time`], 'HH:mm')
+        const date = time < start ? gigdate : gigdate.add(1, 'd'); 
+        
+        gig[field] = date
+          .set({
+            hour: time.get('hour'),
+            minute: time.get('minute'),
+          }).toISOString()
       }
     })
     delete gig._id;
+    delete gig.date;
     gig.type = this.checkType();
     return (!this.checkNewGig() ?
       emit('patch', 'gigs', id, gig) :
@@ -140,153 +141,34 @@ class Gig extends Component {
     this.setState({ tab });
   }
 
-  renderDetails() {
-    const { currentGig, currentProject } = this.props;
-    const { id } = this.props.match.params;
-    const gig = merge({}, this[`default${this.checkType()}`], currentGig);
-
-    this.dateFields.forEach(field => {
-      gig[field] = formatDate(currentGig[field])
-    })
-
-    const custom_fields = (currentProject.custom_fields || []).map((field) => {
-      set(gig, `custom_fields.${field.label}`, get(gig, `custom_fields.${field.label}`) || field.default || "");
-      return { ...field, name: `custom_fields.${field.label}` }
-    });
-
-    const fields = {
-      Gig: [
-        { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
-        { type: 'Text', label: 'Name', name: 'name' },
-        { type: 'DateTime', label: 'Start Time', name: 'start' },
-        { type: 'DateTime', label: 'End Time', name: 'end' },
-        { type: 'Text', label: 'Location', name: 'location' },
-        { type: 'Paragraph', label: 'Description', name: 'description' },
-        { type: 'DateTime', label: 'Load In', name: 'load_in' },
-
-        ...custom_fields
-      ],
-      Rehearsal: [
-        { type: 'Text', label: 'Name', name: 'name' },
-        { type: 'DateTime', label: 'Start Time', name: 'start' },
-        { type: 'DateTime', label: 'End Time', name: 'end' },
-        { type: 'Text', label: 'Location', name: 'location' },
-        { type: 'Paragraph', label: 'Description', name: 'description' },
-      ]
-    };
-    // const fields = this.checkType() === 'Gig' ? gigFields : rehearsalFields;
-    // console.log(this.checkType(), fields[this.checkType()]);
-    const deleteButton = <Button variant="outlined" onClick={this.deleteGig}>
-      Delete Gig
-    </Button>
-
-    return (
-      <GiggityForm
-        onSubmit={this.saveGig}
-        initialValues={!this.checkNewGig() ? gig : this[`default${this.checkType()}`]}
-        fields={fields[this.checkType()]}
-        buttons={[deleteButton]}
-        submitLabel="Save Gig"
-        validate={this.validate}
-
-      />
-    );
-  }
-
-  renderFilter() {
-    return <ListSubheader>
-      Filter
-      <ListItemText
-        primary={
-          <UITextField name='name-filter' value={this.state.nameFilter} label="Name" />
-        }
-      />
-      <ListItemSecondaryAction>
-        <UserAvailability />
-      </ListItemSecondaryAction>
-    </ListSubheader>
-  }
-
-  validate = values => {
-    const errors = {}
-    if (values.end <= values.start) {
-      errors.end = 'End time must be after start time'
+  formatGigValues() {
+    const { currentGig, currentProject: {custom_fields} } = this.props;
+    if (this.checkNewGig()) {
+      return this[`default${this.checkType()}`];
     }
-    return errors;
-  }
+    const date = moment(currentGig.start || new Date()).format('YYYY-MM-DD');
+    const gigValues = merge({date}, this[`default${this.checkType()}`], currentGig, {date});
+    
+    this.timeFields.forEach(field => {
+      if (field === 'start' && !currentGig.end) {
+        gigValues.startTime = '';
+      } else {
+        gigValues[`${field}Time`] = currentGig[field] ? formatTime(currentGig[field]) : '';
+      }
 
-  renderPublic() {
-    const { currentGig, currentProject } = this.props;
-    const { id } = this.props.match.params;
-
-    const gig = merge({}, this[`default${this.checkType()}`], currentGig);
-
-    this.dateFields.forEach(field => {
-      gig[field] = formatDate(currentGig[field])
-    })
-
-    const custom_fields = (currentProject.custom_fields || []).map((field) => {
-      set(gig, `custom_fields.${field.label}`, get(gig, `custom_fields.${field.label}`) || field.default || "");
-      return { ...field, name: `custom_fields.${field.label}` }
     });
-
-    const fields = [
-      { type: 'Checkbox', label: 'Private Gig', name: 'private', helperText: 'Private gigs will not be published to the public calendar' },
-      { type: 'Text', label: 'Public Title', name: 'public_title' },
-      { type: 'Paragraph', label: 'Public Description', name: 'public_description' },
-      { type: 'DateTime', label: 'Event Start Time', name: 'event_start' },
-      { type: 'DateTime', label: 'Event End Time', name: 'event_end' },
-      { type: 'Link', label: 'Public Link', name: 'link' },
-      ...custom_fields
-    ]
-
-    return (
-      <GiggityForm
-        onSubmit={this.saveGig}
-        initialValues={!this.checkNewGig() ? gig : this[`default${this.checkType()}`]}
-        fields={fields}
-        submitLabel="Save Public Details"
-      />
-    );
-  }
-
-  renderAvailability() {
-    const { id } = this.props.match.params;
-    const { users, currentGigAvailability } = this.props;
-    if (!this.checkNewGig()) {
-      return (
-        <List subheader={this.renderFilter()}>
-          {
-            users.map(user => {
-              return (
-                <ListItem
-                  divider
-                  key={user._id}
-                >
-                  <ListItemText
-                    primary={user.name}
-                  />
-                  <ListItemSecondaryAction>
-                    <UserAvailability
-                      buttons
-                      memberId={user._id}
-                      gigId={id} availability={currentGigAvailability[user._id]}
-                    />
-                  </ListItemSecondaryAction>
-                </ListItem>
-              )
-            })
-          }
-        </List>
-      )
+    if (gigValues.startTime && !gigValues.load_inTime) {
+      gigValues.load_inTime = gigValues.startTime;
     }
+    return gigValues;
   }
+
+
 
   render() {
     const { id } = this.props.match.params;
-    const { currentGig, nextGigId } = this.props;
+    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: {custom_fields} } = this.props;
     const { tab } = this.state;
-
     if (!id) {
       if (nextGigId) {
         return <Redirect to={`/gigs/${nextGigId}`} />
@@ -297,33 +179,56 @@ class Gig extends Component {
     if (this.state.isLoading) {
       return "..."
     }
+    const values = this.formatGigValues();
+    const title =  !this.checkNewGig() ? currentGig.name : `New ${this.checkType()}`;
+
     return (
       <div>
         <Helmet>
-          <title>{`Giggity - ${currentGig.name}`}</title>
+          <title>{`Giggity - ${title}`}</title>
         </Helmet>
         <Typography
           variant='h4'
           gutterBottom
           align="center"
         >
-          {!this.checkNewGig() ?
-            currentGig.name
-            : `New ${this.checkType()}`}
+          { title }
         </Typography>
         <Tabs value={tab} onChange={this.changeTab} variant="fullWidth">
           <Tab value='details' label="Details" />
           {
             this.checkType() === 'Gig' && <Tab value='public' label="Public Details" />
           }
-          <Tab value='availability' label="Availability" />
+          { 
+            !this.checkNewGig() &&
+            <Tab value='availability' label="Availability" />
+          }
         </Tabs>
 
         <Grid container justify="center" alignItems="center">
           <Grid item xs={12} lg={6}>
-            {tab === 'details' && this.renderDetails()}
-            {tab === 'availability' && this.renderAvailability()}
-            {tab === 'public' && this.renderPublic()}
+            {tab === 'details' && 
+              <GigDetails
+                customFields={custom_fields}
+                gigValues={values}
+                type={this.checkType()}
+                saveGig={this.saveGig}
+                deleteGig={this.deleteGig}
+              />
+            }
+            {tab === 'availability' && !this.checkNewGig() &&
+              <GigAvailability
+                {...{users, currentGigAvailability, id}}
+              />
+            }
+            {tab === 'public' && 
+              <PublicDetails
+                customFields={custom_fields}
+                gigValues={values}
+                saveGig={this.saveGig}
+                deleteGig={this.deleteGig}
+              />
+            }
           </Grid>
         </Grid>
       </div>
