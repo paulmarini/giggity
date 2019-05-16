@@ -15,8 +15,10 @@ export default ({ customFields = [], gigValues, saveGig, deleteGig }) => {
     { type: 'Checkbox', label: 'Private Gig', name: 'private', helperText: 'Private gigs will not be published to the public calendar' },
     { type: 'Text', label: 'Public Title', name: 'public_title' },
     { type: 'Paragraph', label: 'Public Description', name: 'public_description' },
-    { type: 'Time', label: 'Event Start Time', name: 'event_startTime' },
-    { type: 'Time', label: 'Event End Time', name: 'event_endTime' },
+    [
+      { type: 'Time', label: 'Event Start Time', name: 'event_startTime' },
+      { type: 'Time', label: 'Event End Time', name: 'event_endTime' }
+    ],
     { type: 'Link', label: 'Public Link', name: 'link' },
     ...custom_fields
   ]

@@ -43,8 +43,10 @@ class GigDetails extends React.Component {
       { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
       { type: 'Text', label: 'Name', name: 'name', required: true},
       { type: 'Date', label: 'Date', name: 'date', required: true},
-      { type: 'Time', label: 'Start Time', name: 'startTime'},
-      { type: 'Time', label: 'End Time', name: 'endTime', required: this.state.endRequired},
+      [
+        { type: 'Time', label: 'Start Time', name: 'startTime'},
+        { type: 'Time', label: 'End Time', name: 'endTime', required: this.state.endRequired},
+      ],
       { type: 'Text', label: 'Location', name: 'location' },
       { type: 'Paragraph', label: 'Description', name: 'description' },
       { type: 'Time', label: 'Load In', name: 'load_inTime' },
@@ -53,8 +55,10 @@ class GigDetails extends React.Component {
     [
       { type: 'Text', label: 'Name', name: 'name' },
       { type: 'Date', label: 'Date', name: 'date' },
-      { type: 'Time', label: 'Start Time', name: 'startTime' },
-      { type: 'Time', label: 'End Time', name: 'endTime' },
+      [
+        { type: 'Time', label: 'Start Time', name: 'startTime' },
+        { type: 'Time', label: 'End Time', name: 'endTime' }
+      ],
       { type: 'Text', label: 'Location', name: 'location' },
       { type: 'Paragraph', label: 'Description', name: 'description' },
     ];
