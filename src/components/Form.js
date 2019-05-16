@@ -2,6 +2,8 @@ import React, { Component } from 'react';
 import { Formik, Form as FormikForm } from 'formik';
 import { Button, Grid } from '@material-ui/core';
 import Field from './Field';
+import Effect from '../components/FormikEffect';
+import {set} from 'lodash';
 import './Form.scss';
 
 class Form extends Component {
@@ -22,19 +24,53 @@ class Form extends Component {
     }
   }
 
+  renderButtons = () => {
+    const { submitLabel, buttons = [] } = this.props;
+    const submitButton = submitLabel &&
+      <Button variant='contained' color='primary' type='submit'>
+        {submitLabel}
+      </Button>;
+    const extraButtons = buttons.map((button, index) => {
+      if (button.label) {
+        const {label, action, props={}} = button;
+        return (
+          <Button
+            key={index}
+            variant='outlined'
+            onClick={action}
+            {...props}
+          >
+            {label}
+          </Button>
+        )
+      } else {
+        return (
+          <span key={index}>
+            {button}
+          </span>
+        )
+      }
+    })
+    return (
+      <div className='buttons'>
+        {submitButton}
+        {extraButtons}
+      </div>
+    )
+  }
+
   renderForm = (formikProps) => {
-    const { fields, submitLabel, buttons = [] } = this.props;
+    const { fields, submitLabel, onChange, buttons = [], children } = this.props;
 
     return (
       <FormikForm className='giggity-form' >
+        <Effect onChange={onChange}/>
         <Grid container spacing={16}>
+          {children}
           {
             fields.map((field, index) => this.renderField(field, index, formikProps))
           }
-          {submitLabel && <div className='buttons'>
-            <Button variant='contained' color='primary' type='submit'>{submitLabel}</Button>
-            {buttons.map((button, index) => (<span key={index}>{button}</span>))}
-          </div>}
+          {this.renderButtons()}
         </Grid>
       </FormikForm>
     )
@@ -55,11 +91,16 @@ class Form extends Component {
   }
 
   render() {
-    const { initialValues, validate } = this.props;
+    const { initialValues, validate, fields } = this.props;
+    const defaults = fields.reduce((values, {name, default:defaultValue=''}) => {
+      set(values, name, defaultValue);
+      return values
+    }, {})
+
     return (
       <Formik
         onSubmit={this.submit}
-        initialValues={initialValues}
+        initialValues={{...defaults, ...initialValues}}
         enableReinitialize={true}
         validate={validate}
       >
