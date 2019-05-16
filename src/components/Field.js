@@ -7,7 +7,7 @@ import './Field.scss';
 
 class Field extends React.Component {
   render() {
-    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, required, disabled, props: { onChange, onBlur, ...props } = {} } = this.props;
+    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, required, disabled, width=12, props: { onChange, onBlur, ...props } = {} } = this.props;
 
     let component;
     let children;
@@ -111,7 +111,7 @@ class Field extends React.Component {
     </FormikField>
 
     return (
-      <Grid item xs={12} className='form-field'>
+      <Grid item xs={width} className='form-field'>
         <div className={`form-control field-${type}`}>
           {labelElement ?
             (<FormControl fullWidth required={required} disabled={disabled}>

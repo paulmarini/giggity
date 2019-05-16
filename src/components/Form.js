@@ -61,15 +61,13 @@ class Form extends Component {
 
   renderForm = (formikProps) => {
     const { fields, submitLabel, onChange, buttons = [], children } = this.props;
-
+    const formFields = fields.map((field, index) => this.renderField(field, index, formikProps))
     return (
       <FormikForm className='giggity-form' >
         <Effect onChange={onChange}/>
         <Grid container spacing={16}>
           {children}
-          {
-            fields.map((field, index) => this.renderField(field, index, formikProps))
-          }
+          {formFields}
           {this.renderButtons()}
         </Grid>
       </FormikForm>
@@ -82,12 +80,16 @@ class Form extends Component {
         {field}
       </Grid>
     }
-    return <Field
-      key={index}
-      handleChange={e => { this.handleChange(e, handleChange, submitForm); }}
-      handleBlur={handleBlur}
-      {...field}
-    />
+    const width = 12 / (field.length || 1)
+    return (Array.isArray(field) ? field : [field]).map(field => {
+      return <Field
+        key={field.name}
+        handleChange={e => { this.handleChange(e, handleChange, submitForm); }}
+        handleBlur={handleBlur}
+        width={width}
+        {...field}
+      />
+    })
   }
 
   render() {
