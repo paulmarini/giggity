@@ -7,7 +7,7 @@ import './Field.scss';
 
 class Field extends React.Component {
   render() {
-    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, props: { onChange, onBlur, ...props } = {} } = this.props;
+    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, required, disabled, props: { onChange, onBlur, ...props } = {} } = this.props;
 
     let component;
     let children;
@@ -103,6 +103,8 @@ class Field extends React.Component {
       label={label || name}
       component={component}
       validate={validate}
+      required={required}
+      disabled={disabled}
       {...props}
     >
       {children}
@@ -112,7 +114,7 @@ class Field extends React.Component {
       <Grid item xs={12} className='form-field'>
         <div className={`form-control field-${type}`}>
           {labelElement ?
-            (<FormControl fullWidth>
+            (<FormControl fullWidth required={required} disabled={disabled}>
               {labelElement}
               {field}
             </FormControl>) : field
