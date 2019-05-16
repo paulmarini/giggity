@@ -5,19 +5,17 @@ import { Link } from 'react-router-dom'
 import {
   IconButton,
   Button,
+  List,
   ListItem,
-  ListItemText,
-  ListItemIcon,
-  Icon,
   Grid,
   Typography,
-  Link as MUILink
+  Checkbox,
+  Link as MUILink,
+  FormControlLabel
 } from '@material-ui/core';
 import {
   ChevronRight,
   ChevronLeft,
-  RadioButtonChecked,
-  RadioButtonUnchecked,
 } from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import { gigService, userService, emit } from '../../socket'
@@ -33,7 +31,7 @@ const styles = theme => ({
 
 const defaultState = {
   offset: 0,
-  limit: 4,
+  limit: 10,
   newLimit: false,
   oldLimit: false,
   hideRehearsals: true
@@ -85,7 +83,7 @@ class GigList extends Component {
     }
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
-      emit('find', 'gig-availability', { user: currentUser.memberId }),
+      emit('find', 'gig-availability', { member: currentUser.memberId }),
       emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
     ]);
     this.setState({
@@ -146,44 +144,60 @@ class GigList extends Component {
   render() {
     const { gigsList, currentGig } = this.props;
     return (
-      <>
-        <ListItem>
+      <div class='gigList'>
+        <div>
           <IconButton
             onClick={() => this.setState({ offset: this.state.offset - this.state.limit })}
             disabled={this.state.oldLimit}
           >
             <ChevronLeft />
           </IconButton>
+          <FormControlLabel
+            fontSize={"small"}
+            control={
+              <Checkbox
+                checked={this.state.hideRehearsals}
+                onClick={() => { this.setState({ hideRehearsals: !this.state.hideRehearsals, offset: 0 }) }}
+                color="primary"
+                fontSize={"small"}
+              />
+            }
+            label="Hide Rehearsals"
+          />
           <IconButton
-            onClick={() => { this.setState({ hideRehearsals: !this.state.hideRehearsals, offset: 0 }) }}
-          >
-            {this.state.hideRehearsals ? <RadioButtonChecked /> : <RadioButtonUnchecked />}
-          </IconButton> Hide Rehearsals
-
-          <IconButton
+            variant="fab"
             onClick={() => this.setState({ offset: this.state.offset + this.state.limit })}
             disabled={this.state.newLimit}
           >
             <ChevronRight />
           </IconButton>
-        </ListItem>
-        <ListItem
+        </div>
+          
+        <div
           selected={currentGig._id === null}
         >
           <Button
+            variant="outlined"
+            color="primary"
+            size="small"
             component={Link}
             to={`/gigs/new`}
           >New Gig</Button>
           <Button
+            variant="outlined"
+            color="primary"
+            size="small"
             component={Link}
             to={`/rehearsals/new`}
           >New Rehearsal</Button>
 
-        </ListItem>
-        {
-          gigsList.map(this.renderGigItem)
-        }
-      </>
+        </div>
+        <List>
+          {
+            gigsList.map(this.renderGigItem)
+          }
+        </List>
+      </div>
     );
   }
 }

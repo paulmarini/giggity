@@ -88,7 +88,7 @@ class Home extends React.Component {
     return (
       <div className='Home' style={{ display: 'flex' }}>
         <NavBar />
-        <SideBar {...{ authenticated, location, width, drawerWidth, showSidebar }} />
+        <SideBar {...{ authenticated, location, width, drawerWidth, showSidebar, history: this.props.history }} />
         <main
           className={classes.home}
           style={{

@@ -4,4 +4,49 @@
     background: #fafafa;
     padding-top: 64px;
   }
+  .summary {
+    min-height: 28px !important;
+    &>div:first-of-type {
+      margin: 12px 0 !important;
+    }
+    flex: 1 1000 auto;
+  }
+  .expanded {
+    flex: 1000 1 auto;
+    margin: 1px;
+    display: flex;
+    flex-direction: column;
+    overflow-x: auto;
+
+    &>div:nth-of-type(2) {
+      flex: 1000 1 auto;
+      overflow-x: auto;
+      &>div {
+        height: 100%;
+      }
+    }
+  }
+  .collapsed {
+    flex: 1 1000 auto;
+  }
+  .details {
+    padding: 0;
+    height: 100%;
+  }
+  ul {
+    width: 100%;
+  }
+  .gigList {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    text-align: center;
+    &>div {
+      flex: 1 1000 auto;
+    }
+    ul {
+      flex: 1000 1 auto;
+      overflow-x: auto;
+    }
+  }
 }

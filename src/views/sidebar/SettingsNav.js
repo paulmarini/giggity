@@ -1,6 +1,6 @@
 import React from 'react';
 import Link from '../../components/Link'
-import { ListItem, ListItemText, ListItemIcon, ListSubheader } from '@material-ui/core';
+import { List, ListItem, ListItemText, ListItemIcon, ListSubheader } from '@material-ui/core';
 // import { Link } from 'react-router-dom'
 import {
   Person,
@@ -9,7 +9,7 @@ import {
   Mail,
   Settings,
   Notifications,
-  Event
+  Event,
 } from '@material-ui/icons';
 
 const profile_links = [
@@ -47,12 +47,14 @@ class SettingsNav extends React.Component {
   }
 
   render() {
-    return [
-      <ListSubheader key={0}>Profile Settings</ListSubheader>,
-      ...profile_links.map(this.renderListItem),
-      <ListSubheader key={1}>Project Settings</ListSubheader>,
-      ...project_links.map(this.renderListItem)
-    ]
+    return (
+      <List>
+        <ListSubheader disableSticky>Profile Settings</ListSubheader>
+        {profile_links.map(this.renderListItem)}
+        <ListSubheader disableSticky>Project Settings</ListSubheader>
+        {project_links.map(this.renderListItem)}
+      </List>
+    );
   }
 }
 

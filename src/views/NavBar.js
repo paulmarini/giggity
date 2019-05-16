@@ -10,7 +10,6 @@ import {
 } from '@material-ui/core';
 import {
   Menu as MenuIcon,
-  Settings as SettingsIcon,
   ExitToApp as LogoutIcon
 } from '@material-ui/icons';
 import Link from '../components/Link'
@@ -75,15 +74,6 @@ class NavBar extends Component {
               onClick={this.handleDrawerToggle}
             >
               Giggity
-            </Link>
-            <Link color="inherit" to='/settings'
-              onClick={this.handleDrawerToggle}
-            >
-              <IconButton
-                color="inherit"
-              >
-                <SettingsIcon />
-              </IconButton>
             </Link>
           </Typography>
 

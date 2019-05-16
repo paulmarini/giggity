@@ -61,7 +61,6 @@ class ProjectSettings extends Component {
             <Field
               label="Options"
               name={`custom_fields[${index}].options`}
-              onChange={e => console.log(e)}
             />
           }
           <Field
