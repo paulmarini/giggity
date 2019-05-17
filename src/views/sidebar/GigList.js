@@ -144,7 +144,7 @@ class GigList extends Component {
   render() {
     const { gigsList, currentGig } = this.props;
     return (
-      <div class='gigList'>
+      <div className='gigList'>
         <div>
           <IconButton
             onClick={() => this.setState({ offset: this.state.offset - this.state.limit })}

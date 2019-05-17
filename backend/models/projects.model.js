@@ -15,10 +15,15 @@ module.exports = function(app) {
   const projects = new Schema({
     _id: { type: String },
     name: { type: String, required: true, unique: true },
-    email_list: { type: String },
     default_role: { type: String, default: 'Member' },
     custom_fields: { type: [fields] },
     custom_rehearsal_fields: { type: [fields] },
+    communication: {
+      email_list: { type: String },
+      enable_gig_calendar: {type: Boolean, default: true},
+      enable_rehearsal_calendar: {type: Boolean, default: true}, 
+      enable_public_calendar: {type: Boolean, default: true}, 
+    },
     rehearsal_schedule: { type: String },
     rehearsal_defaults: {
       name: { type: String, default: 'Rehearsal' },

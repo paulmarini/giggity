@@ -5,6 +5,7 @@ import ProjectSettings from './ProjectSettings';
 import MemberProfile from './MemberProfile';
 import MemberNotification from './MemberNotification';
 import ProjectRehearsalSettings from './ProjectRehearsalSettings';
+import ProjectCommunication from './ProjectCommunication';
 import User from './User';
 import { Switch, Route, Redirect } from 'react-router-dom';
 
@@ -20,6 +21,7 @@ export default () => {
       <Route exact path='/settings/project/members' component={Members} />
       <Route path="/settings/project/members/:id" component={User} />
       <Route path="/settings/project/rehearsals" component={ProjectRehearsalSettings} />
+      <Route path="/settings/project/communication" component={ProjectCommunication} />
     </Switch>
   )
 }
