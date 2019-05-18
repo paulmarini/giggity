@@ -79,7 +79,7 @@ class GigDetails extends React.Component {
       { type: 'Link', label: 'Public Link', name: 'link', hidden: true },
       ...this.custom_fields['public']
     ]
-      .map(this.hideFields('public'));
+      .map(this.hideFields('public_details'));
 
     const deleteButton = { label: 'Delete Gig', action: deleteGig };
     return (

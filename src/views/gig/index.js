@@ -2,7 +2,7 @@ import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import { actions } from '../../store';
 import { Typography, Grid } from '@material-ui/core';
-import { Redirect } from 'react-router-dom';
+import { Redirect, Link, Switch, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
@@ -18,8 +18,6 @@ const formatDate = date => moment(date || new Date()).format('YYYY-MM-DD')
 const formatTime = date => moment(date || new Date()).format('HH:mm')
 
 const defaultState = {
-  _id: null,
-  tab: 'summary',
   isLoading: true
 }
 
@@ -29,7 +27,6 @@ class Gig extends Component {
     this.state = defaultState;
     this.saveGig = this.saveGig.bind(this);
     this.deleteGig = this.deleteGig.bind(this);
-    this.state.gigFilter = '';
     this.timeFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
 
     this.defaultGig = {
@@ -40,7 +37,7 @@ class Gig extends Component {
       private: true
     };
     const { currentProject: { custom_fields = [], rehearsal_defaults = {} } } = this.props;
-    custom_fields.map((field) => {
+    custom_fields.forEach((field) => {
       set(this.defaultGig, `custom_fields.${field.label}`, get(this.defaultGig, `custom_fields.${field.label}`) || field.default || "");
     });
     this.defaultRehearsal = {
@@ -62,9 +59,6 @@ class Gig extends Component {
 
     if (id !== prevProps.match.params.id) {
       this.updateGig();
-      // if (this.props.drawerOpen) {
-      //   this.props.updateDrawer(false);
-      // }
     }
   };
 
@@ -73,7 +67,7 @@ class Gig extends Component {
     this.props.loadGigAvailability([]);
   }
 
-  checkType = () => this.props.match.path === "/rehearsals/:id?" ? 'Rehearsal' : 'Gig';
+  checkType = () => this.props.match.path.split("/")[1] === "rehearsals" ? 'Rehearsal' : 'Gig';
 
   checkNewGig = () => this.props.match.params.id === 'new'
 
@@ -144,7 +138,7 @@ class Gig extends Component {
   }
 
   formatGigValues() {
-    const { currentGig, currentProject: { custom_fields } } = this.props;
+    const { currentGig } = this.props;
     if (this.checkNewGig()) {
       return this[`default${this.checkType()}`];
     }
@@ -165,12 +159,9 @@ class Gig extends Component {
     return gigValues;
   }
 
-
-
   render() {
-    const { id } = this.props.match.params;
-    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields } } = this.props;
-    const { tab } = this.state;
+    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields }, match } = this.props;
+    const { id } = match.params;
     const type = this.checkType();
     const availabilityIndex = Object.values(currentGigAvailability)
       .reduce((index, avail) => {
@@ -181,17 +172,18 @@ class Gig extends Component {
 
     if (!id) {
       if (nextGigId) {
-        return <Redirect to={`/gigs/${nextGigId}`} />
-      } else {
-        return "No Upcoming Gigs";
+        return <Redirect to={`/${type.toLowerCase()}s/${nextGigId}/summary`} />
       }
+      return "No Upcoming Gigs";
+    }
+    if (!match.params.view) {
+      return <Redirect to={`/${type.toLowerCase()}s/${id}/summary`} />
     }
     if (this.state.isLoading) {
       return "..."
     }
     const values = this.formatGigValues();
     const title = !this.checkNewGig() ? currentGig.name : `New ${type}`;
-
     return (
       <div className={`gig ${type}-gig`}>
         <Helmet>
@@ -204,48 +196,59 @@ class Gig extends Component {
         >
           {title}
         </Typography>
-        <Tabs value={tab} onChange={this.changeTab} variant="fullWidth">
-          <Tab value='summary' label="Summary" />
-          <Tab value='details' label="Details" />
+        <Tabs
+          value={match.params.view}
+          onChange={this.changeTab}
+          variant="fullWidth"
+        >
           {
-            type === 'Gig' && <Tab value='public' label="Public Details" />
-          }
-          {
-            !this.checkNewGig() &&
-            <Tab value='availability' label="Availability" />
+            [
+              'summary',
+              'details',
+              type === 'Gig' && 'public_details',
+              !this.checkNewGig() && 'availability'
+            ]
+              .map(tab => tab &&
+                <Tab
+                  key={tab}
+                  value={tab}
+                  label={tab}
+                  to={tab}
+                  component={Link}
+                />
+              )
           }
         </Tabs>
 
         <Grid container justify="center" alignItems="center" className="gig-content">
           <Grid item xs={12} lg={6}>
-            {(() => {
-              switch (tab) {
-                case 'summary':
-                  return <GigSummary
-                    customFields={custom_fields}
-                    gigValues={values}
-                    availabilityIndex={availabilityIndex}
-                    type={type}
-                  />
-
-                case 'details':
-                case 'public':
-                  return <GigDetails
-                    customFields={custom_fields}
-                    gigValues={values}
-                    type={type}
-                    saveGig={this.saveGig}
-                    deleteGig={this.deleteGig}
-                    mode={tab}
-                  />
-                case 'availability':
-                  return <GigAvailability
-                    {...{ users, currentGigAvailability, id }}
-                  />
-                default:
-                  return null;
-              }
-            })()}
+            <Switch>
+              <Route path={`${match.path}/summary`}>
+                <GigSummary
+                  customFields={custom_fields}
+                  gigValues={values}
+                  availabilityIndex={availabilityIndex}
+                  type={type}
+                />
+              </Route>
+              <Route path={[`${match.path}/details`, `${match.path}/public_details`]}>
+                <GigDetails
+                  customFields={custom_fields}
+                  gigValues={values}
+                  type={type}
+                  saveGig={this.saveGig}
+                  deleteGig={this.deleteGig}
+                  mode={match.params.view}
+                />
+              </Route>
+              <Route path={`${match.path}/availability`}>
+                <GigAvailability
+                  users={users}
+                  currentGigAvailability={currentGigAvailability}
+                  id={id}
+                />
+              </Route>
+            </Switch>
           </Grid>
         </Grid>
       </div>
