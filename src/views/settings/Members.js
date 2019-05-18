@@ -48,25 +48,26 @@ class Users extends Component {
       <div className="members">
         <Typography gutterBottom variant="subtitle1">Members</Typography>
         {
-          this.props.users.map(user => (
-            <div key={user._id} className='member'>
-              {user.name}
-              <Form
-                initialValues={user}
-                fields={[{
-                  type: 'Dropdown', name: 'role', options: roles
-                }]}
-                autoSubmit={true}
-                onSubmit={this.updateMember}
-              />
-              <IconButton
-                color="inherit"
-                onClick={this.deleteMember(user._id)}
-              >
-                <DeleteIcon fontSize="small" />
-              </IconButton>
-            </div>
-          ))
+          Object.values(this.props.users)
+            .map(user => (
+              <div key={user._id} className='member'>
+                {user.name}
+                <Form
+                  initialValues={user}
+                  fields={[{
+                    type: 'Dropdown', name: 'role', options: roles
+                  }]}
+                  autoSubmit={true}
+                  onSubmit={this.updateMember}
+                />
+                <IconButton
+                  color="inherit"
+                  onClick={this.deleteMember(user._id)}
+                >
+                  <DeleteIcon fontSize="small" />
+                </IconButton>
+              </div>
+            ))
         }
         <Typography gutterBottom variant="subtitle1">Invite Member</Typography>
         <Form initialValues={this.state} fields={this.userFields} submitLabel='Invite Member' onSubmit={this.inviteMember} />

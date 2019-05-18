@@ -10,7 +10,7 @@ module.exports = function(app) {
     type: { type: String, enum: ['Text', 'Paragraph', 'Link', 'Member', 'Dropdown', 'Checkboxes', 'Multiple choice', 'Date', 'Time'] },
     options: { type: [String] },
     default: { type: String },
-    private: { type: Boolean, default: true }
+    public: { type: Boolean, default: false }
   })
   const projects = new Schema({
     _id: { type: String },
@@ -20,9 +20,9 @@ module.exports = function(app) {
     custom_rehearsal_fields: { type: [fields] },
     communication: {
       email_list: { type: String },
-      enable_gig_calendar: {type: Boolean, default: true},
-      enable_rehearsal_calendar: {type: Boolean, default: true}, 
-      enable_public_calendar: {type: Boolean, default: true}, 
+      enable_gig_calendar: { type: Boolean, default: true },
+      enable_rehearsal_calendar: { type: Boolean, default: true },
+      enable_public_calendar: { type: Boolean, default: true },
     },
     rehearsal_schedule: { type: String },
     rehearsal_defaults: {

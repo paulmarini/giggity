@@ -1,0 +1,17 @@
+.gig {
+  .gig-content {
+    margin-top: 10px;
+  }
+  .gig-summary {
+    .info-label {
+      p {
+        font-weight: 600;
+      }
+    }
+    .info-data, .info-label {
+
+      margin: 5px 0px;
+      border-bottom: 1px dotted #ccc;
+    }
+  }
+}

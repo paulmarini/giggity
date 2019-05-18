@@ -10,15 +10,16 @@ import { emit } from '../../socket'
 import moment from 'moment'
 import { get, set, merge } from 'lodash';
 import GigDetails from './GigDetails';
-import PublicDetails from './PublicDetails';
 import GigAvailability from './GigAvailability';
+import GigSummary from './GigSummary';
+import './index.scss';
 
 const formatDate = date => moment(date || new Date()).format('YYYY-MM-DD')
 const formatTime = date => moment(date || new Date()).format('HH:mm')
 
 const defaultState = {
   _id: null,
-  tab: 'details',
+  tab: 'summary',
   isLoading: true
 }
 
@@ -35,7 +36,8 @@ class Gig extends Component {
       name: '',
       status: 'Proposed',
       description: '',
-      date: formatDate()
+      date: formatDate(),
+      private: true
     };
     const { currentProject: { custom_fields = [], rehearsal_defaults = {} } } = this.props;
     custom_fields.map((field) => {
@@ -105,9 +107,9 @@ class Gig extends Component {
       if (!gig[`${field}Time`] && field !== 'start') {
         gig[field] = '';
       } else if (gig[`${field}Time`] !== undefined || field === 'start') {
-        const time =  moment(gig[`${field}Time`], 'HH:mm')
-        const date = time < start ? gigdate : gigdate.add(1, 'd'); 
-        
+        const time = moment(gig[`${field}Time`], 'HH:mm');
+        const date = time && start && time.isBefore(start) ? gigdate.add(1, 'd') : gigdate;
+
         gig[field] = date
           .set({
             hour: time.get('hour'),
@@ -142,13 +144,13 @@ class Gig extends Component {
   }
 
   formatGigValues() {
-    const { currentGig, currentProject: {custom_fields} } = this.props;
+    const { currentGig, currentProject: { custom_fields } } = this.props;
     if (this.checkNewGig()) {
       return this[`default${this.checkType()}`];
     }
     const date = moment(currentGig.start || new Date()).format('YYYY-MM-DD');
-    const gigValues = merge({date}, this[`default${this.checkType()}`], currentGig, {date});
-    
+    const gigValues = merge({ date }, this[`default${this.checkType()}`], currentGig, { date });
+
     this.timeFields.forEach(field => {
       if (field === 'start' && !currentGig.end) {
         gigValues.startTime = '';
@@ -167,8 +169,16 @@ class Gig extends Component {
 
   render() {
     const { id } = this.props.match.params;
-    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: {custom_fields} } = this.props;
+    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields } } = this.props;
     const { tab } = this.state;
+    const type = this.checkType();
+    const availabilityIndex = Object.values(currentGigAvailability)
+      .reduce((index, avail) => {
+        index[avail.status] = index[avail.status] || []
+        index[avail.status].push(users[avail.member])
+        return index;
+      }, {})
+
     if (!id) {
       if (nextGigId) {
         return <Redirect to={`/gigs/${nextGigId}`} />
@@ -180,10 +190,10 @@ class Gig extends Component {
       return "..."
     }
     const values = this.formatGigValues();
-    const title =  !this.checkNewGig() ? currentGig.name : `New ${this.checkType()}`;
+    const title = !this.checkNewGig() ? currentGig.name : `New ${type}`;
 
     return (
-      <div>
+      <div className={`gig ${type}-gig`}>
         <Helmet>
           <title>{`Giggity - ${title}`}</title>
         </Helmet>
@@ -192,43 +202,50 @@ class Gig extends Component {
           gutterBottom
           align="center"
         >
-          { title }
+          {title}
         </Typography>
         <Tabs value={tab} onChange={this.changeTab} variant="fullWidth">
+          <Tab value='summary' label="Summary" />
           <Tab value='details' label="Details" />
           {
-            this.checkType() === 'Gig' && <Tab value='public' label="Public Details" />
+            type === 'Gig' && <Tab value='public' label="Public Details" />
           }
-          { 
+          {
             !this.checkNewGig() &&
             <Tab value='availability' label="Availability" />
           }
         </Tabs>
 
-        <Grid container justify="center" alignItems="center">
+        <Grid container justify="center" alignItems="center" className="gig-content">
           <Grid item xs={12} lg={6}>
-            {tab === 'details' && 
-              <GigDetails
-                customFields={custom_fields}
-                gigValues={values}
-                type={this.checkType()}
-                saveGig={this.saveGig}
-                deleteGig={this.deleteGig}
-              />
-            }
-            {tab === 'availability' && !this.checkNewGig() &&
-              <GigAvailability
-                {...{users, currentGigAvailability, id}}
-              />
-            }
-            {tab === 'public' && 
-              <PublicDetails
-                customFields={custom_fields}
-                gigValues={values}
-                saveGig={this.saveGig}
-                deleteGig={this.deleteGig}
-              />
-            }
+            {(() => {
+              switch (tab) {
+                case 'summary':
+                  return <GigSummary
+                    customFields={custom_fields}
+                    gigValues={values}
+                    availabilityIndex={availabilityIndex}
+                    type={type}
+                  />
+
+                case 'details':
+                case 'public':
+                  return <GigDetails
+                    customFields={custom_fields}
+                    gigValues={values}
+                    type={type}
+                    saveGig={this.saveGig}
+                    deleteGig={this.deleteGig}
+                    mode={tab}
+                  />
+                case 'availability':
+                  return <GigAvailability
+                    {...{ users, currentGigAvailability, id }}
+                  />
+                default:
+                  return null;
+              }
+            })()}
           </Grid>
         </Grid>
       </div>

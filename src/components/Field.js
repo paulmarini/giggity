@@ -7,11 +7,36 @@ import './Field.scss';
 
 class Field extends React.Component {
   render() {
-    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, required, disabled, width=12, props: { onChange, onBlur, ...props } = {} } = this.props;
+    const { name, type, label, options, helperText, users = [], handleChange, handleBlur, validate, required, disabled, hidden = false, width = 12, edit = true, value, props: { onChange, onBlur, ...props } = {} } = this.props;
 
     let component;
     let children;
     let labelElement;
+    if (hidden) {
+      return <FormikField
+        key={name}
+        name={name}
+        validate={validate}
+        required={required}
+        disabled={disabled}
+        render={() => null}
+      >
+      </FormikField>
+    }
+    if (!edit) {
+      return (
+        <Grid item xs={12} className='form-field'>
+          <Grid container spacing={16}>
+            <Grid item xs={4} style={{ textAlign: 'right' }}>
+              <b>{label}</b>
+            </Grid>
+            <Grid item xs={6}>
+              {value}
+            </Grid>
+          </Grid>
+        </Grid>
+      )
+    }
 
     switch (type) {
       case 'Paragraph':

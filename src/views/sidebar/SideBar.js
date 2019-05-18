@@ -17,14 +17,14 @@ import {
   Event as EventIcon
 } from '@material-ui/icons';
 import actions from '../../store/actions';
-import {capitalize} from 'lodash';
+import { capitalize } from 'lodash';
 import { Redirect } from 'react-router-dom';
 import './SideBar.scss';
 
 const SideBar = (props) => {
   const { history, location, width, drawerWidth, drawerOpen, showSidebar, updateDrawer } = props;
   const currentType = location.pathname.split('/')[1];
-  
+
   if (!showSidebar) {
     return null;
   }
@@ -42,14 +42,16 @@ const SideBar = (props) => {
 
   const types = {
     gigs: {
-      icon: <EventIcon/>,
+      routes: ['gigs', 'rehearsals'],
+      icon: <EventIcon />,
       details: <GigList
         handleDrawerToggle={handleDrawerToggle}
         currentLocation={location.pathname}
-      /> 
+      />
     },
     settings: {
-      icon: <SettingsIcon/>,
+      routes: ['settings'],
+      icon: <SettingsIcon />,
       details: <SettingsNav
         handleDrawerToggle={handleDrawerToggle}
         currentLocation={location.pathname}
@@ -72,38 +74,39 @@ const SideBar = (props) => {
           }
         }}
       >
-      {
-        Object.keys(types).map(type => {
-          const typeData = types[type];
-          return (
-            <ExpansionPanel
-              key={type}
-              expanded={currentType === type}
-              onChange={handleChange(type)}
-              className={currentType === type ? 'expanded' : 'collapsed'}
-            >
-              <ExpansionPanelSummary
-                className='summary'
-                expandIcon={<ExpandMoreIcon/>}
+        {
+          Object.keys(types).map(type => {
+            const typeData = types[type];
+            const expanded = typeData.routes.includes(currentType);
+            return (
+              <ExpansionPanel
+                key={type}
+                expanded={expanded}
+                onChange={handleChange(type)}
+                className={expanded ? 'expanded' : 'collapsed'}
               >
-                <Grid container direction="row" alignItems="center" spacing={16}>
-                  <Grid item>
-                    {typeData.icon}
+                <ExpansionPanelSummary
+                  className='summary'
+                  expandIcon={<ExpandMoreIcon />}
+                >
+                  <Grid container direction="row" alignItems="center" spacing={16}>
+                    <Grid item>
+                      {typeData.icon}
+                    </Grid>
+                    <Grid item>
+                      <Typography variant={"body1"}>
+                        {capitalize(type)}
+                      </Typography>
+                    </Grid>
                   </Grid>
-                  <Grid item>
-                    <Typography variant={"body1"}>
-                      {capitalize(type)}
-                    </Typography>
-                  </Grid>
-                </Grid>
-              </ExpansionPanelSummary>
-              <ExpansionPanelDetails className='details'>
-                {typeData.details}
-              </ExpansionPanelDetails>
-            </ExpansionPanel>
-          )
-        })
-      }
+                </ExpansionPanelSummary>
+                <ExpansionPanelDetails className='details'>
+                  {typeData.details}
+                </ExpansionPanelDetails>
+              </ExpansionPanel>
+            )
+          })
+        }
       </SwipeableDrawer>
     </nav>
   )

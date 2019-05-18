@@ -17,14 +17,15 @@ const actions = {
   }),
   loadUsers: payload => ({
     type: 'LOAD_USERS',
-    payload: payload.map(user => {
+    payload: payload.reduce((users, user) => {
       if (user.user && user.user.name) {
         delete user.user._id;
         Object.assign(user, user.user);
         delete user.user;
       }
-      return user;
-    })
+      users[user._id] = user;
+      return users;
+    }, {})
   }),
   loadProjects: payload => ({
     type: 'LOAD_PROJECTS',

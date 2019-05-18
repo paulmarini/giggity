@@ -19,9 +19,9 @@ import Field from '../../components/Field';
 const defaultField = {
   label: '',
   type: 'Text',
-  options: ['obe', 'two'],
+  options: '',
   default: '',
-  private: false
+  public: false
 }
 
 const types = ['Text', 'Paragraph', 'Link', 'Dropdown', 'Member', 'Checkboxes', 'Multiple choice', 'Date', 'Time'];
@@ -34,7 +34,7 @@ class ProjectSettings extends Component {
       ...values,
       custom_fields: values.custom_fields.map(field => ({
         ...field,
-        options: field.options.split(',').map(option => option.trim())
+        options: field.options && field.options.split(',').map(option => option.trim())
       }))
     });
     formikBag.setSubmitting(false);
@@ -68,9 +68,10 @@ class ProjectSettings extends Component {
             name={`custom_fields[${index}].default`}
           />
           <Field
-            name={`custom_fields[${index}].private`}
-            label='Private Field'
+            name={`custom_fields[${index}].public`}
+            label='Public Field'
             type='Checkboxes'
+            helperText="Public fields will be displayed on your public calendar and fan update emails"
           />
           <IconButton onClick={() => arrayHelpers.move(index, index - 1)}>
             <KeyboardArrowUp fontSize="small" />

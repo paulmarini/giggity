@@ -3,7 +3,7 @@ import { Formik, Form as FormikForm } from 'formik';
 import { Button, Grid } from '@material-ui/core';
 import Field from './Field';
 import Effect from '../components/FormikEffect';
-import {set} from 'lodash';
+import { set } from 'lodash';
 import './Form.scss';
 
 class Form extends Component {
@@ -32,7 +32,7 @@ class Form extends Component {
       </Button>;
     const extraButtons = buttons.map((button, index) => {
       if (button.label) {
-        const {label, action, props={}} = button;
+        const { label, action, props = {} } = button;
         return (
           <Button
             key={index}
@@ -60,11 +60,11 @@ class Form extends Component {
   }
 
   renderForm = (formikProps) => {
-    const { fields, submitLabel, onChange, buttons = [], children } = this.props;
+    const { fields, onChange, children } = this.props;
     const formFields = fields.map((field, index) => this.renderField(field, index, formikProps))
     return (
       <FormikForm className='giggity-form' >
-        <Effect onChange={onChange}/>
+        <Effect onChange={onChange} />
         <Grid container spacing={16}>
           {children}
           {formFields}
@@ -75,6 +75,7 @@ class Form extends Component {
   }
 
   renderField = (field, index, { handleSubmit, handleChange, handleBlur, submitForm, values, errors }) => {
+    const { edit } = this.props;
     if (React.isValidElement(field)) {
       return <Grid item key={index} xs={12}>
         {field}
@@ -82,27 +83,36 @@ class Form extends Component {
     }
     const width = 12 / (field.length || 1)
     return (Array.isArray(field) ? field : [field]).map(field => {
+      const dynamic = {};
+      ['required', 'disabled', 'hidden'].forEach(key => {
+        if (field[key] && typeof field[key] === 'function') {
+          dynamic[key] = field[key](values);
+        }
+      })
       return <Field
         key={field.name}
+        edit={edit}
         handleChange={e => { this.handleChange(e, handleChange, submitForm); }}
         handleBlur={handleBlur}
         width={width}
-        {...field}
+        value={values[field.name]}
+        {...{ ...field, ...dynamic }}
       />
     })
   }
 
   render() {
     const { initialValues, validate, fields } = this.props;
-    const defaults = fields.reduce((values, {name, default:defaultValue=''}) => {
+    const defaults = fields.reduce((values, { name, default: defaultValue = '' }) => {
       set(values, name, defaultValue);
       return values
     }, {})
+    const values = { ...defaults, ...initialValues };
 
     return (
       <Formik
         onSubmit={this.submit}
-        initialValues={{...defaults, ...initialValues}}
+        initialValues={values}
         enableReinitialize={true}
         validate={validate}
       >

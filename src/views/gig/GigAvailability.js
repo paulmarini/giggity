@@ -11,7 +11,7 @@ export default ({ users, currentGigAvailability, id }) => {
   return (
     <List>
       {
-        users.map(user => {
+        Object.values(users).map(user => {
           return (
             <ListItem
               divider
