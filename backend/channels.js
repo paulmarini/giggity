@@ -19,7 +19,7 @@ module.exports = function(app) {
       const user = connection.user;
       const claims = decode(authResult.accessToken);
       user.projects = claims.projects;
-      user.memberId = claims.memberId
+      user.member_id = claims.member_id
       // The connection is no longer anonymous, remove it
       app.channel('anonymous').leave(connection);
 
@@ -27,7 +27,7 @@ module.exports = function(app) {
       app.channel('authenticated').join(connection);
       app.channel(`/projects/${user.project}`).join(connection);
       app.channel(`/users/${user._id}`).join(connection);
-      app.channel(`/members/${user.memberId}`).join(connection);
+      app.channel(`/members/${user.member_id}`).join(connection);
       // Channels can be named anything and joined on any condition
 
       // E.g. to send real-time events only to admins use

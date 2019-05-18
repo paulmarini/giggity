@@ -72,9 +72,9 @@ export const logout = () => {
 };
 
 const handleAuth = async ({ accessToken }) => {
-  const { projects, project, memberId } = await client.passport.verifyJWT(accessToken)
-  const { user, preferences } = await emit('get', 'members', memberId);
-  updateCurrentUser({ _id: memberId, user, preferences, projects })
+  const { projects, project, member_id } = await client.passport.verifyJWT(accessToken)
+  const { user, preferences } = await emit('get', 'members', member_id);
+  updateCurrentUser({ _id: member_id, user, preferences, projects })
   await Promise.all([
     loadUsers(),
     loadProjects(projects),
@@ -103,14 +103,14 @@ export const loadProject = project => {
 
 const updateCurrentUser = ({ _id, user, preferences, projects }) => {
   let { currentUser } = store.getState();
-  if (!currentUser.memberId) {
+  if (!currentUser.member_id) {
     currentUser = {
       userId: user._id,
       projects,
-      memberId: _id,
+      member_id: _id,
     }
   }
-  if (currentUser.memberId === _id) {
+  if (currentUser.member_id === _id) {
     const { email, name, photo, project } = user;
     const userData = { ...currentUser, name, email, photo, preferences, project }
     store.dispatch(actions.setUser(userData));

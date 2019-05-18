@@ -66,13 +66,13 @@ class GigList extends Component {
   }
 
   handleRehearsalToggle = async () => {
-    const { hide_rehearsals, memberId } = this.props;
-    await emit('patch', 'members', memberId, { 'preferences.hide_rehearsals': !hide_rehearsals })
+    const { hide_rehearsals, member_id } = this.props;
+    await emit('patch', 'members', member_id, { 'preferences.hide_rehearsals': !hide_rehearsals })
     this.setState({ offset: 0 });
   }
 
   updateData = async () => {
-    const { hide_rehearsals, memberId } = this.props;
+    const { hide_rehearsals, member_id } = this.props;
     const upcoming = this.state.offset >= 0;
     const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
     const now = new Date().getTime();
@@ -88,7 +88,7 @@ class GigList extends Component {
     }
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
-      emit('find', 'gig-availability', { member: memberId }),
+      emit('find', 'gig-availability', { member: member_id }),
       emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
     ]);
     this.setState({
@@ -100,7 +100,7 @@ class GigList extends Component {
   }
 
   renderGigItem = ({ type = 'Gig', _id, start, name }) => {
-    const { currentGig, userAvailability, memberId, handleDrawerToggle } = this.props;
+    const { currentGig, userAvailability, member_id, handleDrawerToggle } = this.props;
     const date = moment(start).format('MM/DD');
     return (
       <ListItem
@@ -130,7 +130,7 @@ class GigList extends Component {
               {name}
             </MUILink><br />
             <UserAvailability
-              memberId={memberId}
+              member_id={member_id}
               gigId={_id} availability={userAvailability[_id]}
             />
           </Grid>
@@ -203,7 +203,7 @@ class GigList extends Component {
 const mapStateToProps = state => ({
   gigsList: state.gigsList,
   currentGig: state.currentGig,
-  memberId: state.currentUser.memberId,
+  member_id: state.currentUser.member_id,
   hide_rehearsals: state.currentUser.preferences.hide_rehearsals,
   userAvailability: state.userAvailability
 })

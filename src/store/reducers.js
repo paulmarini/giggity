@@ -65,7 +65,7 @@ const appReducer = (state = defaultState, action) => {
           [availability.member]: availability
         };
       }
-      if (availability.member === currentUser.memberId) {
+      if (availability.member === currentUser.member_id) {
         newState.userAvailability = {
           ...state.userAvailability,
           [availability.gig]: availability

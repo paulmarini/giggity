@@ -23,7 +23,7 @@ export default ({ users, currentGigAvailability, id }) => {
               <ListItemSecondaryAction>
                 <UserAvailability
                   buttons
-                  memberId={user._id}
+                  member_id={user._id}
                   gigId={id} availability={currentGigAvailability[user._id]}
                 />
               </ListItemSecondaryAction>

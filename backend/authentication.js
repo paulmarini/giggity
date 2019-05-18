@@ -35,7 +35,7 @@ module.exports = function(app) {
 
           payload.projects = members.reduce((obj, item) => {
             if (item.project === project) {
-              payload.memberId = item._id;
+              payload.member_id = item._id;
             }
             obj[item.project] = item.role;
             return obj;

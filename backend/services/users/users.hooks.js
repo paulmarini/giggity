@@ -97,7 +97,7 @@ module.exports = {
     find: [],
     get: [],
     create: [restrictToRole('Admin'), createUser, customizeAuthResponse, hashPassword()],
-    update: [restrictToRole('Admin'), customizeAuthResponse, hashPassword(), switchProject],
+    update: [],
     patch: [restrictToRole('Admin'), customizeAuthResponse, hashPassword(), switchProject],
     remove: []
   },
