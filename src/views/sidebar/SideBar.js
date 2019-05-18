@@ -3,7 +3,6 @@ import GigList from './GigList';
 import SettingsNav from './SettingsNav';
 import { connect } from 'react-redux';
 import {
-  List,
   SwipeableDrawer,
   ExpansionPanel,
   ExpansionPanelSummary,
@@ -18,7 +17,6 @@ import {
 } from '@material-ui/icons';
 import actions from '../../store/actions';
 import { capitalize } from 'lodash';
-import { Redirect } from 'react-router-dom';
 import './SideBar.scss';
 
 const SideBar = (props) => {
@@ -36,7 +34,6 @@ const SideBar = (props) => {
   const handleChange = type => () => {
     if (type !== currentType) {
       history.push(`/${type}`);
-      // window.location.href = `/${type}`
     }
   }
 
@@ -75,7 +72,7 @@ const SideBar = (props) => {
         }}
       >
         {
-          Object.keys(types).map(type => {
+          ['settings', 'gigs'].map(type => {
             const typeData = types[type];
             const expanded = typeData.routes.includes(currentType);
             return (
@@ -113,7 +110,7 @@ const SideBar = (props) => {
 
 }
 const mapStateToProps = state => ({
-  drawerOpen: state.drawerOpen
+  drawerOpen: state.drawerOpen,
 })
 
 const mapDispatchToProps = {

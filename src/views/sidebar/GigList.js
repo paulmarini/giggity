@@ -33,8 +33,7 @@ const defaultState = {
   offset: 0,
   limit: 10,
   newLimit: false,
-  oldLimit: false,
-  hideRehearsals: true
+  oldLimit: false
 }
 
 class GigList extends Component {
@@ -60,14 +59,20 @@ class GigList extends Component {
   componentDidUpdate(oldProps, oldState) {
     if (
       oldState.offset !== this.state.offset ||
-      oldState.hideRehearsals !== this.state.hideRehearsals
+      oldProps.hide_rehearsals !== this.props.hide_rehearsals
     ) {
       this.updateData();
     }
   }
 
+  handleRehearsalToggle = async () => {
+    const { hide_rehearsals, memberId } = this.props;
+    await emit('patch', 'members', memberId, { 'preferences.hide_rehearsals': !hide_rehearsals })
+    this.setState({ offset: 0 });
+  }
+
   updateData = async () => {
-    const { currentUser } = this.props;
+    const { hide_rehearsals, memberId } = this.props;
     const upcoming = this.state.offset >= 0;
     const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
     const now = new Date().getTime();
@@ -78,12 +83,12 @@ class GigList extends Component {
       $select: ['_id', 'name', 'start', 'status', 'type'],
       $skip
     }
-    if (this.state.hideRehearsals) {
+    if (hide_rehearsals) {
       params.type = 'Gig';
     }
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
-      emit('find', 'gig-availability', { member: currentUser.memberId }),
+      emit('find', 'gig-availability', { member: memberId }),
       emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
     ]);
     this.setState({
@@ -95,7 +100,7 @@ class GigList extends Component {
   }
 
   renderGigItem = ({ type = 'Gig', _id, start, name }) => {
-    const { currentGig, userAvailability, currentUser, classes, handleDrawerToggle } = this.props;
+    const { currentGig, userAvailability, memberId, handleDrawerToggle } = this.props;
     const date = moment(start).format('MM/DD');
     return (
       <ListItem
@@ -125,24 +130,17 @@ class GigList extends Component {
               {name}
             </MUILink><br />
             <UserAvailability
-              memberId={currentUser.memberId}
+              memberId={memberId}
               gigId={_id} availability={userAvailability[_id]}
             />
           </Grid>
         </Grid>
-        {/* <ListItemText
-          primaryTypographyProps={{ className: classes.title }}
-          secondaryTypographyProps={{ component: 'div' }}
-          primary={
-          }
-          secondary={
-        } /> */}
       </ListItem>
     );
   }
 
   render() {
-    const { gigsList, currentGig } = this.props;
+    const { gigsList, currentGig, hide_rehearsals } = this.props;
     return (
       <div className='gigList'>
         <div>
@@ -156,8 +154,8 @@ class GigList extends Component {
             fontSize={"small"}
             control={
               <Checkbox
-                checked={this.state.hideRehearsals}
-                onClick={() => { this.setState({ hideRehearsals: !this.state.hideRehearsals, offset: 0 }) }}
+                checked={hide_rehearsals}
+                onClick={this.handleRehearsalToggle}
                 color="primary"
                 fontSize={"small"}
               />
@@ -172,7 +170,7 @@ class GigList extends Component {
             <ChevronRight />
           </IconButton>
         </div>
-          
+
         <div
           selected={currentGig._id === null}
         >
@@ -202,7 +200,20 @@ class GigList extends Component {
   }
 }
 
+const mapStateToProps = state => ({
+  gigsList: state.gigsList,
+  currentGig: state.currentGig,
+  memberId: state.currentUser.memberId,
+  hide_rehearsals: state.currentUser.preferences.hide_rehearsals,
+  userAvailability: state.userAvailability
+})
+
+const mapDispatchToProps = {
+  loadGigs: actions.loadGigs,
+  loadUserAvailability: actions.loadUserAvailability
+}
+
 export default connect(
-  state => ((({ gigsList, currentGig, currentUser, userAvailability }) => ({ gigsList, currentGig, currentUser, userAvailability }))(state)),
-  { loadGigs: actions.loadGigs, loadUserAvailability: actions.loadUserAvailability }
+  mapStateToProps,
+  mapDispatchToProps
 )(withStyles(styles)(GigList));

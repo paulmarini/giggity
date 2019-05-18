@@ -16,7 +16,9 @@ module.exports = function(app) {
       gig_calendar_acl_id: { type: String },
       rehearsal_calendar_acl_id: { type: String }
     },
+    pending: { type: Boolean, default: true },
     preferences: {
+      hide_rehearsals: { type: Boolean, default: false },
       email: {
         gig_added: { type: Boolean, default: false },
         gig_updated: { type: Boolean, default: false },
