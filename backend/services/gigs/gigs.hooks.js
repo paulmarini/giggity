@@ -70,7 +70,7 @@ module.exports = {
     find: [],
     get: [],
     create: [mailGigUpdate, updateCalendar],
-    update: [mailGigUpdate, updateCalendar],
+    update: [],
     patch: [mailGigUpdate, updateCalendar],
     remove: [updateCalendar]
   },

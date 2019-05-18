@@ -51,7 +51,7 @@ module.exports = {
     find: [],
     get: [],
     create: [updateCalendarAcls],
-    update: [updateCalendarAcls],
+    update: [],
     patch: [updateCalendarAcls],
     remove: [removeOrphanedUser]
   },

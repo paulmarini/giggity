@@ -22,7 +22,7 @@ export const handleExpiredAuth = async (method, service, args) => {
   }
   localStorage.removeItem('feathers-jwt');
   // store.dispatch(actions.setAuth(false));
-  
+
   // await client.logout();
   // window.location.href = '/login'
   window.location.href = '/auth/auth0'
@@ -155,14 +155,11 @@ projectService.on('patched', loadProject);
 
 userService.on('created', loadUsers);
 userService.on('patched', loadUsers);
-userService.on('updated', loadUsers);
 userService.on('removed', loadUsers);
 
 gigService.on('created', gigUpdated);
 gigService.on('patched', gigUpdated);
-gigService.on('updated', gigUpdated);
 gigService.on('removed', gigUpdated);
 
 availabilityService.on('created', availabilityUpdated);
 availabilityService.on('patched', availabilityUpdated);
-availabilityService.on('updated', availabilityUpdated);
