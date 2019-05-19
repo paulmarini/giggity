@@ -44,7 +44,7 @@ class GigDetails extends React.Component {
     const { saveGig, deleteGig, gigValues, type } = this.props;
     const fields = (type === 'Gig' ?
       [
-        { type: 'Radio', label: 'Status', name: 'status', options: ['Draft', 'Proposed', 'Confirmed', 'Canceled'], helperText: 'Draft gigs are hidden from members.' },
+        { type: 'Radio', label: 'Status', name: 'status', options: ['Draft', 'Proposed', 'Confirmed', 'Cancelled'], helperText: 'Draft gigs are hidden from members.' },
         { type: 'Text', label: 'Name', name: 'name', required: true },
         { type: 'Date', label: 'Date', name: 'date', required: true },
         [

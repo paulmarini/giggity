@@ -75,7 +75,8 @@ class UserAvailability extends Component {
                 key={status.label}
                 value={status.label}
               >
-                {status.icon} {status.label}
+                {/* {status.icon} */}
+                {status.label}
               </MenuItem>)
           }
         </Select>

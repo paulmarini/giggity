@@ -16,6 +16,10 @@ import {
 import {
   ChevronRight,
   ChevronLeft,
+  Edit,
+  Check,
+  NotInterested,
+  HelpOutline
 } from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import { gigService, userService, emit } from '../../socket'
@@ -34,6 +38,13 @@ const defaultState = {
   limit: 10,
   newLimit: false,
   oldLimit: false
+}
+
+const statusIcons = {
+  Confirmed: Check,
+  Proposed: HelpOutline,
+  Cancelled: NotInterested,
+  Draft: Edit,
 }
 
 class GigList extends Component {
@@ -103,9 +114,10 @@ class GigList extends Component {
     this.props.loadUserAvailability(availability);
   }
 
-  renderGigItem = ({ type = 'Gig', _id, start, name }) => {
+  renderGigItem = ({ type = 'Gig', _id, start, name, status }) => {
     const { currentGig, userAvailability, member_id, handleDrawerToggle } = this.props;
     const date = moment(start).format('MM/DD');
+    const StatusIcon = statusIcons[status] || HelpOutline;
     return (
       <ListItem
         button
@@ -117,29 +129,37 @@ class GigList extends Component {
         alignItems="flex-start"
         onClick={handleDrawerToggle}
       >
-        <Grid container>
+        <Grid container spacing={16}>
           <Grid item xs>
-            <div style={{ textAlign: 'center', display: 'inline-block' }}>
+            <Typography variant="caption" align="center" style={{ fontSize: '60%' }}>
+              < StatusIcon size="small"></ StatusIcon>
+              <br />
+              {type}
+            </Typography>
+          </Grid>
+          <Grid item xs>
+            <Typography align="center" variant="body2">
               <b>{date}</b>
               <br />
-              <Typography variant="body2">
-                {moment(start).format('ddd')}
-              </Typography>
-              <Typography variant="caption" style={{ fontSize: '60%' }}>
-                {type}
-              </Typography>
-            </div>
+              {moment(start).format('ddd')}
+            </Typography>
           </Grid>
-          <Grid item xs={9}>
-            <MUILink
-              component='span'
-            >
-              {name}
-            </MUILink><br />
-            <UserAvailability
-              member_id={member_id}
-              gigId={_id} availability={userAvailability[_id]}
-            />
+          <Grid item xs={8}>
+            <Typography variant="body1">
+              <MUILink
+                component='span'
+              >
+                {name}
+              </MUILink>
+            </Typography>
+            {
+              status !== 'Cancelled' &&
+              <UserAvailability
+                member_id={member_id}
+                gigId={_id} availability={userAvailability[_id]}
+              />
+
+            }
           </Grid>
         </Grid>
       </ListItem>
