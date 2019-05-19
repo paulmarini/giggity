@@ -6,6 +6,8 @@ import { store, actions } from './store';
 
 const client = feathers();
 
+const roles = ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'];
+
 export const socket = io(null, {
   transports: ['websocket'],
   forceNew: true
@@ -101,7 +103,7 @@ export const loadProject = project => {
     .then(project => store.dispatch(actions.setProject(project)))
 };
 
-const updateCurrentUser = ({ _id, user, preferences, projects }) => {
+const updateCurrentUser = ({ _id, user, projects, ...params }) => {
   let { currentUser } = store.getState();
   if (!currentUser.member_id) {
     currentUser = {
@@ -112,7 +114,15 @@ const updateCurrentUser = ({ _id, user, preferences, projects }) => {
   }
   if (currentUser.member_id === _id) {
     const { email, name, photo, project } = user;
-    const userData = { ...currentUser, name, email, photo, preferences, project }
+    const update = {
+      ...params, email, name, photo, project
+    }
+    if (projects) {
+      update.projects = projects;
+      update.role = projects[project];
+      update.role_index = roles.indexOf(update.role);
+    }
+    const userData = { ...currentUser, ...update }
     store.dispatch(actions.setUser(userData));
   }
 }

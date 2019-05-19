@@ -47,6 +47,7 @@ class GigList extends Component {
     userService.on('patched', this.updateData);
     gigService.on('created', this.updateData);
     gigService.on('removed', this.updateData);
+    gigService.on('patched', this.updateData);
     this.updateData();
   }
 
@@ -72,7 +73,7 @@ class GigList extends Component {
   }
 
   updateData = async () => {
-    const { hide_rehearsals, member_id } = this.props;
+    const { hide_rehearsals, member_id, role_index } = this.props;
     const upcoming = this.state.offset >= 0;
     const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
     const now = new Date().getTime();
@@ -85,6 +86,9 @@ class GigList extends Component {
     }
     if (hide_rehearsals) {
       params.type = 'Gig';
+    }
+    if (role_index > 2) {
+      params.status = { $ne: 'Draft' };
     }
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
@@ -204,6 +208,7 @@ const mapStateToProps = state => ({
   gigsList: state.gigsList,
   currentGig: state.currentGig,
   member_id: state.currentUser.member_id,
+  role_index: state.currentUser.role_index,
   hide_rehearsals: state.currentUser.preferences.hide_rehearsals,
   userAvailability: state.userAvailability
 })

@@ -44,7 +44,7 @@ class GigDetails extends React.Component {
     const { saveGig, deleteGig, gigValues, type } = this.props;
     const fields = (type === 'Gig' ?
       [
-        { type: 'Radio', label: 'Status', name: 'status', options: ['Proposed', 'Confirmed', 'Canceled'] },
+        { type: 'Radio', label: 'Status', name: 'status', options: ['Draft', 'Proposed', 'Confirmed', 'Canceled'] },
         { type: 'Text', label: 'Name', name: 'name', required: true },
         { type: 'Date', label: 'Date', name: 'date', required: true },
         [
@@ -74,9 +74,9 @@ class GigDetails extends React.Component {
       { type: 'Paragraph', label: 'Public Description', name: 'public_description', required: values => !values.private },
       [
         { type: 'Time', label: 'Event Start Time', name: 'event_startTime' },
-        { type: 'Time', label: 'Event End Time', name: 'event_endTime' }
+        { type: 'Time', label: 'Event End Time', name: 'event_endTime', required: values => Boolean(values.event_startTime) }
       ],
-      { type: 'Link', label: 'Public Link', name: 'link', hidden: true },
+      { type: 'Link', label: 'Public Link', name: 'link' },
       ...this.custom_fields['public']
     ]
       .map(this.hideFields('public_details'));

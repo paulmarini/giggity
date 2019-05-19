@@ -31,7 +31,7 @@ class Gig extends Component {
 
     this.defaultGig = {
       name: '',
-      status: 'Proposed',
+      status: 'Draft',
       description: '',
       date: formatDate(),
       private: true

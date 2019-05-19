@@ -19,31 +19,31 @@ module.exports = {
     }
 
     const userRole = context.params.user.projects[context.params.user.project];
-    const roleIndex = roles.indexOf(allowedRole);
+    const role_index = roles.indexOf(allowedRole);
     const userIndex = roles.indexOf(userRole);
 
     const isSelf = context.method === 'patch' &&
       (
-        [context.params.user._id, context.params.member_id]
+        [context.params.user._id, context.params.user.member_id]
           .includes(context.id) ||
-        (context.data.member && [context.params.user._id, context.params.member_id]
+        (context.data.member && [context.params.user._id, context.params.user.member_id]
           .includes(context.data.member))
       )
 
-    if (!isSelf && userIndex > roleIndex) {
+    if (!isSelf && userIndex > role_index) {
       throw new errors.BadRequest(`Only users with the role ${allowedRole} or above can perform this operation`);
     }
     context.params.allowedRole = isSelf ? 'self' : allowedRole;
     return context;
   },
 
-  restrictFields: (restrictRoles, throwError = true) => context => {
+  restrictFields: (restrictRoles, throwError = false) => context => {
     const { data } = context;
     const fields = restrictRoles[context.params.allowedRole];
     if (fields) {
       fields.forEach(name => {
         const errorMessage = `You do not have permissions to update the field  "${name}"`;
-        const error = `Patch blocked: ${context.path}.${name} by ${context.params.member_id}`;
+        const error = `Patch blocked: ${context.path}.${name} by ${context.params.user.member_id}`;
         if (existsByDot(data, name)) {
           console.error(error);
           if (throwError) throw new errors.BadRequest(errorMessage);

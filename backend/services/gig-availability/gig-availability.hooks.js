@@ -7,12 +7,12 @@ module.exports = {
     all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [restrictToRole('Manager'), restrictFields({
+    create: [restrictToRole('Manager')],
+    update: [],
+    patch: [restrictToRole('Manager'), restrictFields({
       'Manager': ['project', 'member', 'gig', 'comments'],
       'self': ['project', 'member', 'gig'],
     })],
-    update: [],
-    patch: [],
     remove: []
   },
 

@@ -19,7 +19,7 @@ module.exports = function(app) {
     location: { type: String },
     public_title: { type: String },
     public_description: { type: String },
-    status: { type: String, enum: ['Proposed', 'Confirmed', 'Canceled'] },
+    status: { type: String, enum: ['Draft', 'Proposed', 'Confirmed', 'Canceled'] },
     private: { type: Boolean },
     link: { type: String },
     custom_fields: { type: Map, of: String },
