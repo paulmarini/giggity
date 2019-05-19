@@ -1,6 +1,7 @@
 
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const { protect } = require('@feathersjs/authentication-local').hooks;
+const { restrictToRole, restrictFields } = require('../../hooks/customHooks');
 
 const removeCalendarAcls = async context => {
   if (!context.app.get('calendar').enabled) {
@@ -40,10 +41,13 @@ module.exports = {
     all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [],
+    create: [restrictToRole('Admin')],
     update: [],
-    patch: [],
-    remove: [removeCalendarAcls]
+    patch: [restrictToRole('Admin'), restrictFields({
+      Admin: ['project', 'user'],
+      self: ['role', 'pending', 'project', 'user'],
+    })],
+    remove: [restrictToRole('Admin'), removeCalendarAcls]
   },
 
   after: {

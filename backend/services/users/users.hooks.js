@@ -1,7 +1,7 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const { hashPassword, protect } = require('@feathersjs/authentication-local').hooks;
 const errors = require('@feathersjs/errors');
-const { restrictToRole, generateCode } = require('../../hooks/customHooks');
+const { restrictToRole, generateCode, restrictFields } = require('../../hooks/customHooks');
 
 const switchProject = context => {
   if (context.params.provider && context.data && context.data.project && context.params.user) {
@@ -98,7 +98,7 @@ module.exports = {
     get: [],
     create: [restrictToRole('Admin'), createUser, customizeAuthResponse, hashPassword()],
     update: [],
-    patch: [restrictToRole('Admin'), customizeAuthResponse, hashPassword(), switchProject],
+    patch: [restrictToRole('Admin'), customizeAuthResponse, hashPassword(), restrictFields({ self: ['accessCode'] }), switchProject],
     remove: []
   },
 

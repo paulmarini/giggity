@@ -1,6 +1,7 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
 const moment = require('moment');
 const { removeRelated } = require('../../hooks/customHooks');
+const { restrictToRole, restrictFields } = require('../../hooks/customHooks');
 
 const mailGigUpdate = async context => {
   if (!context.app.get('mail').enabled) {
@@ -59,10 +60,10 @@ module.exports = {
         app.channel(`/gigs/${id}`).join(connection);
       }
     ],
-    create: [],
+    create: [restrictToRole('Manager')],
     update: [],
-    patch: [],
-    remove: [removeRelated('api/gig-availability', 'gig')]
+    patch: [restrictToRole('Manager'), restrictFields({ Manager: ['project'] })],
+    remove: [restrictToRole('Manager'), removeRelated('api/gig-availability', 'gig')]
   },
 
   after: {

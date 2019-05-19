@@ -1,5 +1,6 @@
 const { removeRelated } = require('../../hooks/customHooks');
 const errors = require('@feathersjs/errors');
+const { restrictToRole } = require('../../hooks/customHooks');
 
 const checkOwnership = context => {
   return context;
@@ -20,10 +21,10 @@ module.exports = {
     all: [checkOwnership],
     find: [],
     get: [],
-    create: [],
+    create: [restrictToRole('Admin')],
     update: [],
-    patch: [],
-    remove: []
+    patch: [restrictToRole('Admin')],
+    remove: [restrictToRole('Admin')]
   },
 
   after: {

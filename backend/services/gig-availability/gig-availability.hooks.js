@@ -1,4 +1,5 @@
 const { authenticate } = require('@feathersjs/authentication').hooks;
+const { restrictToRole, restrictFields } = require('../../hooks/customHooks');
 
 
 module.exports = {
@@ -6,7 +7,10 @@ module.exports = {
     all: [authenticate('jwt')],
     find: [],
     get: [],
-    create: [],
+    create: [restrictToRole('Manager'), restrictFields({
+      'Manager': ['project', 'member', 'gig', 'comments'],
+      'self': ['project', 'member', 'gig'],
+    })],
     update: [],
     patch: [],
     remove: []
