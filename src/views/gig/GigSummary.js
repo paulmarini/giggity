@@ -18,11 +18,8 @@ class GigSummary extends React.Component {
   renderRows(rows) {
     return <div className='summary-rows'>
       {
-        rows.filter(field => field && field.label)
+        rows.filter(field => field && field.label && (field.value || field.showBlank))
           .map(({ label, value, showBlank }) => {
-            if (!value && !showBlank) {
-              return null;
-            }
             return (
               <Grid key={label} container spacing={16} className='gig-summary'>
                 <Grid xs={4} item className='info-label'>
@@ -105,7 +102,7 @@ class GigSummary extends React.Component {
         }) : [])
     ];
 
-    const public_rows = [
+    const public_rows = this.renderRows([
       gigValues.event_start && {
         label: 'Event Time',
         value: `${this.renderTime(gigValues.event_start)} -      ${this.renderTime(gigValues.event_end)}`
@@ -123,14 +120,18 @@ class GigSummary extends React.Component {
         value: gigValues.link && <Link href={gigValues.link} target="_blank">{gigValues.link}</Link>,
       },
       ...this.customRows(true)
-
-    ];
+    ]);
 
     return <div className='summary'>
       {this.renderRows(rows)}
-      <hr />
-      <Typography gutterBottom variant="h6">Public Details</Typography>
-      {this.renderRows(public_rows)}
+      {
+        Boolean(public_rows.props.children.length) &&
+        <>
+          <hr />
+          <Typography gutterBottom variant="h6">Public Details</Typography>
+          {public_rows}
+        </>
+      }
     </div>
   }
 }
