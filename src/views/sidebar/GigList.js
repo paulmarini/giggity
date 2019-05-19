@@ -144,7 +144,7 @@ class GigList extends Component {
               {moment(start).format('ddd')}
             </Typography>
           </Grid>
-          <Grid item xs={8}>
+          <Grid item xs={7}>
             <Typography variant="body1">
               <MUILink
                 component='span'
