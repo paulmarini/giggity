@@ -2,16 +2,24 @@
   .gig-content {
     margin-top: 10px;
   }
+
   .gig-summary {
     .info-label {
       p {
         font-weight: 600;
       }
     }
-    .info-data, .info-label {
 
-      margin: 5px 0px;
+    .info-data,
+    .info-label {
       border-bottom: 1px dotted #ccc;
+      margin: 5px 0;
+    }
+
+    &:last-of-type {
+      div {
+        border-bottom: 0;
+      }
     }
   }
 }
