@@ -9,10 +9,12 @@ const mailGigUpdate = async context => {
   }
 
   const gig = context.result;
-  await context.app.service('api/calendar').create({ foo: 'bar' });
-  // normally filter this for preferences
+  if (context.app.get('calendar').enabled) {
+    // await context.app.service('api/calendar').create({ foo: 'bar' });
+  }
+  const filter = context.method === 'create' ? 'added' : 'updated';
   const project = await context.app.service('api/projects').get(gig.project);
-  const users = await context.app.service('api/members').find({ query: { project: gig.project, $populate: 'user' } });
+  const users = await context.app.service('api/members').find({ query: { project: gig.project, $populate: 'user', [`preferences.email.gig_${filter}`]: true } });
   await Promise.all(users.map(({ user }) => {
     return context.app.service('api/mail').create({
       template: 'gigUpdate',
