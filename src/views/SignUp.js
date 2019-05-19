@@ -15,7 +15,8 @@ const defaultState = {
   project: '',
   error: '',
   activeStep: 0,
-  verificationCode: ''
+  verificationCode: '',
+  new_project: false
 }
 
 class SignUp extends Component {
@@ -96,7 +97,7 @@ class SignUp extends Component {
     </div>
   }
 
-  render() {
+  renderNewProject() {
     const { activeStep } = this.state;
     return <>
       <Typography variant="h5">Create a new Giggity Project</Typography>
@@ -124,6 +125,31 @@ class SignUp extends Component {
         </Formik>
       }
     </>
+  }
+
+  render() {
+    if (!this.state.new_project) {
+      return (
+        <div style={{
+          textAlign: 'center',
+          display: 'flex',
+          flexDirection: 'row',
+          justifyContent: 'space-around',
+          maxWidth: '700px',
+          margin: 'auto',
+          height: '400px',
+          alignItems: 'center',
+        }}>
+          <Button size="large" variant="contained" color="primary" href='/login'>
+            Login with access code
+          </Button>
+          <Button size="large" variant="contained" color="default" onClick={() => this.setState({ new_project: true })}>
+            Create new project
+          </Button>
+        </div>
+      )
+    }
+    return this.renderNewProject()
   }
 }
 

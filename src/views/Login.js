@@ -10,9 +10,7 @@ import { Formik, Form, Field } from 'formik';
 const defaultState = {
   email: '',
   accessCode: '',
-  // project: localStorage.getItem('project') || 'blo',
   error: '',
-  showLogin: false
 }
 
 class Login extends Component {
@@ -23,7 +21,6 @@ class Login extends Component {
     if (query.accessCode) {
       this.state.showLogin = true;
     }
-    console.log(query)
   };
 
   // async componentDidMount() {
@@ -40,7 +37,6 @@ class Login extends Component {
       project: values.project
     })
       .then(({ accessToken }) => {
-        console.log(`feathers-jwt=${accessToken}; path=/`)
         document.cookie = `feathers-jwt=${accessToken}; path=/`;
         // this.setState({ authed: true })
         window.location = `/auth/auth0`;
@@ -60,28 +56,7 @@ class Login extends Component {
   }
 
   render() {
-    const { email, accessCode, showLogin } = this.state;
-    if (!showLogin) {
-      return (
-        <div style={{
-          textAlign: 'center',
-          display: 'flex',
-          flexDirection: 'row',
-          justifyContent: 'space-around',
-          maxWidth: '700px',
-          margin: 'auto',
-          height: '400px',
-          alignItems: 'center',
-        }}>
-          <Button size="large" variant="contained" color="primary" href='/auth/auth0'>
-            Login with Auth0
-          </Button>
-          <Button size="large" variant="contained" color="default" onClick={() => this.setState({ showLogin: true })}>
-            Login with Access Code
-          </Button>
-        </div>
-      )
-    }
+    const { email, accessCode } = this.state;
     return (
       <div style={{ maxWidth: 300, margin: 'auto' }}>
         <h3>Login</h3>
@@ -118,10 +93,6 @@ class Login extends Component {
               <Button variant="contained" type="submit" color="primary">
                 Login
               </Button>
-              <Button color="default" onClick={() => this.setState({ showLogin: false })}>
-                Cancel
-              </Button>
-
             </Form>
           )}
         </Formik>

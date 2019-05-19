@@ -6,7 +6,8 @@ import {
   Typography,
   CardHeader,
   CardActionArea,
-  CardContent
+  CardContent,
+  Link as MUILink
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
 
@@ -24,7 +25,7 @@ const Welcome = props => {
       >
         <Grid item xs={6}>
           <Card raised>
-            <CardActionArea component={Link} to="/login">
+            <CardActionArea component={MUILink} href="/auth/auth0">
               <CardHeader title="Sign In" align="center" />
             </CardActionArea>
           </Card>
@@ -36,7 +37,6 @@ const Welcome = props => {
             </CardActionArea>
           </Card>
         </Grid>
-
       </Grid >
     </>
 
