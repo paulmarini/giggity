@@ -211,7 +211,7 @@ class Gig extends Component {
         >
           {
             [
-              'summary',
+              !this.checkNewGig() && 'summary',
               'details',
               type === 'Gig' && 'public_details',
               !this.checkNewGig() && 'availability'

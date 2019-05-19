@@ -206,14 +206,14 @@ class GigList extends Component {
             color="primary"
             size="small"
             component={Link}
-            to={`/gigs/new`}
+            to={`/gigs/new/details`}
           >New Gig</Button>
           <Button
             variant="outlined"
             color="primary"
             size="small"
             component={Link}
-            to={`/rehearsals/new`}
+            to={`/rehearsals/new/details`}
           >New Rehearsal</Button>
 
         </div>
