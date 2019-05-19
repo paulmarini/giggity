@@ -122,6 +122,9 @@ class GigList extends Component {
             <div style={{ textAlign: 'center', display: 'inline-block' }}>
               <b>{date}</b>
               <br />
+              <Typography variant="body2">
+                {moment(start).format('ddd')}
+              </Typography>
               <Typography variant="caption" style={{ fontSize: '60%' }}>
                 {type}
               </Typography>
