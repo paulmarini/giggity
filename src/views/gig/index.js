@@ -192,10 +192,18 @@ class Gig extends Component {
         <Typography
           variant='h4'
           gutterBottom
-          align="center"
         >
           {title}
         </Typography>
+        <Typography
+          variant='h6'
+          gutterBottom
+          color="textSecondary"
+        >
+          {currentGig.start && moment(currentGig.start).format('dddd, MMMM Do, YYYY')}<br />
+          {currentGig.status}
+        </Typography>
+
         <Tabs
           value={match.params.view}
           onChange={this.changeTab}
@@ -251,7 +259,7 @@ class Gig extends Component {
             </Switch>
           </Grid>
         </Grid>
-      </div>
+      </div >
     );
   }
 }
