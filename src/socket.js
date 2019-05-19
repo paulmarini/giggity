@@ -69,8 +69,12 @@ export const login = async ({ email, password, project }) => {
   return login;
 };
 
-export const logout = () => {
-  client.logout();
+export const logout = async () => {
+  const { authenticated } = store.getState();
+  await client.logout();
+  if (authenticated) {
+    window.location.href = `https://giggity2.auth0.com/v2/logout?returnTo=${window.location.origin}`;
+  }
 };
 
 const handleAuth = async ({ accessToken }) => {
