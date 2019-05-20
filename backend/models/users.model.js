@@ -17,7 +17,7 @@ module.exports = function(app) {
       timestamps: true
     });
 
-  users.index({ auth0Id: 1 }, { unique: true, partialFilterExpression: { auth0Id: { $type: "string" } } })
+  users.index({ auth0Id: 1 }, { unique: true, partialFilterExpression: { auth0Id: { $type: "string" } }, sparse: true })
 
   return mongooseClient.model('users', users);
 };
