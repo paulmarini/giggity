@@ -28,7 +28,7 @@ module.exports = function(app) {
       SES: new aws.SES({
         apiVersion: '2010-12-01'
       }),
-      sendingRate: 1
+      sendingRate: 12
     };
     options.message = {
       from: 'giggity@giggity.info'
