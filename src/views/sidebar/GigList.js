@@ -19,7 +19,8 @@ import {
   Edit,
   Check,
   NotInterested,
-  HelpOutline
+  HelpOutline,
+  FavoriteBorder
 } from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import { gigService, userService, emit } from '../../socket'
@@ -117,7 +118,7 @@ class GigList extends Component {
   renderGigItem = ({ type = 'Gig', _id, start, name, status }) => {
     const { currentGig, userAvailability, member_id, handleDrawerToggle } = this.props;
     const date = moment(start).format('MM/DD');
-    const StatusIcon = statusIcons[status] || HelpOutline;
+    const StatusIcon = type === 'Gig' ? statusIcons[status] : FavoriteBorder;
     return (
       <ListItem
         button
@@ -134,8 +135,6 @@ class GigList extends Component {
           <Grid item xs>
             <Typography variant="caption" align="center" style={{ fontSize: '60%' }}>
               < StatusIcon size="small"></ StatusIcon>
-              <br />
-              {type}
             </Typography>
           </Grid>
           <Grid item xs>
