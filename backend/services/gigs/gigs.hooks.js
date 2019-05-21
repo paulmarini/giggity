@@ -38,6 +38,7 @@ const updateCalendar = async context => {
     return context;
   }
   const gig = context.result;
+  gig.calendar = gig.calendar || {};
   const project = await context.app.service('api/projects').get(gig.project);
   const remove = context.method === 'remove' || gig.status === 'Draft';
   const calendar = await context.app.service('api/calendar').updateEvent(project.calendar, gig, remove);
