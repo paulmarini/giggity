@@ -15,9 +15,13 @@ module.exports = {
           }
           context.params.query.project = context.params.user.project;
           if (context.data) {
-            context.data.project = context.params.user.project;
-            return context;
+            if (context.method === 'patch') {
+              delete context.data.project;
+            } else {
+              context.data.project = context.params.user.project;
+            }
           }
+          return context;
         }
       },
     ],
