@@ -9,9 +9,10 @@ const mailGigUpdate = async context => {
   }
 
   const gig = context.result;
-  if (context.app.get('calendar').enabled) {
-    // await context.app.service('api/calendar').create({ foo: 'bar' });
+  if (gig.status === 'Draft') {
+    return;
   }
+
   const filter = context.method === 'create' ? 'added' : 'updated';
   const project = await context.app.service('api/projects').get(gig.project);
   const users = await context.app.service('api/members').find({ query: { project: gig.project, $populate: 'user', [`preferences.email.gig_${filter}`]: true } });
@@ -38,8 +39,10 @@ const updateCalendar = async context => {
   }
   const gig = context.result;
   const project = await context.app.service('api/projects').get(gig.project);
-  const calendar = await context.app.service('api/calendar').updateEvent(project.calendar, gig, context.method === 'remove');
-  if (!gig.calendar) {
+  const remove = context.method === 'remove' || gig.status === 'Draft';
+  const calendar = await context.app.service('api/calendar').updateEvent(project.calendar, gig, remove);
+  if (calendar.id !== gig.calendar.id || calendar.public_id !== gig.calendar.public_id) {
+    gig.calendar = calendar;
     await context.app.service('api/gigs')._patch(gig._id, { calendar });
   }
   return context;

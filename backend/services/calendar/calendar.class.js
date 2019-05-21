@@ -50,6 +50,7 @@ class Service {
         const result = await this.calendars.acl[method]({
           calendarId,
           ruleId,
+          sendNotifications: false,
           requestBody: {
             role: "reader",
             scope: { type: "user", value: email }
@@ -128,6 +129,7 @@ class Service {
         }
         const response = await this.calendars.events[method]({
           eventId,
+          sendUpdates: 'none',
           calendarId,
           requestBody
         });
