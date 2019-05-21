@@ -20,7 +20,7 @@ import { capitalize } from 'lodash';
 import './SideBar.scss';
 
 const SideBar = (props) => {
-  const { history, location, width, drawerWidth, drawerOpen, showSidebar, updateDrawer } = props;
+  const { history, location, width, drawerWidth, drawerOpen, showSidebar, updateDrawer, role_index } = props;
   const currentType = location.pathname.split('/')[1];
 
   if (!showSidebar) {
@@ -38,6 +38,11 @@ const SideBar = (props) => {
   }
 
   const types = {
+    admin: {
+      routes: ['admin'],
+      icon: <EventIcon />,
+      details: <></>
+    },
     gigs: {
       routes: ['gigs', 'rehearsals'],
       icon: <EventIcon />,
@@ -72,9 +77,12 @@ const SideBar = (props) => {
         }}
       >
         {
-          ['settings', 'gigs'].map(type => {
+          ['admin', 'settings', 'gigs'].map(type => {
             const typeData = types[type];
             const expanded = typeData.routes.includes(currentType);
+            if (type === 'admin' && role_index !== 0) {
+              return null;
+            }
             return (
               <ExpansionPanel
                 key={type}
@@ -111,6 +119,7 @@ const SideBar = (props) => {
 }
 const mapStateToProps = state => ({
   drawerOpen: state.drawerOpen,
+  role_index: state.currentUser.role_index
 })
 
 const mapDispatchToProps = {

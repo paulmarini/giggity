@@ -29,10 +29,10 @@ module.exports = function(app) {
         async (context) => {
           const { payload } = context.params;
           const { userId } = payload;
-          const { project } = await context.app.service('api/users').get(userId, { query: { $select: ['project'] } })
+          const { project, email } = await context.app.service('api/users').get(userId, { query: { $select: ['project', 'email'] } })
           payload.project = project
+          const isRoot = context.app.get('rootEmails').includes(email);
           const members = await context.app.service('api/members')._find({ query: { user: userId } });
-
           payload.projects = members.reduce((obj, item) => {
             if (item.project === project) {
               payload.member_id = item._id;
@@ -40,7 +40,13 @@ module.exports = function(app) {
             obj[item.project] = item.role;
             return obj;
           }, {});
-
+          if (isRoot) {
+            const projects = await context.app.service('api/projects')._find({ query: { $select: ['_id'] } });
+            payload.projects = projects.reduce((obj, project) => {
+              obj[project._id] = 'Root';
+              return obj;
+            }, {})
+          }
           // context.params.payload.projects = member.map(p => p.project);
           return context;
         }
