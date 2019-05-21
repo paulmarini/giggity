@@ -88,6 +88,7 @@ class Gig extends Component {
         this.setState({ isLoading: false })
       }
     } else {
+      this.setState({ isLoading: false })
       this.props.loadGig(this[`default${this.checkType()}`]);
     }
   };
