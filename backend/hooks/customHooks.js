@@ -21,13 +21,11 @@ module.exports = {
     const userRole = context.params.user.projects[context.params.user.project];
     const role_index = roles.indexOf(allowedRole);
     const userIndex = roles.indexOf(userRole);
-
+    const ids = [context.params.user._id.toString(), context.params.user.member_id]
     const isSelf = context.method === 'patch' &&
       (
-        [context.params.user._id, context.params.user.member_id]
-          .includes(context.id) ||
-        (context.data.member && [context.params.user._id, context.params.user.member_id]
-          .includes(context.data.member))
+        ids.includes(context.id) ||
+        (context.data.member && ids.includes(context.data.member))
       )
 
     if (!isSelf && userIndex > role_index) {
