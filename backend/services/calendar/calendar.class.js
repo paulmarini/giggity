@@ -1,4 +1,5 @@
 const { google } = require('googleapis');
+const moment = require('moment');
 
 /* eslint-disable no-unused-vars */
 class Service {
@@ -104,11 +105,17 @@ class Service {
         Foo - bar
         `,
       start: {
-        dateTime: gig.start
       },
       end: {
-        dateTime: gig.end
       }
+    }
+    if (gig.start && gig.end) {
+      requestBody.start.dateTime = gig.start;
+      requestBody.end.dateTime = gig.end;
+    } else {
+      const date = moment(gig.start).format('YYYY-MM-DD');
+      requestBody.start.date = date;
+      requestBody.end.date = date;
     }
     const calendarIds = gig.type === 'rehearsal' ? [rehearsal_calendar_id] : [gig_calendar_id, public_calendar_id];
     const eventIDs = gig.calendar || {};
