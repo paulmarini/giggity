@@ -35,6 +35,9 @@
   }
   ul {
     width: 100%;
+    &>a {
+      overflow-x: hidden;
+    }
   }
   .gigList {
     display: flex;

@@ -121,6 +121,7 @@ class GigList extends Component {
     return (
       <ListItem
         button
+        disableGutters
         divider
         key={_id}
         component={Link}
@@ -144,7 +145,7 @@ class GigList extends Component {
               {moment(start).format('ddd')}
             </Typography>
           </Grid>
-          <Grid item xs={7}>
+          <Grid item xs={8}>
             <Typography variant="body1">
               <MUILink
                 component='span'
