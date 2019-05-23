@@ -23,9 +23,9 @@ class GigDetails extends React.Component {
     }
   }
 
-  onComponentDidUpdate(oldProps) {
-    const { type } = this.props;
-    if (oldProps.type !== type || !this.fields.length) {
+  componentDidUpdate(oldProps) {
+    const { type, mode } = this.props;
+    if (oldProps.type !== type || oldProps.mode !== mode) {
       this.setState({ fields: this.updateFields() });
     }
   }
