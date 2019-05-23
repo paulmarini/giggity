@@ -4,6 +4,10 @@ import {
   Typography,
   Link
 } from '@material-ui/core';
+import UserAvailability from '../../components/UserAvailability';
+import GiggityForm from '../../components/Form';
+import { emit } from '../../socket'
+
 import moment from 'moment'
 
 class GigSummary extends React.Component {
@@ -28,7 +32,7 @@ class GigSummary extends React.Component {
                   </Typography>
                 </Grid>
                 <Grid xs={8} item className='info-data'>
-                  <Typography variant="body1">
+                  <Typography component="div" variant="body1">
                     {value}
                   </Typography>
                 </Grid>
@@ -58,9 +62,38 @@ class GigSummary extends React.Component {
       })
   }
 
+  updateAvailability = ({ comments }) => {
+    const { id, member_id, userAvailability } = this.props;
+    if (member_id && id) {
+      if (userAvailability) {
+        emit('patch', 'gig-availability', userAvailability._id, { member: member_id, gig: id, comments });
+      } else {
+        emit('create', 'gig-availability', { member: member_id, gig: id, comments, status: 'Unknown' });
+      }
+    }
+  }
+
   render() {
-    const { gigValues, type, availabilityIndex, customFields } = this.props;
+    const { gigValues, type, userAvailability = {}, availabilityIndex, customFields, id, member_id } = this.props;
     const rows = [
+      {
+        label: 'Status',
+        value: gigValues.status,
+      },
+      {
+        label: 'Your Availability',
+        value: <UserAvailability gigId={id} member_id={member_id} availability={userAvailability} />
+      },
+      {
+        label: 'Your Comments',
+        value: <GiggityForm
+          initialValues={{ comments: userAvailability.comments }}
+          fields={[{ type: 'Paragraph', name: 'comments', label: '' }]}
+          onSubmit={this.updateAvailability}
+          submitLabel="Save"
+        />
+      },
+
       {
         label: 'When',
         value: <>
@@ -87,13 +120,24 @@ class GigSummary extends React.Component {
         value: ['Available', 'Maybe', 'Unavailable']
           .filter(key => availabilityIndex[key] && availabilityIndex[key].length)
           .map(key => {
-            return <span key={key}>
-              <b>{key}</b>: {availabilityIndex[key].map(user => user.name).join(', ')}
-
-              <br />
-            </span>
+            return <Typography key={key} variant="body2">
+              <b>{key}</b>: {availabilityIndex[key].map(({ user }) => user.name).join(', ')}
+            </Typography>
           }),
         showBlank: true
+      },
+      {
+        label: 'Member Comments',
+        value: Object.values(availabilityIndex)
+          .reduce((arr, val) => [...arr, ...val], [])
+          .filter(({ availability }) => availability.comments)
+          .sort((a, b) => a.user.name.localeCompare(b.user.name))
+          .map(({ user, availability }) =>
+            <Typography key={availability._id} variant="body2">
+              <b>{user.name}</b>: &nbsp;
+              {availability.comments}
+            </Typography>
+          )
       },
       ...(type === 'Gig' ? customFields
         .filter(field => !field.public)

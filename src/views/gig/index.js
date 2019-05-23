@@ -161,13 +161,13 @@ class Gig extends Component {
   }
 
   render() {
-    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields }, match } = this.props;
+    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields }, match, member_id } = this.props;
     const { id } = match.params;
     const type = this.checkType();
     const availabilityIndex = Object.values(currentGigAvailability)
-      .reduce((index, avail) => {
-        index[avail.status] = index[avail.status] || []
-        index[avail.status].push(users[avail.member])
+      .reduce((index, availability) => {
+        index[availability.status] = index[availability.status] || []
+        index[availability.status].push({ user: users[availability.member], availability })
         return index;
       }, {})
 
@@ -237,7 +237,10 @@ class Gig extends Component {
                   customFields={custom_fields}
                   gigValues={values}
                   availabilityIndex={availabilityIndex}
+                  userAvailability={currentGigAvailability[member_id]}
                   type={type}
+                  id={id}
+                  member_id={member_id}
                 />
               </Route>
               <Route path={[`${match.path}/details`, `${match.path}/public_details`]}>
@@ -271,7 +274,8 @@ const mapStateToProps = state => ({
   currentGigAvailability: state.currentGigAvailability,
   drawerOpen: state.drawerOpen,
   currentProject: state.currentProject,
-  nextGigId: state.nextGigId
+  nextGigId: state.nextGigId,
+  member_id: state.currentUser.member_id
 });
 
 const mapDispatchToProps = {
