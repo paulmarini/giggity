@@ -125,7 +125,7 @@ class Field extends React.Component {
 
     const field = <FormikField
       name={name}
-      label={label || name}
+      label={label !== null ? label : name}
       component={component}
       validate={validate}
       required={required}
