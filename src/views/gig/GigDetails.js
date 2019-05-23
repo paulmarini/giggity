@@ -10,7 +10,6 @@ class GigDetails extends React.Component {
   constructor(props) {
     super(props);
     const { customFields = [] } = props;
-
     this.custom_fields = customFields
       .reduce((fields, field) => {
         fields[field.public ? 'public' : 'band'].push({
@@ -19,29 +18,20 @@ class GigDetails extends React.Component {
         })
         return fields;
       }, { public: [], band: [] });
-  }
-
-  validate(values) {
-    const errors = {}
-    // if (values.startTime && values.endTime <= values.startTime) {
-    // errors.endTime = 'End time must be after start time'
-    if (values.startTime && !values.endTime) {
-      errors.endTime = 'End time must be set if start time is set'
-    }
-    return errors;
-  }
-
-  hideFields = fieldType => field => {
-    const { mode } = this.props;
-    if (Array.isArray(field)) {
-      return field.map(f => ({ ...{ hidden: mode !== fieldType }, ...f }))
-    } else {
-      return { ...{ hidden: mode !== fieldType }, ...field }
+    this.state = {
+      fields: this.updateFields()
     }
   }
 
-  render() {
-    const { saveGig, deleteGig, gigValues, type } = this.props;
+  onComponentDidUpdate(oldProps) {
+    const { type } = this.props;
+    if (oldProps.type !== type || !this.fields.length) {
+      this.setState({ fields: this.updateFields() });
+    }
+  }
+
+  updateFields() {
+    const { type } = this.props;
     const fields = (type === 'Gig' ?
       [
         { type: 'Radio', label: 'Status', name: 'status', options: ['Draft', 'Proposed', 'Confirmed', 'Cancelled'], helperText: 'Draft gigs are hidden from members.' },
@@ -81,15 +71,30 @@ class GigDetails extends React.Component {
     ]
       .map(this.hideFields('public_details'));
 
+    return [...fields, ...public_fields];
+  }
+
+
+  hideFields = fieldType => field => {
+    const { mode } = this.props;
+    if (Array.isArray(field)) {
+      return field.map(f => ({ ...{ hidden: mode !== fieldType }, ...f }))
+    } else {
+      return { ...{ hidden: mode !== fieldType }, ...field }
+    }
+  }
+
+  render() {
+    const { saveGig, deleteGig, gigValues } = this.props;
+
     const deleteButton = { label: 'Delete Gig', action: deleteGig };
     return (
       <GiggityForm
         onSubmit={saveGig}
         initialValues={gigValues}
-        fields={[...public_fields, ...fields]}
+        fields={this.state.fields}
         buttons={[deleteButton]}
         submitLabel="Save Gig"
-        validate={this.validate}
       >
       </GiggityForm>
     );
