@@ -2,18 +2,29 @@ import React from 'react';
 import {
   Grid,
   Typography,
-  Link
+  Link,
+  IconButton
 } from '@material-ui/core';
+import {
+  Edit,
+  Save
+} from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import GiggityForm from '../../components/Form';
 import { emit } from '../../socket'
 
 import moment from 'moment'
 
+const defaultState = {
+  editComments: false,
+  editAvailability: false
+};
+
 class GigSummary extends React.Component {
 
   constructor(props) {
     super(props);
+    this.state = defaultState;
   }
 
   renderDate = date => date ? moment(date).format('dddd, MMMM Do') : ''
@@ -62,15 +73,17 @@ class GigSummary extends React.Component {
       })
   }
 
-  updateAvailability = ({ comments }) => {
+  updateAvailability = async ({ comments }) => {
     const { id, member_id, userAvailability } = this.props;
     if (member_id && id) {
       if (userAvailability) {
-        emit('patch', 'gig-availability', userAvailability._id, { member: member_id, gig: id, comments });
+        await emit('patch', 'gig-availability', userAvailability._id, { member: member_id, gig: id, comments });
       } else {
-        emit('create', 'gig-availability', { member: member_id, gig: id, comments, status: 'Unknown' });
+        await emit('create', 'gig-availability', { member: member_id, gig: id, comments, status: 'Unknown' });
       }
     }
+    this.setState(defaultState);
+
   }
 
   render() {
@@ -82,16 +95,29 @@ class GigSummary extends React.Component {
       },
       {
         label: 'Your Availability',
-        value: <UserAvailability gigId={id} member_id={member_id} availability={userAvailability} />
+        value: this.state.editAvailability ?
+          <UserAvailability gigId={id} member_id={member_id} availability={userAvailability} updateCallback={() => this.setState(defaultState)} /> :
+          <>
+            {userAvailability.status || 'Unknown'}
+            <IconButton onClick={() => this.setState({ editAvailability: true })}>
+              <Edit fontSize="small" />
+            </IconButton>
+          </>
       },
       {
         label: 'Your Comments',
-        value: <GiggityForm
+        value: this.state.editComments ? <GiggityForm
           initialValues={{ comments: userAvailability.comments }}
           fields={[{ type: 'Paragraph', name: 'comments', label: '' }]}
           onSubmit={this.updateAvailability}
           submitLabel="Save"
-        />
+        /> :
+          <>
+            {userAvailability.comments}
+            <IconButton onClick={() => this.setState({ editComments: true })}>
+              <Edit fontSize="small" />
+            </IconButton>
+          </>
       },
 
       {

@@ -20,18 +20,22 @@ const Statuses = [
 
 class UserAvailability extends Component {
 
-  updateAvailability = (event, value) => {
+  updateAvailability = async (event, value) => {
     const status = event.target.value || value;
     if (!status) {
       return;
     }
     const { gigId, member_id, availability } = this.props;
+    const data = { member: member_id, gig: gigId, status };
     if (member_id && gigId) {
       if (availability) {
-        emit('patch', 'gig-availability', availability._id, { member: member_id, gig: gigId, status });
+        await emit('patch', 'gig-availability', availability._id, data);
       } else {
-        emit('create', 'gig-availability', { member: member_id, gig: gigId, status });
+        await emit('create', 'gig-availability', data);
       }
+    }
+    if (this.props.updateCallback) {
+      this.props.updateCallback(data)
     }
   }
 
