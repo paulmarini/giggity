@@ -31,6 +31,17 @@ if (port === '443') {
   server = app.listen(port);
 }
 
+var timeout;
+fs.watch(app.get('certFile'), () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+		console.log('reloading SSL certs');
+        server._sharedCreds.context.setCert(fs.readFileSync(app.get('certFile')));
+        server._sharedCreds.context.setKey(fs.readFileSync(app.get('keyFile')));
+    }, 1000);
+});
+
+
 process.on('unhandledRejection', (reason, p) =>
   logger.error('Unhandled Rejection at: Promise ', p, reason)
 );
