@@ -36,7 +36,7 @@ class GigSummary extends React.Component {
         rows.filter(field => field && field.label && (field.value || field.showBlank))
           .map(({ label, value, showBlank }) => {
             return (
-              <Grid key={label} container spacing={16} className='gig-summary'>
+              <Grid key={label} container spacing={2} className='gig-summary'>
                 <Grid xs={4} item className='info-label'>
                   <Typography align="right" variant="body1">
                     {label}
@@ -175,7 +175,7 @@ class GigSummary extends React.Component {
     const public_rows = this.renderRows([
       gigValues.event_start && {
         label: 'Event Time',
-        value: `${this.renderTime(gigValues.event_start)} -      ${this.renderTime(gigValues.event_end)}`
+        value: `${this.renderTime(gigValues.event_start)} - ${this.renderTime(gigValues.event_end)}`
       },
       {
         label: 'Public Title',

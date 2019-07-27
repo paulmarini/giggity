@@ -20,7 +20,7 @@ const Welcome = props => {
         direction="row"
         justify="space-evenly"
         alignItems="center"
-        spacing={40}
+        spacing={5}
         container
       >
         <Grid item xs={6}>

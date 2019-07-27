@@ -50,9 +50,9 @@
     "@feathersjs/feathers": "^3.2.3",
     "@feathersjs/socketio": "^3.2.7",
     "@feathersjs/socketio-client": "^1.2.1",
-    "@material-ui/core": "^3.9.3",
-    "@material-ui/icons": "^3.0.2",
-    "@material-ui/lab": "^3.0.0-alpha.30",
+    "@material-ui/core": "^4.2.1",
+    "@material-ui/icons": "^4.2.1",
+    "@material-ui/lab": "^4.0.0-alpha.20",
     "auth0": "^2.18.0",
     "aws-sdk": "^2.501.0",
     "axios": "^0.18.1",
@@ -64,7 +64,7 @@
     "feathers-hooks-common": "^4.20.7",
     "feathers-mongoose": "^7.2.0",
     "formik": "^1.5.8",
-    "formik-material-ui": "^0.0.16",
+    "formik-material-ui": "0.0.20",
     "googleapis": "^39.2.0",
     "helmet": "^3.20.0",
     "jwt-decode": "^2.2.0",
@@ -88,7 +88,8 @@
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.4",
     "serve-favicon": "^2.5.0",
-    "winston": "^3.0.0"
+    "winston": "^3.0.0",
+    "yarn": "^1.17.3"
   },
   "devDependencies": {
     "@feathersjs/cli": "^3.9.0",

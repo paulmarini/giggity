@@ -94,7 +94,7 @@ const SideBar = (props) => {
                   className='summary'
                   expandIcon={<ExpandMoreIcon />}
                 >
-                  <Grid container direction="row" alignItems="center" spacing={16}>
+                  <Grid container direction="row" alignItems="center" spacing={2}>
                     <Grid item>
                       {typeData.icon}
                     </Grid>

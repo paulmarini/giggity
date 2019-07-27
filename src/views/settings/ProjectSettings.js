@@ -43,7 +43,7 @@ class ProjectSettings extends Component {
   renderField = (field, index, arrayHelpers) => {
     return (
       <ListItem key={index} divider>
-        <Grid container direction="row" spacing={24}>
+        <Grid container direction="row" spacing={3}>
           <Field
             label='Label'
             name={`custom_fields[${index}].label`}

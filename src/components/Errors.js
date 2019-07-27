@@ -13,7 +13,7 @@ const styles = theme => ({
     backgroundColor: theme.palette.error.dark,
   },
   close: {
-    padding: theme.spacing.unit / 2,
+    padding: theme.spacing(0.5),
   },
 });
 

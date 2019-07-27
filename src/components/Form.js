@@ -65,7 +65,7 @@ class Form extends Component {
     return (
       <FormikForm className='giggity-form' >
         <Effect onChange={onChange} />
-        <Grid container spacing={16}>
+        <Grid container spacing={2}>
           {children}
           {formFields}
           {this.renderButtons()}

@@ -26,7 +26,7 @@ class Field extends React.Component {
     if (!edit) {
       return (
         <Grid item xs={12} className='form-field'>
-          <Grid container spacing={16}>
+          <Grid container spacing={2}>
             <Grid item xs={4} style={{ textAlign: 'right' }}>
               <b>{label}</b>
             </Grid>

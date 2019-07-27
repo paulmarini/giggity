@@ -131,7 +131,7 @@ class GigList extends Component {
         alignItems="flex-start"
         onClick={handleDrawerToggle}
       >
-        <Grid container spacing={16}>
+        <Grid container spacing={2}>
           <Grid item xs>
             <Typography variant="caption" align="center" style={{ fontSize: '60%' }}>
               < StatusIcon size="small"></ StatusIcon>
