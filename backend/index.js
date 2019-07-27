@@ -8,6 +8,7 @@ const logger = require('./logger');
 const app = require('./app');
 const port = app.get('port');
 let server;
+let timeout;
 
 console.log(`starting in ${process.env.NODE_ENV} mode on port ${port}`);
 
@@ -27,20 +28,17 @@ if (port === '443') {
   http.createServer(httpApp).listen(httpApp.get('port'), function() {
     console.log('Express HTTP server listening on port ' + httpApp.get('port'));
   });
+  fs.watch(app.get('certFile'), () => {
+    clearTimeout(timeout);
+    timeout = setTimeout(() => {
+      console.log('reloading SSL certs');
+      server._sharedCreds.context.setCert(fs.readFileSync(app.get('certFile')));
+      server._sharedCreds.context.setKey(fs.readFileSync(app.get('keyFile')));
+    }, 1000);
+  });
 } else {
   server = app.listen(port);
 }
-
-var timeout;
-fs.watch(app.get('certFile'), () => {
-    clearTimeout(timeout);
-    timeout = setTimeout(() => {
-		console.log('reloading SSL certs');
-        server._sharedCreds.context.setCert(fs.readFileSync(app.get('certFile')));
-        server._sharedCreds.context.setKey(fs.readFileSync(app.get('keyFile')));
-    }, 1000);
-});
-
 
 process.on('unhandledRejection', (reason, p) =>
   logger.error('Unhandled Rejection at: Promise ', p, reason)
