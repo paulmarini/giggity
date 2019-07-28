@@ -1,5 +1,12 @@
 .members {
-  form {
-    display: inline-block;
+  position: relative;
+  .add-icon {
+    position: absolute;
+    top: 0px;
+    right: 0px;
+  }
+  .giggity-form {
+    width: 100%;
+    margin-left: 56px;
   }
 }

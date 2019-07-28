@@ -1,22 +1,31 @@
 import React, { Component } from 'react';
-import Link from '../../components/Link';
 import { connect } from 'react-redux';
 
 import {
+  List,
+  ListItem,
+  ListItemText,
+  ListItemAvatar,
+  ListItemSecondaryAction,
   IconButton,
   Typography,
-  Select,
-  MenuItem
+  Fab
 } from '@material-ui/core';
-import { Delete as DeleteIcon } from '@material-ui/icons';
+import {
+  Edit as EditIcon,
+  Add as AddIcon
+} from '@material-ui/icons';
+import Avatar from '../../components/Avatar';
 import Form from '../../components/Form';
-import Field from '../../components/Field';
 import { emit } from '../../socket';
 import './Members.scss';
+
 const roles = ['Admin', 'Manager', 'Member', 'Read-Only']
 const defaulState = {
   email: '',
-  role: 'Member'
+  role: 'Member',
+  editMember: null,
+  showInvite: false
 }
 
 class Users extends Component {
@@ -32,6 +41,7 @@ class Users extends Component {
 
   inviteMember = async values => {
     await emit('create', 'users', { email: values.email, name: values.email, role: values.role });
+    this.setState({ showInvite: false });
   }
 
   updateMember = async (values) => {
@@ -42,35 +52,98 @@ class Users extends Component {
     await emit('remove', 'members', id);
   }
 
-  render() {
+  renderEditMember(user) {
+    return (
+      <ListItem key={`edit_${user._id}`}>
+        <Form
+          initialValues={user}
+          className='edit-member'
+          fields={[
+            { 'label': 'Role', type: 'Dropdown', name: 'role', options: roles },
+          ]}
+          onSubmit={this.updateMember}
+          submitLabel="Save"
+          onCancel={() => this.setState({ editMember: null })}
+          buttons={[
+            {
+              label: 'Delete',
+              action: () => this.deleteMember(user._id),
+              props: {
+                color: "secondary",
+                variant: 'contained'
+              }
+            }
+          ]}
+        />
+      </ListItem>
+    )
+  }
 
+  renderListItem(user) {
+    const isEditMember = this.state.editMember === user._id;
+    return (
+      <ListItem
+        key={user._id}
+        className='member'
+        button={!isEditMember}
+        onClick={() => this.setState({ editMember: user._id })}
+      >
+        <ListItemAvatar>
+          <Avatar user={user} />
+        </ListItemAvatar>
+        <ListItemText
+          primary={user.name}
+          secondary={`${user.role} - ${user.email}`}
+        />
+
+        <ListItemSecondaryAction>
+          {
+            !isEditMember &&
+            <IconButton
+              color="inherit"
+              onClick={() => this.setState({ editMember: user._id })}
+            >
+              <EditIcon />
+            </IconButton>
+          }
+        </ListItemSecondaryAction>
+      </ListItem>
+    )
+  }
+
+  render() {
     return (
       <div className="members">
-        <Typography gutterBottom variant="subtitle1">Members</Typography>
+        <Typography gutterBottom variant="h4">Members</Typography>
+        <Fab
+          color="primary"
+          className='add-icon'
+          size="small"
+          onClick={() => this.setState({ showInvite: true })}
+        >
+          <AddIcon />
+        </Fab>
         {
-          Object.values(this.props.users)
-            .map(user => (
-              <div key={user._id} className='member'>
-                {user.name}
-                <Form
-                  initialValues={user}
-                  fields={[{
-                    type: 'Dropdown', name: 'role', options: roles
-                  }]}
-                  autoSubmit={true}
-                  onSubmit={this.updateMember}
-                />
-                <IconButton
-                  color="inherit"
-                  onClick={this.deleteMember(user._id)}
-                >
-                  <DeleteIcon fontSize="small" />
-                </IconButton>
-              </div>
-            ))
+          this.state.showInvite && <>
+            <Typography gutterBottom variant="subtitle1">Invite Member</Typography>
+            <Form
+              initialValues={this.state}
+              fields={this.userFields}
+              submitLabel='Invite Member'
+              onSubmit={this.inviteMember}
+              onCancel={() => this.setState({ showInvite: false })}
+            />
+          </>
         }
-        <Typography gutterBottom variant="subtitle1">Invite Member</Typography>
-        <Form initialValues={this.state} fields={this.userFields} submitLabel='Invite Member' onSubmit={this.inviteMember} />
+        <List>
+          {
+            Object.values(this.props.users)
+              .map(user => ([
+                this.renderListItem(user),
+                this.state.editMember === user._id && this.renderEditMember(user)
+              ]))
+          }
+        </List>
       </div>
     )
   }
