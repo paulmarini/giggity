@@ -9,9 +9,9 @@ import {
   ListItem,
   ListItemText
 } from '@material-ui/core';
-import {capitalize } from 'lodash';
+import { capitalize } from 'lodash';
 
-const MemberNotification = ({ currentUser, calendar,communication }) => {
+const MemberNotification = ({ currentUser, calendar={}, communication = {} }) => {
   const preferences = currentUser.preferences && currentUser.preferences.email ? currentUser.preferences.email : { gig_added: false, gig_updated: false, gig_availability_updated: false };
 
   const submit = async values => {
@@ -28,23 +28,23 @@ const MemberNotification = ({ currentUser, calendar,communication }) => {
   return <>
     <Typography gutterBottom variant="body1">Calendar Links</Typography>
     <List>
-    {
-      ['gig', 'rehearsal', 'public'].map(type => {
-       if (!communication[`enable_${type}_calendar`]) {
-         return null;
-       }
-       return <ListItem
-          button
-          component={Link}
-          key={type}
-          href={`https://calendar.google.com/calendar?cid=${calendar[`${type}_calendar_id`]}`}
-          target="_blank"
-          color="primary"
-        >
-          {`${capitalize(type)} Calendar`}
-        </ListItem>
-      })
-    }
+      {
+        ['gig', 'rehearsal', 'public'].map(type => {
+          if (!communication[`enable_${type}_calendar`]) {
+            return null;
+          }
+          return <ListItem
+            button
+            component={Link}
+            key={type}
+            href={`https://calendar.google.com/calendar?cid=${calendar[`${type}_calendar_id`]}`}
+            target="_blank"
+            color="primary"
+          >
+            {`${capitalize(type)} Calendar`}
+          </ListItem>
+        })
+      }
     </List>
     <Typography gutterBottom variant="body1">Email me when ...</Typography>
     <Form
