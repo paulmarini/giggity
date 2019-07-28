@@ -25,11 +25,16 @@ class Form extends Component {
   }
 
   renderButtons = () => {
-    const { submitLabel, buttons = [] } = this.props;
+    const { submitLabel, buttons = [], onCancel } = this.props;
     const submitButton = submitLabel &&
       <Button variant='contained' color='primary' type='submit'>
         {submitLabel}
       </Button>;
+    const cancelButton = onCancel &&
+      <Button variant='contained' onClick={onCancel}>
+        Cancel
+      </Button>;
+
     const extraButtons = buttons.map((button, index) => {
       if (button.label) {
         const { label, action, props = {} } = button;
@@ -55,6 +60,7 @@ class Form extends Component {
       <div className='buttons'>
         {submitButton}
         {extraButtons}
+        {cancelButton}
       </div>
     )
   }
