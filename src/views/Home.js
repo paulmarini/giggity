@@ -9,7 +9,7 @@ import Settings from './/settings';
 import Gig from './gig';
 import { connect } from 'react-redux';
 import { actions } from '../store';
-import { logout, authenticate, socket, emit } from '../socket';
+import { logout, authenticate, emit } from '../socket';
 import { withStyles } from '@material-ui/core/styles';
 import withWidth from '@material-ui/core/withWidth';
 import NavBar from './NavBar';
@@ -28,7 +28,8 @@ const styles = theme => (console.log(theme) || {
     flex: '1 1 100%',
     [theme.breakpoints.up('sm')]: {
       marginLeft: drawerWidth
-    }
+    },
+    overflow: 'auto',
   },
   paper: {
     color: '#000'
