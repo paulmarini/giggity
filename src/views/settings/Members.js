@@ -114,7 +114,6 @@ class Users extends Component {
   render() {
     return (
       <div className="members">
-        <Typography gutterBottom variant="h4">Members</Typography>
         <Fab
           color="primary"
           className='add-icon'

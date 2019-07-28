@@ -8,10 +8,17 @@ import ProjectRehearsalSettings from './ProjectRehearsalSettings';
 import ProjectCommunication from './ProjectCommunication';
 import User from './User';
 import { Switch, Route, Redirect } from 'react-router-dom';
+import { Typography } from '@material-ui/core';
+import { Helmet } from 'react-helmet';
+import { startCase } from 'lodash';
 
-
-export default () => {
-  return (
+export default (props) => {
+  const title = startCase(props.match.params.setting);
+  return (<>
+    <Helmet>
+      <title>{`Giggity - Settings - ${title}`}</title>
+    </Helmet>
+    <Typography variant="h4" gutterBottom>{title}</Typography>
     <Switch>
       <Redirect from="/settings" exact to="/settings/profile/profile" />
       <Route path="/settings/profile/profile" component={MemberProfile} />
@@ -23,5 +30,5 @@ export default () => {
       <Route path="/settings/project/rehearsals" component={ProjectRehearsalSettings} />
       <Route path="/settings/project/communication" component={ProjectCommunication} />
     </Switch>
-  )
+  </>)
 }

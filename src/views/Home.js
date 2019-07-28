@@ -103,7 +103,8 @@ class Home extends React.Component {
               {/* <Route exact path='/gigs/new' component={Gig} /> */}
               <Route path='/gigs/:id?/:view?' component={Gig} />
               <Route path='/rehearsals/:id?/:view?' component={Gig} />
-              <Route path='/settings' component={Settings} />
+              <Route exact path='/settings' component={Settings} />
+              <Route path='/settings/:mode?/:setting' component={Settings} />
               <Route exact path='/'>
                 {
                   authenticated ? <Redirect to="/gigs" /> : <Welcome />

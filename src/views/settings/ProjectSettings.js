@@ -1,6 +1,5 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
-import Helmet from 'react-helmet';
 import {
   Typography,
   List,
@@ -99,9 +98,6 @@ class ProjectSettings extends Component {
     }
     return (
       <>
-        <Helmet>
-          <title>{`Giggity - ${currentProject.name} Settings`}</title>
-        </Helmet>
         <Formik
           onSubmit={this.saveProject}
           initialValues={initialValues}
@@ -110,8 +106,7 @@ class ProjectSettings extends Component {
               <Form>
                 <Button type='submit'>
                   Save Settings
-                        </Button>
-                <Typography gutterBottom variant="h5">Custom Fields</Typography>
+                </Button>
                 <FieldArray
                   name="custom_fields"
                   render={(arrayHelpers) => (
