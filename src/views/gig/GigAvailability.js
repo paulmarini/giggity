@@ -3,9 +3,11 @@ import UserAvailability from '../../components/UserAvailability';
 import {
   List,
   ListItem,
+  ListItemAvatar,
   ListItemText,
   ListItemSecondaryAction
 } from '@material-ui/core';
+import Avatar from '../../components/Avatar';
 
 export default ({ users, currentGigAvailability, id }) => {
   return (
@@ -17,6 +19,9 @@ export default ({ users, currentGigAvailability, id }) => {
               divider
               key={user._id}
             >
+              <ListItemAvatar>
+                <Avatar user={user} />
+              </ListItemAvatar>
               <ListItemText
                 primary={user.name}
               />

@@ -51,7 +51,7 @@ module.exports = {
   },
 
   after: {
-    all: [protect('user.password', 'user.auth0Id', 'user.__v', 'user.createdAt', 'user.updatedAt')],
+    all: [protect('user.password', 'user.auth0Id', 'user.__v', 'user.createdAt', 'user.updatedAt', 'user.accessCode')],
     find: [],
     get: [],
     create: [updateCalendarAcls],
