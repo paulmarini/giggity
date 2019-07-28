@@ -35,7 +35,8 @@
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "deploy-quick": "ssh giggity -C \"cd giggity-dev; git pull && npm run build && sudo systemctl restart giggity.service\"",
-    "deploy": "ssh giggity -C \"cd giggity-dev; git pull && npm ci && npm run build && sudo systemctl restart giggity.service\""
+    "deploy": "ssh giggity -C \"cd giggity-dev; git pull && npm ci && npm run build && sudo systemctl restart giggity.service\"",
+    "analyze": "source-map-explorer 'build/static/js/*.js'"
   },
   "dependencies": {
     "@feathersjs/authentication": "^2.1.13",
@@ -88,6 +89,7 @@
     "react-router-dom": "^5.0.1",
     "redux": "^4.0.4",
     "serve-favicon": "^2.5.0",
+    "source-map-explorer": "^2.0.1",
     "winston": "^3.0.0",
     "yarn": "^1.17.3"
   },
