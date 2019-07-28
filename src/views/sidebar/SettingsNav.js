@@ -35,10 +35,13 @@ class SettingsNav extends React.Component {
         key={text}
         component={Link}
         to={`/settings/${link}`}
+        color="inherit"
         selected={Boolean(currentLocation.match(link))}
         onClick={handleDrawerToggle}
       >
-        {icon}
+        <ListItemIcon>
+          {icon}
+        </ListItemIcon>
         <ListItemText primary={
           text
         } />
