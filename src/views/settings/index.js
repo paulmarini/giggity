@@ -10,7 +10,7 @@ import User from './User';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
-import { startCase } from 'lodash';
+import { startCase } from 'lodash-es';
 
 export default (props) => {
   const title = startCase(props.match.params.setting);

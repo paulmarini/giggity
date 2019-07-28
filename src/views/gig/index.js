@@ -8,7 +8,7 @@ import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
 import { emit } from '../../socket'
 import moment from 'moment'
-import { get, set, merge } from 'lodash';
+import { get, set, merge } from 'lodash-es';
 import GigDetails from './GigDetails';
 import GigAvailability from './GigAvailability';
 import GigSummary from './GigSummary';

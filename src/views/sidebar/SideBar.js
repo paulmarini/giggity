@@ -16,7 +16,7 @@ import {
   Event as EventIcon
 } from '@material-ui/icons';
 import actions from '../../store/actions';
-import { capitalize } from 'lodash';
+import { capitalize } from 'lodash-es';
 import './SideBar.scss';
 
 const SideBar = (props) => {

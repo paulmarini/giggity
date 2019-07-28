@@ -9,7 +9,7 @@ import {
   ListItem,
   ListItemText
 } from '@material-ui/core';
-import { capitalize } from 'lodash';
+import { capitalize } from 'lodash-es';
 
 const MemberNotification = ({ currentUser, calendar={}, communication = {} }) => {
   const preferences = currentUser.preferences && currentUser.preferences.email ? currentUser.preferences.email : { gig_added: false, gig_updated: false, gig_availability_updated: false };

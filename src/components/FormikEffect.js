@@ -1,5 +1,5 @@
 import React from 'react';
-import { debounce, isEqual } from 'lodash';
+import { debounce, isEqual } from 'lodash-es';
 import { connect } from 'formik';
 
 class FormikEffect extends React.Component {

@@ -3,7 +3,7 @@ import { Formik, Form as FormikForm } from 'formik';
 import { Button, Grid } from '@material-ui/core';
 import Field from './Field';
 import Effect from '../components/FormikEffect';
-import { set } from 'lodash';
+import { set } from 'lodash-es';
 import './Form.scss';
 
 class Form extends Component {
