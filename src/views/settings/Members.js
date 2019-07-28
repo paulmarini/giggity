@@ -74,6 +74,7 @@ class Users extends Component {
               }
             }
           ]}
+          buttonSize="small"
         />
       </ListItem>
     )
