@@ -38,23 +38,23 @@ const SideBar = (props) => {
   }
 
   const types = {
-    admin: {
-      routes: ['admin'],
-      icon: <EventIcon />,
-      details: <></>
+    // admin: {
+    //   routes: ['admin'],
+    //   icon: <EventIcon />,
+    //   details: <></>
+    // },
+    settings: {
+      routes: ['settings'],
+      icon: <SettingsIcon />,
+      details: <SettingsNav
+      handleDrawerToggle={handleDrawerToggle}
+      currentLocation={location.pathname}
+      />
     },
     gigs: {
       routes: ['gigs', 'rehearsals'],
       icon: <EventIcon />,
       details: <GigList
-        handleDrawerToggle={handleDrawerToggle}
-        currentLocation={location.pathname}
-      />
-    },
-    settings: {
-      routes: ['settings'],
-      icon: <SettingsIcon />,
-      details: <SettingsNav
         handleDrawerToggle={handleDrawerToggle}
         currentLocation={location.pathname}
       />
@@ -77,7 +77,7 @@ const SideBar = (props) => {
         }}
       >
         {
-          ['admin', 'settings', 'gigs'].map(type => {
+          Object.keys(types).map(type => {
             const typeData = types[type];
             const expanded = typeData.routes.includes(currentType);
             if (type === 'admin' && role_index !== 0) {
