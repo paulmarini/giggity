@@ -25,13 +25,13 @@ class Form extends Component {
   }
 
   renderButtons = () => {
-    const { submitLabel, buttons = [], onCancel } = this.props;
+    const { submitLabel, buttons = [], onCancel, buttonSize = 'medium' } = this.props;
     const submitButton = submitLabel &&
-      <Button variant='contained' color='primary' type='submit'>
+      <Button variant='contained' size={buttonSize} color='primary' type='submit'>
         {submitLabel}
       </Button>;
     const cancelButton = onCancel &&
-      <Button variant='contained' onClick={onCancel}>
+      <Button variant='contained' size={buttonSize} onClick={onCancel}>
         Cancel
       </Button>;
 
@@ -43,6 +43,7 @@ class Form extends Component {
             key={index}
             variant='outlined'
             onClick={action}
+            size={buttonSize}
             {...props}
           >
             {label}
