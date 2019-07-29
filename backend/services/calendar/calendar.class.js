@@ -127,13 +127,26 @@ class Service {
         if (remove && !eventId) {
           return;
         }
-        const response = await this.calendars.events[method]({
-          eventId,
-          sendUpdates: 'none',
-          calendarId,
-          requestBody
-        });
-        return response.data.id
+        try {
+          const response = await this.calendars.events[method]({
+            eventId,
+            sendUpdates: 'none',
+            calendarId,
+            requestBody
+          });
+          return response.data.id
+        } catch (err) {
+          if (err.response.status === 404 && method === 'patch') {
+            const response = await this.calendars.events.insert({
+              sendUpdates: 'none',
+              calendarId,
+              requestBody
+            });
+            return response.data.id;
+          }
+          console.error(`Error ${method}ing calendar event ${eventId} on calendar ${calendarId}`, err.message)
+          return Promise.reject(err);
+        }
       });
     const [id, public_id] = await Promise.all(promises);
     return {
