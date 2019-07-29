@@ -150,13 +150,13 @@ const availabilityUpdated = availability => {
   store.dispatch(actions.availabilityUpdated(availability))
 }
 
-const loadNextGigId = async () => {
-  const nextGig = (await emit('find', 'gigs', {
-    start: { $gt: new Date().getTime() },
+export const loadNextGigId = async () => {
+  const { data: [nextGig] } = await emit('find', 'gigs', {
+    start: { $gt: new Date().setHours(0, 0, 0, 0) },
     $limit: 1,
     $select: ['_id'],
     $sort: { start: 1 }
-  })).data[0];
+  })
   if (nextGig) {
     store.dispatch(actions.loadNextGigId(nextGig._id));
   }
@@ -170,7 +170,10 @@ userService.on('removed', loadUsers);
 
 gigService.on('created', gigUpdated);
 gigService.on('patched', gigUpdated);
-gigService.on('removed', gigUpdated);
+gigService.on('removed', gig => {
+  gigUpdated(gig);
+  loadNextGigId();
+});
 
 availabilityService.on('created', availabilityUpdated);
 availabilityService.on('patched', availabilityUpdated);

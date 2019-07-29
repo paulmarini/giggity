@@ -89,7 +89,7 @@ class GigList extends Component {
     const { hide_rehearsals, member_id } = this.props;
     const upcoming = this.state.offset >= 0;
     const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
-    const now = new Date().getTime();
+    const now = new Date().setHours(0, 0, 0, 0);
     const params = {
       $limit: this.state.limit,
       start: { [upcoming ? '$gt' : '$lt']: now },
