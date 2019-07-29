@@ -16,11 +16,12 @@ import {
   Event as EventIcon
 } from '@material-ui/icons';
 import actions from '../../store/actions';
+import { isUserOrRole } from '../../util';
 import { capitalize } from 'lodash-es';
 import './SideBar.scss';
 
 const SideBar = (props) => {
-  const { history, location, width, drawerWidth, drawerOpen, showSidebar, updateDrawer, role_index } = props;
+  const { history, location, width, drawerWidth, drawerOpen, showSidebar, updateDrawer } = props;
   const currentType = location.pathname.split('/')[1];
 
   if (!showSidebar) {
@@ -47,8 +48,8 @@ const SideBar = (props) => {
       routes: ['settings'],
       icon: <SettingsIcon />,
       details: <SettingsNav
-      handleDrawerToggle={handleDrawerToggle}
-      currentLocation={location.pathname}
+        handleDrawerToggle={handleDrawerToggle}
+        currentLocation={location.pathname}
       />
     },
     gigs: {
@@ -80,7 +81,7 @@ const SideBar = (props) => {
           Object.keys(types).map(type => {
             const typeData = types[type];
             const expanded = typeData.routes.includes(currentType);
-            if (type === 'admin' && role_index !== 0) {
+            if (type === 'admin' && !isUserOrRole({ role: 'Root' })) {
               return null;
             }
             return (
@@ -119,7 +120,6 @@ const SideBar = (props) => {
 }
 const mapStateToProps = state => ({
   drawerOpen: state.drawerOpen,
-  role_index: state.currentUser.role_index
 })
 
 const mapDispatchToProps = {

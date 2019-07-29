@@ -26,6 +26,7 @@ import UserAvailability from '../../components/UserAvailability';
 import { gigService, userService, emit } from '../../socket'
 import { withStyles } from '@material-ui/core/styles';
 import moment from 'moment';
+import { isUserOrRole } from '../../util';
 
 const styles = theme => ({
   title: {
@@ -85,7 +86,7 @@ class GigList extends Component {
   }
 
   updateData = async () => {
-    const { hide_rehearsals, member_id, role_index } = this.props;
+    const { hide_rehearsals, member_id } = this.props;
     const upcoming = this.state.offset >= 0;
     const $skip = Math.abs(upcoming ? this.state.offset : this.state.offset + this.state.limit);
     const now = new Date().getTime();
@@ -99,9 +100,7 @@ class GigList extends Component {
     if (hide_rehearsals) {
       params.type = 'Gig';
     }
-    if (role_index > 2) {
-      params.status = { $ne: 'Draft' };
-    }
+
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
       emit('find', 'gig-availability', { member: member_id }),
@@ -198,25 +197,27 @@ class GigList extends Component {
           </IconButton>
         </div>
 
-        <div
-          selected={currentGig._id === null}
-        >
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            component={Link}
-            to={`/gigs/new/details`}
-          >New Gig</Button>
-          <Button
-            variant="outlined"
-            color="primary"
-            size="small"
-            component={Link}
-            to={`/rehearsals/new/details`}
-          >New Rehearsal</Button>
-
-        </div>
+        {
+          isUserOrRole({ role: 'Manager' }) &&
+          <div
+            selected={currentGig._id === null}
+          >
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              component={Link}
+              to={`/gigs/new/details`}
+            >New Gig</Button>
+            <Button
+              variant="outlined"
+              color="primary"
+              size="small"
+              component={Link}
+              to={`/rehearsals/new/details`}
+            >New Rehearsal</Button>
+          </div>
+        }
         <List>
           {
             gigsList.map(this.renderGigItem)
@@ -231,7 +232,6 @@ const mapStateToProps = state => ({
   gigsList: state.gigsList,
   currentGig: state.currentGig,
   member_id: state.currentUser.member_id,
-  role_index: state.currentUser.role_index,
   hide_rehearsals: state.currentUser.preferences.hide_rehearsals,
   userAvailability: state.userAvailability
 })

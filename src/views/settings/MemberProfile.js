@@ -2,12 +2,13 @@ import React from 'react';
 import { connect } from 'react-redux';
 import Form from '../../components/Form';
 import { emit } from '../../socket';
+import actions from '../../store/actions';
 
-
-const MemberProfile = ({ currentUser }) => {
+const MemberProfile = ({ currentUser, setUser }) => {
 
   const submit = async values => {
-    await emit('patch', 'users', currentUser.userId, values);
+    const { name, email } = await emit('patch', 'users', currentUser.userId, values);
+    setUser({ ...currentUser, email, name })
   }
 
   const fields = [
@@ -25,4 +26,8 @@ const MemberProfile = ({ currentUser }) => {
 
 const mapStatetoProps = state => ((({ currentUser }) => ({ currentUser }))(state))
 
-export default connect(mapStatetoProps)(MemberProfile);
+const mapDispatchToProps = {
+  setUser: actions.setUser
+}
+
+export default connect(mapStatetoProps, mapDispatchToProps)(MemberProfile);

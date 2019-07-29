@@ -12,6 +12,7 @@ import { get, set, merge, startCase } from 'lodash-es';
 import GigDetails from './GigDetails';
 import GigAvailability from './GigAvailability';
 import GigSummary from './GigSummary';
+import { isUserOrRole } from '../../util';
 import './index.scss';
 
 const formatDate = date => moment(date || new Date()).format('YYYY-MM-DD')
@@ -171,6 +172,9 @@ class Gig extends Component {
         return index;
       }, {})
 
+    const isNewGig = this.checkNewGig();
+    const isManager = isUserOrRole({ role: 'Manager' });
+
     if (!id) {
       if (nextGigId) {
         return <Redirect to={`/${type.toLowerCase()}s/${nextGigId}/summary`} />
@@ -184,7 +188,7 @@ class Gig extends Component {
       return "..."
     }
     const values = this.formatGigValues();
-    const title = !this.checkNewGig() ? currentGig.name : `New ${type}`;
+    const title = !isNewGig ? currentGig.name : `New ${type}`;
     return (
       <div className={`gig ${type}-gig`}>
         <Helmet>
@@ -213,10 +217,10 @@ class Gig extends Component {
         >
           {
             [
-              !this.checkNewGig() && 'summary',
-              'details',
-              type === 'Gig' && 'public_details',
-              !this.checkNewGig() && 'availability'
+              !isNewGig && 'summary',
+              isManager && 'details',
+              isManager && type === 'Gig' && 'public_details',
+              !isNewGig && 'availability'
             ]
               .map(tab => tab &&
                 <Tab

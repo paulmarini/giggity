@@ -11,6 +11,7 @@ import {
   Notifications,
   Event,
 } from '@material-ui/icons';
+import { isUserOrRole } from '../../util';
 
 const profile_links = [
   ['Profile', 'profile/profile', <Person />],
@@ -50,12 +51,17 @@ class SettingsNav extends React.Component {
   }
 
   render() {
+    const isAdmin = isUserOrRole({ role: 'Admin' });
     return (
       <List>
         <ListSubheader disableSticky>Profile Settings</ListSubheader>
         {profile_links.map(this.renderListItem)}
-        <ListSubheader disableSticky>Project Settings</ListSubheader>
-        {project_links.map(this.renderListItem)}
+        {
+          isAdmin && <>
+            <ListSubheader disableSticky>Project Settings</ListSubheader>
+            {project_links.map(this.renderListItem)}
+          </>
+        }
       </List>
     );
   }

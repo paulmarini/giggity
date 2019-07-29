@@ -8,6 +8,7 @@ import {
   ListItemSecondaryAction
 } from '@material-ui/core';
 import Avatar from '../../components/Avatar';
+import { isUserOrRole } from '../../util';
 
 export default ({ users, currentGigAvailability, id }) => {
   return (
@@ -29,7 +30,11 @@ export default ({ users, currentGigAvailability, id }) => {
                 <UserAvailability
                   buttons
                   member_id={user._id}
-                  gigId={id} availability={currentGigAvailability[user._id]}
+                  gigId={id}
+                  availability={currentGigAvailability[user._id]}
+                  disabled={
+                    !isUserOrRole({ role: 'Manager', member_id: user._id }) || isUserOrRole({ role: 'Read-Only' })
+                  }
                 />
               </ListItemSecondaryAction>
             </ListItem>
