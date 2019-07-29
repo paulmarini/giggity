@@ -1,7 +1,6 @@
 const errors = require('@feathersjs/errors');
 const randomNumber = require("random-number-csprng");
 const { existsByDot, deleteByDot } = require("feathers-hooks-common");
-const roles = ['Root', 'Admin', 'Manager', 'Member', 'Read-Only'];
 
 module.exports = {
   generateCode: async () => {
@@ -17,7 +16,7 @@ module.exports = {
     ) {
       return context;
     }
-
+    const roles = context.app.get('roles')
     const userRole = context.params.user.projects[context.params.user.project];
     const role_index = roles.indexOf(allowedRole);
     const userIndex = roles.indexOf(userRole);

@@ -49,13 +49,24 @@ const updateCalendar = async context => {
   return context;
 }
 
+const hideDraftsFromNonManagers = context => {
+  const roles = context.app.get('roles')
+  const userRole = context.params.user.projects[context.params.user.project];
+  const role_index = roles.indexOf('Manager');
+  const userIndex = roles.indexOf(userRole);
+  if (userIndex && userIndex > role_index) {
+    context.params.query.status = { '$ne': 'Draft' };
+  }
+  return context;
+}
+
 module.exports = {
   before: {
     all: [
       authenticate('jwt'),
       // preUpdate
     ],
-    find: [],
+    find: [hideDraftsFromNonManagers],
     get: [
       ({ app, params: { connection }, id }) => {
         app.channels.forEach(channel => {
