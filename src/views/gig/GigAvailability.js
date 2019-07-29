@@ -33,7 +33,7 @@ export default ({ users, currentGigAvailability, id }) => {
                   gigId={id}
                   availability={currentGigAvailability[user._id]}
                   disabled={
-                    !isUserOrRole({ role: 'Manager', member_id: user._id }) || isUserOrRole({ role: 'Read-Only' })
+                    !isUserOrRole({ role: 'Manager', member_id: user._id })
                   }
                 />
               </ListItemSecondaryAction>

@@ -9,5 +9,9 @@ export const getUser = () => {
 
 export const isUserOrRole = ({ member_id, role }) => {
   const { currentUser: { member_id: current_member_id, role: current_role } } = store.getState();
-  return roles.indexOf(current_role) <= roles.indexOf(role) || member_id === current_member_id;
+  return roles.indexOf(current_role) <= roles.indexOf(role) ||
+    (
+      member_id === current_member_id &&
+      roles.indexOf(current_role) < roles.indexOf('Read-Only')
+    );
 }
