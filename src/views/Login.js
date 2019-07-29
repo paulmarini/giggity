@@ -1,8 +1,7 @@
 import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
-import { Link } from '@material-ui/core';
 import { TextField } from 'formik-material-ui';
-import { login, emit } from '../socket'
+import { login } from '../socket'
 import queryString from 'query-string'
 
 import { Formik, Form, Field } from 'formik';

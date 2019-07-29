@@ -6,7 +6,7 @@ import MemberProfile from './MemberProfile';
 import MemberNotification from './MemberNotification';
 import ProjectRehearsalSettings from './ProjectRehearsalSettings';
 import ProjectCommunication from './ProjectCommunication';
-import User from './User';
+// import User from './User';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
 import { Helmet } from 'react-helmet';
@@ -26,7 +26,7 @@ export default (props) => {
       <Route path="/settings/project/profile" component={ProjectProfile} />
       <Route path="/settings/project/custom_fields" component={ProjectSettings} />
       <Route exact path='/settings/project/members' component={Members} />
-      <Route path="/settings/project/members/:id" component={User} />
+      {/* <Route path="/settings/project/members/:id" component={User} /> */}
       <Route path="/settings/project/rehearsals" component={ProjectRehearsalSettings} />
       <Route path="/settings/project/communication" component={ProjectCommunication} />
     </Switch>

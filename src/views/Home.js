@@ -78,7 +78,7 @@ class Home extends React.Component {
   }
 
   render() {
-    const { classes, authenticated, location, width, users, errors, removeError } = this.props;
+    const { classes, authenticated, location, width, errors, removeError } = this.props;
     if (!this.state.initialized) {
       return "...";
     }

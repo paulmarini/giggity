@@ -6,8 +6,7 @@ import {
   Typography,
   List,
   Link,
-  ListItem,
-  ListItemText
+  ListItem
 } from '@material-ui/core';
 import { capitalize } from 'lodash-es';
 

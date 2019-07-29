@@ -7,7 +7,6 @@ import {
 } from '@material-ui/core';
 import {
   Edit,
-  Save
 } from '@material-ui/icons';
 import UserAvailability from '../../components/UserAvailability';
 import GiggityForm from '../../components/Form';

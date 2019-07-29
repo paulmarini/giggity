@@ -1,8 +1,21 @@
 import { connect } from 'react-redux';
 import React from 'react';
 import { Field as FormikField } from 'formik';
-import { Grid, MenuItem, FormControlLabel, Radio, InputLabel, FormControl, FormLabel, FormHelperText } from '@material-ui/core';
-import { TextField, Select, Checkbox, RadioGroup, Switch, CheckboxWithLabel } from 'formik-material-ui';
+import {
+  Grid,
+  MenuItem,
+  FormControlLabel,
+  Radio,
+  InputLabel,
+  FormControl,
+  FormHelperText
+} from '@material-ui/core';
+import {
+  TextField,
+  Select,
+  RadioGroup,
+  CheckboxWithLabel
+} from 'formik-material-ui';
 import './Field.scss';
 
 class Field extends React.Component {

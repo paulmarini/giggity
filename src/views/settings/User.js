@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Button } from '@material-ui/core';
-import { TextField, Select } from 'formik-material-ui';
+import { TextField } from 'formik-material-ui';
 import { connect } from 'react-redux';
 
 import { Formik, Form, Field } from 'formik';

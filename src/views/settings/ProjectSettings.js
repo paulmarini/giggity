@@ -1,14 +1,10 @@
 import React, { Component } from 'react';
 import { connect } from 'react-redux';
 import {
-  Typography,
   List,
   ListItem,
   Button,
   IconButton,
-  InputLabel,
-  FormControl,
-  Chip,
   Grid
 } from '@material-ui/core';
 import { emit } from '../../socket'

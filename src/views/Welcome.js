@@ -2,11 +2,9 @@ import React from 'react';
 import {
   Card,
   Grid,
-  Paper,
   Typography,
   CardHeader,
   CardActionArea,
-  CardContent,
   Link as MUILink
 } from '@material-ui/core';
 import { Link } from 'react-router-dom';
