@@ -45,7 +45,7 @@ class UserAvailability extends Component {
   }
 
   render() {
-    const { buttons = false, availability: { status = 'Unknown' } = {} } = this.props;
+    const { buttons = false, availability: { status = 'Unknown' } = {}, disabled = false } = this.props;
     if (buttons) {
       return (
         <ToggleButtonGroup
@@ -59,6 +59,7 @@ class UserAvailability extends Component {
                 key={status.label}
                 value={status.label}
                 style={{ fontSize: 24 }}
+                disabled={disabled}
               >
                 {status.icon}
               </ToggleButton>
@@ -72,6 +73,7 @@ class UserAvailability extends Component {
         <Select
           value={status}
           onChange={this.updateAvailability}
+          disabled={disabled}
         >
           {
             Statuses.map(status =>
