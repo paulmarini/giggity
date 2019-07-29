@@ -6,13 +6,15 @@ import { Redirect, Link, Switch, Route } from 'react-router-dom';
 import { Helmet } from 'react-helmet';
 import Tabs from '@material-ui/core/Tabs';
 import Tab from '@material-ui/core/Tab';
-import { emit } from '../../socket'
+import { emit, loadNextGigId } from '../../socket'
 import moment from 'moment'
 import { get, set, merge, startCase } from 'lodash-es';
 import GigDetails from './GigDetails';
 import GigAvailability from './GigAvailability';
 import GigSummary from './GigSummary';
 import { isUserOrRole } from '../../util';
+import confirm from '../../util/confirm';
+
 import './index.scss';
 
 const formatDate = date => moment(date || new Date()).format('YYYY-MM-DD')
@@ -94,7 +96,8 @@ class Gig extends Component {
     }
   };
 
-  saveGig(values) {
+  saveGig = async (values) => {
+    console.log(values)
     const { id } = this.props.match.params;
     const gig = { ...values };
     const start = moment(gig.startTime, 'HH:mm');
@@ -116,23 +119,21 @@ class Gig extends Component {
     delete gig._id;
     delete gig.date;
     gig.type = this.checkType();
-    return (!this.checkNewGig() ?
-      emit('patch', 'gigs', id, gig) :
-      emit('create', 'gigs', gig)
-    )
-      .then(gig => {
-        if (this.checkNewGig()) {
-          this.props.history.push(`/${this.checkType().toLowerCase()}s/${gig._id}`);
-        }
-      })
+    const isNewGig = this.checkNewGig();
+    const newGig = await isNewGig ?
+      emit('create', 'gigs', gig) :
+      emit('patch', 'gigs', id, gig);
+    if (isNewGig) {
+      this.props.history.push(`/${this.checkType().toLowerCase()}s/${newGig._id}`);
+    }
   };
 
-  deleteGig() {
+  deleteGig = async () => {
     const { id } = this.props.match.params;
-    return emit('remove', 'gigs', id)
-      .then(() => {
-        this.props.history.push(`/`);
-      })
+    await confirm(`Delete the gig "${this.props.currentGig.name}"?`, { okLabel: 'Delete' });
+    await emit('remove', 'gigs', id);
+    await loadNextGigId();
+    this.props.history.push(`/`);
   }
 
   changeTab = (event, tab) => {

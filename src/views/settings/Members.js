@@ -18,6 +18,7 @@ import {
 import Avatar from '../../components/Avatar';
 import Form from '../../components/Form';
 import { emit } from '../../socket';
+import confirm from '../../util/confirm';
 import './Members.scss';
 
 const roles = ['Admin', 'Manager', 'Member', 'Read-Only']
@@ -48,7 +49,8 @@ class Users extends Component {
     await emit('patch', 'members', values._id, values);
   }
 
-  deleteMember = id => async () => {
+  deleteMember = async ({ name, _id: id }) => {
+    await confirm(`Delete the member "${name}"?`, { okLabel: 'Delete' });
     await emit('remove', 'members', id);
   }
 
@@ -67,7 +69,7 @@ class Users extends Component {
           buttons={[
             {
               label: 'Delete',
-              action: () => this.deleteMember(user._id),
+              action: () => this.deleteMember(user),
               props: {
                 color: "secondary",
                 variant: 'contained'

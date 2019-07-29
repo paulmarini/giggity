@@ -21,7 +21,9 @@ class Form extends Component {
     try {
       await Promise.resolve(action());
     } catch (err) {
-      console.error(`Button ${index} submit error`, err);
+      if (err !== 'canceled') {
+        console.error(`Button ${index} submit error`, err);
+      }
     }
     this.setState({ [`submitting${index}`]: false, disabled: false });
   }
@@ -111,7 +113,7 @@ class Form extends Component {
     )
   }
 
-  renderField = (field, index, { handleSubmit, handleChange, handleBlur, submitForm, values, errors }) => {
+  renderField = (field, index, { handleChange, handleBlur, submitForm, values }) => {
     const { edit } = this.props;
     if (React.isValidElement(field)) {
       return <Grid item key={index} xs={12}>

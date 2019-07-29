@@ -1,9 +1,5 @@
 import React from 'react';
 import GiggityForm from '../../components/Form';
-import {
-  Grid,
-  Typography
-} from '@material-ui/core';
 
 class GigDetails extends React.Component {
 
@@ -88,6 +84,7 @@ class GigDetails extends React.Component {
     const { saveGig, deleteGig, gigValues } = this.props;
 
     const deleteButton = { label: 'Delete Gig', action: deleteGig };
+
     return (
       <GiggityForm
         onSubmit={saveGig}
