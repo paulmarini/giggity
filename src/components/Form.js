@@ -1,19 +1,33 @@
 import React, { Component } from 'react';
 import { Formik, Form as FormikForm } from 'formik';
-import { Button, Grid } from '@material-ui/core';
+import { Button, Grid, CircularProgress } from '@material-ui/core';
 import Field from './Field';
 import Effect from '../components/FormikEffect';
 import { set } from 'lodash-es';
+import { withTheme } from '@material-ui/styles';
 import './Form.scss';
 
 class Form extends Component {
-  submit = async (values, formikBag) => {
+  constructor(props) {
+    super(props);
+    this.state = {
+      disabled: false,
+      submitting: false
+    };
+  }
+
+  buttonClick = async (action, index = '') => {
+    this.setState({ [`submitting${index}`]: true, disabled: true });
     try {
-      const res = this.props.onSubmit(values, formikBag);
-      await Promise.resolve(res);
+      await Promise.resolve(action());
     } catch (err) {
-      console.error('Form submit error', err);
+      console.error(`Button ${index} submit error`, err);
     }
+    this.setState({ [`submitting${index}`]: false, disabled: false });
+  }
+
+  submit = async (values, formikBag) => {
+    await this.buttonClick(() => this.props.onSubmit(values, formikBag));
     formikBag.setSubmitting(false);
   }
 
@@ -25,9 +39,23 @@ class Form extends Component {
   }
 
   renderButtons = () => {
-    const { submitLabel, buttons = [], onCancel, buttonSize = 'medium' } = this.props;
+    const { submitLabel, theme, buttons = [], onCancel, buttonSize = 'medium' } = this.props;
+    const { typography: { fontSize } } = theme;
+    const sizeOffsets = {
+      'small': -2,
+      'medium': 0,
+      'large': 2
+    };
+    const progressSize = fontSize + sizeOffsets[buttonSize];
     const submitButton = submitLabel &&
-      <Button variant='contained' size={buttonSize} color='primary' type='submit'>
+      <Button
+        variant='contained'
+        size={buttonSize}
+        color='primary'
+        type='submit'
+        disabled={this.state.disabled}
+      >
+        {this.state.submitting && <CircularProgress className="progress" size={progressSize} />}
         {submitLabel}
       </Button>;
     const cancelButton = onCancel &&
@@ -42,10 +70,12 @@ class Form extends Component {
           <Button
             key={index}
             variant='outlined'
-            onClick={action}
+            onClick={() => this.buttonClick(action, index)}
             size={buttonSize}
+            disabled={this.state.disabled}
             {...props}
           >
+            {this.state[`submitting${index}`] && <CircularProgress className="progress" size={progressSize} />}
             {label}
           </Button>
         )
@@ -129,4 +159,4 @@ class Form extends Component {
   }
 }
 
-export default Form;
+export default withTheme(Form);
