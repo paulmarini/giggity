@@ -68,7 +68,7 @@ class Field extends React.Component {
       case 'Member':
         labelElement = label && <InputLabel shrink>{label}</InputLabel>
         component = Select;
-        children = users.map(({ _id, name }) => {
+        children = Object.values(users).map(({ _id, name }) => {
           return <MenuItem key={_id} value={_id}>{name}</MenuItem>
         })
         break;
@@ -83,7 +83,6 @@ class Field extends React.Component {
       case 'Text':
         component = TextField
         break;
-      case 'Multiple choice':
       case 'Radio':
         component = RadioGroup;
         labelElement = label && <InputLabel shrink>{label}</InputLabel>
@@ -92,7 +91,6 @@ class Field extends React.Component {
         })
         break;
       case 'Checkbox':
-      case 'Checkboxes':
         component = CheckboxWithLabel;
         props.Label = { label: label };
         break;
@@ -100,7 +98,6 @@ class Field extends React.Component {
         component = TextField;
         props.type = 'url';
         break;
-      case 'Dropdown':
       case 'Select':
         labelElement = label && <InputLabel shrink>{label}</InputLabel>
         component = Select;

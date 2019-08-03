@@ -36,7 +36,7 @@ class Users extends Component {
 
     this.userFields = [
       { type: 'Text', name: 'email', label: 'Email' },
-      { type: 'Dropdown', name: 'role', label: 'Role', options: roles }
+      { type: 'Select', name: 'role', label: 'Role', options: roles }
     ]
   }
 
@@ -61,7 +61,7 @@ class Users extends Component {
           initialValues={user}
           className='edit-member'
           fields={[
-            { 'label': 'Role', type: 'Dropdown', name: 'role', options: roles },
+            { 'label': 'Role', type: 'Select', name: 'role', options: roles },
           ]}
           onSubmit={this.updateMember}
           submitLabel="Save"

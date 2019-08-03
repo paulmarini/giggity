@@ -3,7 +3,7 @@ import { Formik, Form as FormikForm } from 'formik';
 import { Button, Grid, CircularProgress } from '@material-ui/core';
 import Field from './Field';
 import Effect from '../components/FormikEffect';
-import { set } from 'lodash-es';
+import { set, update } from 'lodash-es';
 import { withTheme } from '@material-ui/styles';
 import './Form.scss';
 
@@ -40,7 +40,7 @@ class Form extends Component {
     }
   }
 
-  renderButtons = () => {
+  renderButtons = (formikProps) => {
     const { submitLabel, theme, buttons = [], onCancel, buttonSize = 'medium' } = this.props;
     const { typography: { fontSize } } = theme;
     const sizeOffsets = {
@@ -61,7 +61,7 @@ class Form extends Component {
         {submitLabel}
       </Button>;
     const cancelButton = onCancel &&
-      <Button variant='contained' size={buttonSize} onClick={onCancel}>
+      <Button variant='contained' size={buttonSize} onClick={() => onCancel(formikProps)}>
         Cancel
       </Button>;
 
@@ -99,15 +99,16 @@ class Form extends Component {
   }
 
   renderForm = (formikProps) => {
-    const { fields, onChange, children } = this.props;
+    const { fields, onChange, children, render } = this.props;
     const formFields = fields.map((field, index) => this.renderField(field, index, formikProps))
     return (
       <FormikForm className='giggity-form' >
         <Effect onChange={onChange} />
         <Grid container spacing={2}>
-          {children}
-          {formFields}
-          {this.renderButtons()}
+          {
+            render ? render(formikProps, formFields) : [children, formFields]
+          }
+          {this.renderButtons(formikProps)}
         </Grid>
       </FormikForm>
     )
@@ -147,7 +148,11 @@ class Form extends Component {
       return values
     }, {})
     const values = { ...defaults, ...initialValues };
-
+    fields.forEach(({ type, name }) => {
+      if (type === 'Checkbox') {
+        update(values, name, Boolean);
+      }
+    })
     return (
       <Formik
         onSubmit={this.submit}

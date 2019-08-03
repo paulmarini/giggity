@@ -7,10 +7,11 @@ module.exports = function(app) {
   const { Schema } = mongooseClient;
   const fields = new Schema({
     label: { type: String },
-    type: { type: String, enum: ['Text', 'Paragraph', 'Link', 'Member', 'Dropdown', 'Checkboxes', 'Multiple choice', 'Date', 'Time'] },
+    type: { type: String, enum: ['Text', 'Paragraph', 'Link', 'Member', 'Select', 'Checkbox', 'Radio', 'Date', 'Time', 'Multiple choice', 'Dropdown'] },
     options: { type: [String] },
     default: { type: String },
-    public: { type: Boolean, default: false }
+    public: { type: Boolean, default: false },
+    helperText: { type: String }
   })
   const projects = new Schema({
     _id: { type: String },
