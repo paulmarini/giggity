@@ -1,12 +1,23 @@
 extends ../template.pug
 
-
 block title
-  a(href=`https://giggity.info/gigs/${gig._id}`) New #{project.name} Gig: #{date} - #{gig.name}
+  |#{gigData.shortTitle}
 
 block content
+  p(style='text-align: center;')
+    a(href=gigData.link class='button') View in Giggity
+
+  h3 Details
   table
-    tr
-      td.label Description
-      td.value #{gig.description}
-      
+
+    each field, key in gigData.bandDetails
+      tr
+        td.label #{key}
+        td.value !{field}
+  hr/
+  h3 Public Details
+  table
+    each field, key in gigData.publicDetails
+      tr
+        td.label #{key}
+        td.value !{field}

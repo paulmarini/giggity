@@ -51,7 +51,10 @@
   },
   "mail": {
     "enabled": false,
-    "preview": true
+    "preview": true,
+    "htmlToText": {
+      "tables": true
+    }
   },
   "calendar": {
     "enabled": false

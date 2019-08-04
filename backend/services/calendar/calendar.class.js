@@ -98,16 +98,21 @@ class Service {
     }
   }
 
-  async updateEvent({ gig_calendar_id, rehearsal_calendar_id, public_calendar_id }, gig, remove) {
+  async updateEvent({ gig_calendar_id, rehearsal_calendar_id, public_calendar_id }, gig, gigData, remove) {
     const requestBody = {
       summary: gig.name,
       description:
-        `<b>Description</b>: ${gig.description}
-        Foo - bar
-        `,
+        ['bandDetails', 'publicDetails']
+          .map(type => Object.keys(gigData[type])
+            .map(key => `<b>${key}:</b> ${gigData[type][key]}`)
+            .join('\n\n')
+          )
+          .join('\n\n<hr/><b>PUBLIC DETAILS</b>\n\n'),
       start: {
+        'date': null
       },
       end: {
+        'date': null
       }
     }
     if (gig.start && gig.end) {
@@ -144,7 +149,7 @@ class Service {
             });
             return response.data.id;
           }
-          console.error(`Error ${method}ing calendar event ${eventId} on calendar ${calendarId}`, err.message)
+          console.error(`Error ${method}ing calendar event ${eventId} on calendar ${calendarId}`, err.message, requestBody)
           return Promise.reject(err);
         }
       });

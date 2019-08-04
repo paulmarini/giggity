@@ -13,6 +13,15 @@ module.exports = function(app) {
     preview: config.preview,
     views: { root: './backend/emails/' },
     subjectPrefix: env === 'production' ? false : `[${env.toUpperCase()}] `,
+    htmlToText: {
+      format: {
+        heading: function(elem, fn, options) {
+          var h = fn(elem.children, options);
+          return '==== ' + h.toUpperCase() + ' ====\n\n';
+        }
+      },
+      tables: true
+    },
     juiceResources: {
       webResources: {
         relativeTo: path.resolve('./backend/emails/')
