@@ -3,24 +3,10 @@ import { Route, Switch } from 'react-router-dom';
 import Home from './views/Home';
 import CssBaseline from '@material-ui/core/CssBaseline';
 import { MuiThemeProvider, createMuiTheme } from '@material-ui/core/styles';
-import blue from '@material-ui/core/colors/lightBlue';
-import pink from '@material-ui/core/colors/pink';
-
+import themeConfig from './util/themeConfig';
 import './App.css';
 
-const theme = createMuiTheme({
-  palette: {
-    primary: { main: blue[900] }, // Purple and green play nicely together.
-    secondary: { main: pink[700] }, // This is just green.A700 as hex.
-    action: {
-      // selected: blue[300]
-    },
-    background: {
-      default: '#fff'
-    }
-  },
-  typography: { useNextVariants: true },
-});
+const theme = createMuiTheme(themeConfig);
 
 const App = () => (
   <React.Fragment>
@@ -34,3 +20,4 @@ const App = () => (
 );
 
 export default App;
+export { themeConfig };
