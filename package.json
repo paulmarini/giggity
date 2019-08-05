@@ -66,7 +66,7 @@
     "feathers-mongoose": "^8.0.1",
     "formik": "^1.5.8",
     "formik-material-ui": "0.0.20",
-    "googleapis": "^39.2.0",
+    "googleapis": "^42.0.0",
     "helmet": "^3.20.0",
     "jwt-decode": "^2.2.0",
     "later": "github:RickCarlino/later",
