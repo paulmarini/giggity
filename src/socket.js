@@ -152,10 +152,10 @@ const availabilityUpdated = availability => {
 
 export const loadNextGigId = async () => {
   const { data: [nextGig] } = await emit('find', 'gigs', {
-    start: { $gt: new Date().setHours(0, 0, 0, 0) },
+    start: { $gte: new Date().setHours(0, 0, 0, 0) },
     $limit: 1,
     $select: ['_id'],
-    $sort: { start: 1 }
+    $sort: { start: 1, name: 1 }
   })
   if (nextGig) {
     store.dispatch(actions.loadNextGigId(nextGig._id));

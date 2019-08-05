@@ -92,8 +92,8 @@ class GigList extends Component {
     const now = new Date().setHours(0, 0, 0, 0);
     const params = {
       $limit: this.state.limit,
-      start: { [upcoming ? '$gt' : '$lt']: now },
-      $sort: { start: upcoming ? 1 : -1 },
+      start: { [upcoming ? '$gte' : '$lt']: now },
+      $sort: { start: upcoming ? 1 : -1, name: upcoming ? 1 : -1 },
       $select: ['_id', 'name', 'start', 'status', 'type'],
       $skip
     }
@@ -104,7 +104,7 @@ class GigList extends Component {
     const [{ data: gigs, total: count }, availability, { total }] = await Promise.all([
       emit('find', 'gigs', params),
       emit('find', 'gig-availability', { member: member_id }),
-      emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gt']: now }, $limit: 0 }),
+      emit('find', 'gigs', { ...params, start: { [upcoming ? '$lt' : '$gte']: now }, $limit: 0 }),
     ]);
     this.setState({
       [`${upcoming ? 'new' : 'old'}Limit`]: (count <= $skip + this.state.limit),
