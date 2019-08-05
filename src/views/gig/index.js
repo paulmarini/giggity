@@ -31,25 +31,6 @@ class Gig extends Component {
     this.saveGig = this.saveGig.bind(this);
     this.deleteGig = this.deleteGig.bind(this);
     this.timeFields = ['start', 'end', 'load_in', 'event_start', 'event_end'];
-
-    this.defaultGig = {
-      name: '',
-      status: 'Draft',
-      description: '',
-      date: formatDate(),
-      private: true
-    };
-    const { currentProject: { custom_fields = [], rehearsal_defaults = {} } } = this.props;
-    custom_fields.forEach((field) => {
-      set(this.defaultGig, `custom_fields.${field.label}`, get(this.defaultGig, `custom_fields.${field.label}`) || field.default || "");
-    });
-    this.defaultRehearsal = {
-      ...rehearsal_defaults,
-      date: formatDate(),
-      startTime: formatTime(rehearsal_defaults.start),
-      endTime: formatTime(rehearsal_defaults.end),
-      description: ''
-    };
     this.state.isLoading = !this.checkNewGig();
   };
 
@@ -74,6 +55,44 @@ class Gig extends Component {
 
   checkNewGig = () => this.props.match.params.id === 'new'
 
+  getDefault() {
+    const { currentProject: { custom_rehearsal_fields = [], custom_fields = [], custom_public_fields = [], rehearsal_defaults = {} } } = this.props;
+
+    const fields = this.checkType() === 'Rehearsal' ? custom_rehearsal_fields : custom_fields;
+
+    let defaultGig = {};
+
+    if (this.checkType() === 'Rehearsal') {
+      defaultGig = {
+        ...rehearsal_defaults,
+        status: 'Confirmed',
+        date: formatDate(),
+        startTime: formatTime(rehearsal_defaults.start),
+        endTime: formatTime(rehearsal_defaults.end),
+        description: ''
+      };
+    } else {
+      defaultGig = {
+        name: '',
+        status: 'Draft',
+        description: '',
+        date: formatDate(),
+        private: true,
+        startTime: '',
+        endTime: '',
+        location: '',
+        load_inTime: ''
+      };
+      custom_public_fields.forEach((field) => {
+        set(defaultGig, `custom_public_fields.${field.label}`, get(defaultGig, `custom_public_fields.${field.label}`) || field.default || "");
+      });
+    }
+    fields.forEach((field) => {
+      set(defaultGig, `custom_fields.${field.label}`, get(defaultGig, `custom_fields.${field.label}`) || field.default || "");
+    });
+    return defaultGig;
+  }
+
   updateGig = async () => {
     const { id } = this.props.match.params;
     if (!id) { return; }
@@ -87,17 +106,21 @@ class Gig extends Component {
         ])
         this.props.loadGig(message);
         this.props.loadGigAvailability(availability)
+      } catch (err) {
+        if (err.code === 404 || err.code === 400) {
+          const nextGigId = this.props.nextGigId || await loadNextGigId();
+          this.props.history.push(`/${this.checkType().toLowerCase()}s/${nextGigId}`);
+        }
       } finally {
         this.setState({ isLoading: false })
       }
     } else {
-      this.setState({ isLoading: false })
-      this.props.loadGig(this[`default${this.checkType()}`]);
+      this.setState({ isLoading: false });
+      this.props.loadGig(this.getDefault());
     }
   };
 
   saveGig = async (values) => {
-    console.log(values)
     const { id } = this.props.match.params;
     const gig = { ...values };
     const start = moment(gig.startTime, 'HH:mm');
@@ -119,12 +142,12 @@ class Gig extends Component {
     delete gig._id;
     delete gig.date;
     gig.type = this.checkType();
-    const isNewGig = this.checkNewGig();
-    const newGig = await isNewGig ?
-      emit('create', 'gigs', gig) :
-      emit('patch', 'gigs', id, gig);
-    if (isNewGig) {
+
+    if (this.checkNewGig()) {
+      const newGig = await emit('create', 'gigs', gig);
       this.props.history.push(`/${this.checkType().toLowerCase()}s/${newGig._id}`);
+    } else {
+      await emit('patch', 'gigs', id, gig);
     }
   };
 
@@ -143,10 +166,10 @@ class Gig extends Component {
   formatGigValues() {
     const { currentGig } = this.props;
     if (this.checkNewGig()) {
-      return this[`default${this.checkType()}`];
+      return this.getDefault();
     }
     const date = moment(currentGig.start || new Date()).format('YYYY-MM-DD');
-    const gigValues = merge({ date }, this[`default${this.checkType()}`], currentGig, { date });
+    const gigValues = merge({ date }, this.getDefault(), currentGig, { date });
 
     this.timeFields.forEach(field => {
       if (field === 'start' && !currentGig.end) {
@@ -163,7 +186,7 @@ class Gig extends Component {
   }
 
   render() {
-    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields }, match, member_id } = this.props;
+    const { users, currentGigAvailability, currentGig, nextGigId, currentProject: { custom_fields = [], custom_public_fields = [], custom_rehearsal_fields = [] }, match, member_id } = this.props;
     const { id } = match.params;
     const type = this.checkType();
     const availabilityIndex = Object.values(currentGigAvailability)
@@ -175,8 +198,8 @@ class Gig extends Component {
 
     const isNewGig = this.checkNewGig();
     const isManager = isUserOrRole({ role: 'Manager' });
-
-    if (!id) {
+    const fields = type === 'Rehearsal' ? custom_rehearsal_fields : custom_fields;
+    if (!id || id === 'undefined') {
       if (nextGigId) {
         return <Redirect to={`/${type.toLowerCase()}s/${nextGigId}/summary`} />
       }
@@ -240,7 +263,8 @@ class Gig extends Component {
             <Switch>
               <Route path={`${match.path}/summary`}>
                 <GigSummary
-                  customFields={custom_fields}
+                  custom_fields={fields}
+                  custom_public_fields={custom_public_fields}
                   gigValues={values}
                   availabilityIndex={availabilityIndex}
                   userAvailability={currentGigAvailability[member_id]}
@@ -251,7 +275,8 @@ class Gig extends Component {
               </Route>
               <Route path={[`${match.path}/details`, `${match.path}/public_details`]}>
                 <GigDetails
-                  customFields={custom_fields}
+                  custom_fields={fields}
+                  custom_public_fields={custom_public_fields}
                   gigValues={values}
                   type={type}
                   saveGig={this.saveGig}

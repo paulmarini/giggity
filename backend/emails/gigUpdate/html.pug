@@ -14,10 +14,12 @@ block content
       tr
         td.label #{key}
         td.value !{field}
-  hr/
-  h3 Public Details
-  table
-    each field, key in gigData.publicDetails
-      tr
-        td.label #{key}
-        td.value !{field}
+  
+  if gigData.type === 'Gig' && Object.keys(gigData.publicDetails).length
+    hr/
+    h3 Public Details
+    table
+      each field, key in gigData.publicDetails
+        tr
+          td.label #{key}
+          td.value !{field}

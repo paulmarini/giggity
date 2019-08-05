@@ -2,22 +2,21 @@ const { authenticate } = require('@feathersjs/authentication').hooks;
 const moment = require('moment');
 const { removeRelated } = require('../../hooks/customHooks');
 const { restrictToRole, restrictFields } = require('../../hooks/customHooks');
-const { startCase } = require('lodash');
 
 const renderDate = date => date ? moment(date).format('dddd, MMMM Do') : ''
 const renderTime = time => time ? moment(time).format('h:mm A') : ''
 
+const populateData = async context => {
+  const { app, method } = context
 
-const formatUpdates = async context => {
-  const { app, method, result: gig } = context;
-
-  if (gig.status === 'Draft') {
-    return context;
+  // If we don't do this, we get maps instead of objects - should file an issue w/ feathers-mongoose
+  if (method === 'create') {
+    context.result = await app.service('api/gigs')._get(context.result._id);
   }
+  const { result: gig } = context;
 
-  const action = method === 'create' ? 'New' : 'Updated';
+  context.project = await app.service('api/projects')._get(gig.project);
 
-  context.project = await app.service('api/projects').get(gig.project);
   context.users = await app.service('api/members').find({
     query: {
       project: gig.project,
@@ -25,8 +24,15 @@ const formatUpdates = async context => {
       $select: ['user.name', 'preferences']
     }
   });
+  return context;
+}
 
-  // console.log(context.users);
+const formatUpdates = async context => {
+  const { app, method, result: gig, users, project } = context;
+
+  if (gig.status === 'Draft') {
+    return context;
+  }
 
   const availability = await app.service('api/gig-availability').find({
     query: {
@@ -38,20 +44,23 @@ const formatUpdates = async context => {
   const availabilityIndex = Object.values(availability)
     .reduce((index, availability) => {
       index[availability.status] = index[availability.status] || []
-      index[availability.status].push({ user: context.users.find(user => user._id.toString() === availability.member._id.toString()), availability })
+      index[availability.status].push({ user: users.find(user => user._id.toString() === availability.member._id.toString()), availability })
       return index;
     }, {})
 
+  const action = method === 'create' ? 'New' : 'Updated';
+  const custom_key = gig.type === 'Rehearsal' ? 'custom_rehearsal_fields' : 'custom_fields';
   const date = renderDate(gig.start);
   const shortDate = moment(gig.start).format('M/D/YY');
 
   context.gigData = {
-    action: method === 'create' ? 'New Gig' : 'Gig Update',
-    project: context.project.name,
+    action: method === 'create' ? `New ${gig.type}` : `${gig.type} Update`,
+    project: project.name,
     date,
     shortDate,
     name: gig.name,
-    title: `${action} ${context.project.name} ${gig.type}: ${moment(gig.start).format('M/D/YY')} - ${gig.name}`,
+    type: gig.type,
+    title: `${action} ${project.name} ${gig.type}: ${moment(gig.start).format('M/D/YY')} - ${gig.name}`,
     shortTitle: `${shortDate} - ${gig.name}`,
     link: `https://giggity.info/gigs/${gig._id}`,
     bandDetails: {
@@ -74,24 +83,22 @@ const formatUpdates = async context => {
           `<b>${user.user.name}</b>: ${availability.comments}`
         ).join('<br/>'),
       ...(
-        context.project.custom_fields
-          .filter(field => !field.public)
+        project[custom_key]
           .reduce((obj, field) => {
             obj[field.label] = gig.custom_fields[field.label].replace(/\n/g, '<br/>');
             return obj;
           }, {})
       )
     },
-    publicDetails: {
+    publicDetails: gig.type === 'Rehearsal' ? {} : {
       'Event Time': (gig.event_start && gig.event_end) ? `${renderTime(gig.event_start)} - ${renderTime(gig.event_end)}` : '',
       'Public Title': gig.public_title,
       'Public Description': gig.public_description.replace(/\n/g, '<br/>'),
       'Public Link': gig.link,
       ...(
-        context.project.custom_fields
-          .filter(field => field.public)
+        project.custom_public_fields
           .reduce((obj, field) => {
-            obj[field.label] = gig.custom_fields[field.label].replace(/\n/g, '<br/>');
+            obj[field.label] = gig.custom_public_fields[field.label].replace(/\n/g, '<br/>');
             return obj;
           }, {})
       )
@@ -142,14 +149,18 @@ const mailGigUpdate = async context => {
 }
 
 const updateCalendar = async context => {
-  const { app, method, gigData, project, result: gig } = context;
+  const { app, method, gigData, result: gig } = context;
+
   if (!context.app.get('calendar').enabled) {
     return context;
   }
+
+  const project = await app.service('api/projects').get(gig.project);
+
   gig.calendar = gig.calendar || {};
   const remove = method === 'remove' || gig.status === 'Draft';
   const calendar = await app.service('api/calendar').updateEvent(project.calendar, gig, gigData, remove);
-  if (calendar.id !== gig.calendar.id || calendar.public_id !== gig.calendar.public_id) {
+  if ((calendar.id !== gig.calendar.id || calendar.public_id !== gig.calendar.public_id) && method !== 'remove') {
     gig.calendar = calendar;
     await app.service('api/gigs')._patch(gig._id, { calendar });
   }
@@ -194,9 +205,9 @@ module.exports = {
     all: [],
     find: [],
     get: [],
-    create: [formatUpdates, mailGigUpdate, updateCalendar],
+    create: [populateData, formatUpdates, mailGigUpdate, updateCalendar],
     update: [],
-    patch: [formatUpdates, mailGigUpdate, updateCalendar],
+    patch: [populateData, formatUpdates, mailGigUpdate, updateCalendar],
     remove: [updateCalendar]
   },
 

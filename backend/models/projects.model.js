@@ -10,7 +10,6 @@ module.exports = function(app) {
     type: { type: String, enum: ['Text', 'Paragraph', 'Link', 'Member', 'Select', 'Checkbox', 'Radio', 'Date', 'Time', 'Multiple choice', 'Dropdown'] },
     options: { type: [String] },
     default: { type: String },
-    public: { type: Boolean, default: false },
     helperText: { type: String }
   })
   const projects = new Schema({
@@ -18,6 +17,7 @@ module.exports = function(app) {
     name: { type: String, required: true, unique: true },
     default_role: { type: String, default: 'Member' },
     custom_fields: { type: [fields] },
+    custom_public_fields: { type: [fields] },
     custom_rehearsal_fields: { type: [fields] },
     communication: {
       email_list: { type: String },

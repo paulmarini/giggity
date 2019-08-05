@@ -23,6 +23,7 @@ module.exports = function(app) {
     private: { type: Boolean },
     link: { type: String },
     custom_fields: { type: Map, of: String },
+    custom_public_fields: { type: Map, of: String },
     calendar: {
       id: { type: String },
       public_id: { type: String }

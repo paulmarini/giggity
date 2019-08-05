@@ -5,15 +5,6 @@ class GigDetails extends React.Component {
 
   constructor(props) {
     super(props);
-    const { customFields = [] } = props;
-    this.custom_fields = customFields
-      .reduce((fields, field) => {
-        fields[field.public ? 'public' : 'band'].push({
-          ...field,
-          name: `custom_fields.${field.label}`
-        })
-        return fields;
-      }, { public: [], band: [] });
     this.state = {
       fields: this.updateFields()
     }
@@ -27,7 +18,7 @@ class GigDetails extends React.Component {
   }
 
   updateFields() {
-    const { type } = this.props;
+    const { type, custom_fields = [], custom_public_fields = [] } = this.props;
     const fields = (type === 'Gig' ?
       [
         { type: 'Radio', label: 'Status', name: 'status', options: ['Draft', 'Proposed', 'Confirmed', 'Cancelled'], helperText: 'Draft gigs are hidden from members.' },
@@ -40,7 +31,8 @@ class GigDetails extends React.Component {
         { type: 'Text', label: 'Location', name: 'location' },
         { type: 'Paragraph', label: 'Description', name: 'description' },
         { type: 'Time', label: 'Load In', name: 'load_inTime' },
-        ...this.custom_fields['band']
+        ...custom_fields
+          .map(field => ({ ...field, name: `custom_fields.${field.label}` }))
       ] :
       [
         { type: 'Text', label: 'Name', name: 'name' },
@@ -51,6 +43,9 @@ class GigDetails extends React.Component {
         ],
         { type: 'Text', label: 'Location', name: 'location' },
         { type: 'Paragraph', label: 'Description', name: 'description' },
+        ...custom_fields
+          .map(field => ({ ...field, name: `custom_fields.${field.label}` }))
+
       ])
       .map(this.hideFields('details'));
 
@@ -63,7 +58,9 @@ class GigDetails extends React.Component {
         { type: 'Time', label: 'Event End Time', name: 'event_endTime', required: values => Boolean(values.event_startTime) }
       ],
       { type: 'Link', label: 'Public Link', name: 'link' },
-      ...this.custom_fields['public']
+      ...custom_public_fields
+        .map(field => ({ ...field, name: `custom_public_fields.${field.label}` }))
+
     ]
       .map(this.hideFields('public_details'));
 
@@ -84,7 +81,6 @@ class GigDetails extends React.Component {
     const { saveGig, deleteGig, gigValues } = this.props;
 
     const deleteButton = { label: 'Delete Gig', action: deleteGig };
-
     return (
       <GiggityForm
         onSubmit={saveGig}

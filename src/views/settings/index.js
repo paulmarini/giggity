@@ -1,11 +1,11 @@
 import React from 'react';
 import Members from './Members';
 import ProjectProfile from './ProjectProfile';
-import ProjectSettings from './ProjectSettings';
 import MemberProfile from './MemberProfile';
 import MemberNotification from './MemberNotification';
 import ProjectRehearsalSettings from './ProjectRehearsalSettings';
 import ProjectCommunication from './ProjectCommunication';
+import CustomFields from './custom_fields/CustomFields'
 // import User from './User';
 import { Switch, Route, Redirect } from 'react-router-dom';
 import { Typography } from '@material-ui/core';
@@ -24,7 +24,7 @@ export default (props) => {
       <Route path="/settings/profile/profile" component={MemberProfile} />
       <Route path="/settings/profile/notifications" component={MemberNotification} />
       <Route path="/settings/project/profile" component={ProjectProfile} />
-      <Route path="/settings/project/custom_fields" component={ProjectSettings} />
+      <Route path="/settings/project/custom_fields" component={CustomFields} />
       <Route exact path='/settings/project/members' component={Members} />
       {/* <Route path="/settings/project/members/:id" component={User} /> */}
       <Route path="/settings/project/rehearsals" component={ProjectRehearsalSettings} />

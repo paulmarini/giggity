@@ -54,14 +54,12 @@ class GigSummary extends React.Component {
   }
 
   customRows(isPublic) {
-    const { gigValues, type, customFields } = this.props;
-    if (type !== 'Gig') {
-      return [];
-    }
-    return customFields
-      .filter(field => Boolean(field.public) === isPublic)
+    const { gigValues } = this.props;
+    const fieldKey = isPublic ? 'custom_public_fields' : 'custom_fields';
+
+    return this.props[fieldKey]
       .map(field => {
-        let value = gigValues.custom_fields[field.label];
+        let value = gigValues[fieldKey][field.label];
         if (field.type === 'Link' && value) {
           value = <Link href={value} target="_blank">{value}</Link>
         }
@@ -86,7 +84,7 @@ class GigSummary extends React.Component {
   }
 
   render() {
-    const { gigValues, type, userAvailability = {}, availabilityIndex, customFields, id, member_id } = this.props;
+    const { gigValues, type, userAvailability = {}, availabilityIndex, id, member_id } = this.props;
     const rows = [
       {
         label: 'Status',
@@ -164,14 +162,10 @@ class GigSummary extends React.Component {
             </Typography>
           )
       },
-      ...(type === 'Gig' ? customFields
-        .filter(field => !field.public)
-        .map(field => {
-          return { label: field.label, value: gigValues.custom_fields[field.label] }
-        }) : [])
+      ...this.customRows()
     ];
 
-    const public_rows = this.renderRows([
+    const public_rows = type === 'Rehearsal' ? '' : this.renderRows([
       gigValues.event_start && {
         label: 'Event Time',
         value: `${this.renderTime(gigValues.event_start)} - ${this.renderTime(gigValues.event_end)}`
@@ -194,7 +188,7 @@ class GigSummary extends React.Component {
     return <div className='summary'>
       {this.renderRows(rows)}
       {
-        Boolean(public_rows.props.children.length) &&
+        Boolean(public_rows && public_rows.props.children.length) &&
         <>
           <hr />
           <Typography gutterBottom variant="h6">Public Details</Typography>

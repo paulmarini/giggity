@@ -101,7 +101,7 @@ class Service {
   async updateEvent({ gig_calendar_id, rehearsal_calendar_id, public_calendar_id }, gig, gigData, remove) {
     const requestBody = {
       summary: gig.name,
-      description:
+      description: remove ? '' :
         ['bandDetails', 'publicDetails']
           .map(type => Object.keys(gigData[type])
             .map(key => `<b>${key}:</b> ${gigData[type][key]}`)
