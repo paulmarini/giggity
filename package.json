@@ -33,6 +33,8 @@
     "stream-series": "^0.1.1"
   },
   "dependencies": {
+    "bower": "^1.8.8",
+    "gulp": "^3.9.1",
     "gulp-less": "^3.0.5",
     "path": "^0.12.7"
   }

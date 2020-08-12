@@ -123,12 +123,14 @@ angular.module('Giggity.controllers', [])
 
 		$scope.fetchGig = function(gig_id) {
 			$scope.gig_loading = 1;
-      if (!gig_id || ! $scope.Gigs.gigs[gig_id]) {
+      if ((!gig_id || ! $scope.Gigs.gigs[gig_id]) && $scope.Gigs.gigsList.length) {
         gig_id = $scope.Gigs.gigsList[0].gig_id;
       }
-			return Requests.fetch('fetchGig', {gig_id: gig_id}).then(function(gig) {
-				$scope.setGig(gig);
-			})
+      if (gig_id) {
+        return Requests.fetch('fetchGig', {gig_id: gig_id}).then(function(gig) {
+          $scope.setGig(gig);
+        })
+      }
 		}
 
     $scope.fetchGigs = function() {

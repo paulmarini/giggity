@@ -72,5 +72,5 @@ gulp.task('dev', function() {
 
 gulp.task('default', ['index'], function() {
 	return gulp.src('./lib/')
-		.pipe($.git.add());
+		//.pipe($.git.add());
 });
